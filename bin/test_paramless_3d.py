@@ -19,6 +19,9 @@ def test_surface_distance():
     return True
 
 def example():
+    """
+
+    """
     x = np.linspace(-3,3, 20)
     y = np.array([i**2 for i in x])
     z = np.copy(y)
@@ -30,7 +33,8 @@ def example():
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.plot_wireframe(target_surface[0], target_surface[1], np.array([target_surface[2], target_surface[2]-2*target_surface[2]]), rstride=10, cstride=10)
-
+    
+    fig.suptitle('Target Surface', fontsize=14)
     ax.set_xlabel('X Label')
     ax.set_ylabel('Y Label')
     ax.set_zlabel('Z Label')
@@ -42,13 +46,23 @@ def example():
     ax = fig.add_subplot(111, projection='3d')
     ax.plot_wireframe(initial_surface[0], initial_surface[1], np.array([initial_surface[2], initial_surface[2]-2*initial_surface[2]]), rstride=10, cstride=10)
 
+    fig.suptitle('Initial Surface', fontsize=14)
+    ax.set_xlabel('X Label')
+    ax.set_ylabel('Y Label')
+    ax.set_zlabel('Z Label')
+
     plt.show()
 
-    Result = evolve(initial_surface, distance_fitness_function, p.point_mutation, 10000, target_surface=target_surface, domain=initial_surface[0], width=18)
+    Result = ps.evolve(initial_surface, ps.distance_fitness_function, p.point_mutation, 10000, target_surface=target_surface, domain=initial_surface[0], width=18)
 
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.plot_wireframe(Result[0], Result[1], np.array([Result[2], Result[2]-2*Result[2]]), rstride=10, cstride=10)
+
+    fig.suptitle('Evolved Surface', fontsize=14)
+    ax.set_xlabel('X Label')
+    ax.set_ylabel('Y Label')
+    ax.set_zlabel('Z Label')
 
     plt.show()
 
