@@ -31,38 +31,36 @@ def example():
     initial_surface = np.array([x, y, initial_z])
 
     fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.plot_wireframe(target_surface[0], target_surface[1], np.array([target_surface[2], target_surface[2]-2*target_surface[2]]), rstride=10, cstride=10)
+
+    # Plotting the Target Surface
+    ax1 = fig.add_subplot(221, projection='3d')
+    ax1.plot_wireframe(target_surface[0], target_surface[1], np.array([target_surface[2], target_surface[2]-2*target_surface[2]]), rstride=10, cstride=10)
     
-    fig.suptitle('Target Surface', fontsize=14)
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label')
+    ax1.set_title('Target Surface')
+    ax1.set_xlabel('X Label')
+    ax1.set_ylabel('Y Label')
+    ax1.set_zlabel('Z Label')
+   
+    # Plotting the Initial Surface
+    ax2 = fig.add_subplot(223, projection='3d')
+    ax2.plot_wireframe(initial_surface[0], initial_surface[1], np.array([initial_surface[2], initial_surface[2]-2*initial_surface[2]]), rstride=10, cstride=10)
+    ax2.set_title('Initial Surface')
+    ax2.set_xlabel('X Label')
+    ax2.set_ylabel('Y Label')
+    ax2.set_zlabel('Z Label')
 
-    plt.show()
 
-    
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.plot_wireframe(initial_surface[0], initial_surface[1], np.array([initial_surface[2], initial_surface[2]-2*initial_surface[2]]), rstride=10, cstride=10)
-
-    fig.suptitle('Initial Surface', fontsize=14)
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label')
-
-    plt.show()
-
+    # using paramless_3d to evolve the initial surface towards the target
     Result = ps.evolve(initial_surface, ps.distance_fitness_function, p.point_mutation, 10000, target_surface=target_surface, domain=initial_surface[0], width=18)
 
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.plot_wireframe(Result[0], Result[1], np.array([Result[2], Result[2]-2*Result[2]]), rstride=10, cstride=10)
-
-    fig.suptitle('Evolved Surface', fontsize=14)
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label')
+    # Plotting the Evolved surface
+    ax3 = fig.add_subplot(224, projection='3d')
+    ax3.plot_wireframe(Result[0], Result[1], np.array([Result[2], Result[2]-2*Result[2]]), rstride=10, cstride=10)
+    ax3.set_title('Evolved Surface')    
+    ax3.set_xlabel('X Label')
+    ax3.set_ylabel('Y Label')
+    ax3.set_zlabel('Z Label')
+   
 
     plt.show()
 
