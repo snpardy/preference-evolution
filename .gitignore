@@ -404,3 +404,4 @@ dmypy.json
 proposalSketch.pdf
 bin/.vscode/settings.json
 docs/lect02-03 Agents.pdf
+src/.vscode/settings.json
