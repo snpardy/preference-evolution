@@ -44,11 +44,9 @@ def _attemp_gaussian_mutation(X,Y,Z, mutation_epsilon, radius, lower_bound=None,
     # upwards
     if (np.random.randint(2)):
         mutant += perturbation
-        # np.add(mutant, perturbation, out=mutant, casting="unsafe")
     # downwards
     else:
         mutant -= perturbation
-        # np.add(mutant, -perturbation, out=mutant, casting="unsafe")
     return mutant
 
 def gaussian_mutation(X,Y,Z, mutation_epsilon, radius, lower_bound=None, upper_bound=None, **kwargs):
