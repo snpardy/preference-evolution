@@ -22,13 +22,16 @@ def example_evolution():
 
     target_surface = [X,Y,Z]
     initial_surface = [X,Y,np.zeros_like(X, dtype=float)]
-    result_surface = p.evolve(initial_surface, p.distance_fitness_function, p.gaussian_mutation, 10000, target_surface=target_surface,
-    mutation_epsilon=.05, radius=2)
-   
+    result_surface, time_series = p.evolve(initial_surface, p.distance_fitness_function, p.gaussian_mutation, 10, target_surface=target_surface,
+    mutation_epsilon=.05, time_series_data=True, radius=4)
+    print("Evolution is done, now creating a GIF. This can take a while...")
+    p.createGIF("src\python\paramless", time_series)
+    print("Done!")
    
     #Make a 3D plot
     fig = plt.figure()
     ax1 = fig.add_subplot(121, projection='3d')
+    ax1.set_zlim3d(0, 1.1)
     ax1.plot_surface(X, Y, Z,cmap='viridis',linewidth=0)
     ax1.set_title('Target Surface')
     ax1.set_xlabel('X axis')
@@ -36,6 +39,7 @@ def example_evolution():
     ax1.set_zlabel('Z axis')
     
     ax2 = fig.add_subplot(122, projection='3d')
+    ax2.set_zlim3d(0, 1.1)
     ax2.plot_surface(X, Y, result_surface[2],cmap='viridis',linewidth=0)
     ax2.set_title('Evolved Surface')
     ax2.set_xlabel('X axis')

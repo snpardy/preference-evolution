@@ -9,7 +9,10 @@ import numpy as np
 import math
 from collections import OrderedDict as OrderedDict
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import axes3d
+import matplotlib
+import os
+import imageio
+# from mpl_toolkits.mplot3d import axes3d
 
 # default tolerance for float comparisons
 DEFAULT_ATOL = 1e-8
@@ -93,22 +96,54 @@ def evolution_step(resident_surface, fitness_function, mutation_function, atol, 
     """
     One generation iteration
     """
+    invasion = False
     mutantVector = mutation_function(resident_surface[0], resident_surface[1], resident_surface[2], **kwargs)
     fitness_resident, fitness_mutant = fitness_function(resident_surface, [resident_surface[0], resident_surface[1], mutantVector], **kwargs)
     if fitness_resident < fitness_mutant and abs(fitness_resident - fitness_mutant) > atol:
         resident_surface = np.copy(resident_surface)
         resident_surface[2] = np.copy(mutantVector)
-    return resident_surface
+        invasion = True
+    return resident_surface, invasion
 
 
 
-def evolve(initial_surface, fitness_function, mutation_function, iterations, atol=DEFAULT_ATOL, seed=None, **kwargs):
+def evolve(initial_surface, fitness_function, mutation_function, iterations, atol=DEFAULT_ATOL, seed=None, time_series_data=False, **kwargs):
     """
     Evolve
     """
     np.random.seed(seed)
     resident = np.copy(initial_surface)
     previous_resident = np.zeros_like(initial_surface)
+    if time_series_data:
+        time_series_array = [resident]
     for step in range(1, iterations):
-        resident = evolution_step(resident, fitness_function, mutation_function, atol, **kwargs)
+        resident, invasion = evolution_step(resident, fitness_function, mutation_function, atol, **kwargs)
+        if invasion and time_series_data:
+            time_series_array.append(resident)
+            
+    if time_series_data:
+        return resident, time_series_array
     return resident
+
+def createGIF(path, time_series_array):
+    os.mkdir(path + "\.plots")
+    fig = plt.figure()
+    images = []
+    for i, item in enumerate(time_series_array):
+        ax = fig.add_subplot(111, projection='3d')
+        ax.set_zlim3d(0, 1.1)
+        ax.set_title('Evolved Surface')
+        ax.set_xlabel('X axis')
+        ax.set_ylabel('Y axis')
+        ax.set_zlabel('Z axis')
+        ax.plot_surface(item[0], item[1], item[2],cmap='viridis',linewidth=0)
+        file_name = path + "\.plots\plot_" + str(i) + '.png'
+        fig.savefig(file_name)
+
+
+    for i in range(len(time_series_array)):
+        fn = path + "\.plots\plot_" + str(i) + '.png'
+        images.append(imageio.imread(fn))
+        os.remove(fn)
+    os.rmdir(path+"\.plots")
+    imageio.mimsave(path +'\evolution.gif', images)

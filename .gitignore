@@ -406,3 +406,5 @@ bin/.vscode/settings.json
 docs/lect02-03 Agents.pdf
 src/.vscode/settings.json
 src/python/paramless/tempCodeRunnerFile.py
+src/python/paramless/evolution.gif
+data/evolution.gif
