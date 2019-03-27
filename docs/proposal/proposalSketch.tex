@@ -6,8 +6,9 @@
 \usepackage[T1]{fontenc}
 \usepackage{fourier}
 \usepackage[utf8]{inputenc}
+\usepackage[hidelinks]{hyperref}
 
-\newcommand{\todo}[1]{\textcolor{red}{TODO:\newline #1}\PackageWarning{TODO:}{#1!}}
+\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}\PackageWarning{TODO:}{#1!}}
 \newcommand*{\np}{\par\noindent\newline}
 
 \title{Agent Based Modelling of the Formation of Social Preferences}
@@ -81,6 +82,16 @@
 	\vfill % Push the date up 1/4 of the remaining page
 	
 \end{titlepage}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+\newpage
+\tableofcontents
+\newpage
 \section{Introduction}
 The research proposed herein is intended to address questions in
 \textit{Evolutionary Game Theory} with a particular focus on the the formation
@@ -134,7 +145,7 @@ There are several of assumptions that are made about players in game theory:
     \item They reason in a way that takes into account their beliefs about their opponent's action. 
 \end{itemize}
 
-\todo{Example of a game? Prisoner's Dilemma...\newline Talk about Nash}
+\todo{\newline Example of a game? Prisoner's Dilemma...\newline Talk about Nash}
 
 \subsubsection{Strategies}
 In traditional game theory, what the internal desires of the players are is not
@@ -152,9 +163,11 @@ example, if, when playing rock paper scissors, a player decides to play
 scissors no matter what, then that player is implementing a pure strategy.
 Playing exclusively rock or paper are the other available pure strategies.}
 \np When implementing a mixed strategy, the player plays each strategy with
-some probability. This probability may be zero for some strategies. So, if a
-player plays rock with some probability and scissors with some probability, but
-never paper, they are implementing a mixed strategy.
+some probability. This probability may be zero for some strategies, but for the
+strategy to be considered mixed, the probability that the player plays the
+respective strategy must be greater than zero for more than one strategy. So,
+if a player plays rock with some probability and scissors with some
+probability, but never paper, they are implementing a mixed strategy.
 \subsubsection{With Preferences}
 In the real world, it is difficult to explain all the decisions that people
 make when analysing their action as being motivated only by their own material
@@ -168,8 +181,9 @@ part of the motivation for action, more than just objective payoff.
 A preference is considered 'social' when a players utility function is
 dependent on their opponent's payoff (or utility). A social preference may
 assign positive weight to the opponent's outcome (so our player is "happy" when
-their opponent goes well), but it may also assign negative weight - so, our
-player is "envious" when their opponent does well.
+their opponent goes well). This is known as an "altruistic" preference.It may
+also be the case that the preference assigns negative weight to the opponent's
+outcome - so, our player is "envious" when their opponent does well \cite{angner_course_2012}.
 \subsection{Evolution of Social Preferences}
 \subsection{Agent Based Modelling}
 \subsubsection{Evolution in Agent Based Models}
@@ -178,6 +192,38 @@ player is "envious" when their opponent does well.
 This is where the Peysacovich paper can be mentioned.
 \section{Research Objectives and Methods}
 \subsection{Questions \& Objectives}
+In the existing literature, analysis is often done on models in which agents
+are matched to play a two player cooperation game in a \textit{uniformly
+random} way \todo{add citation}. Firstly, in the real world this is often not
+the case - we are more likely to match with some kinds of people than others
+(depending on the context we're talking about) and secondly, it has been shown
+that the level of assortativity that is present in the matching process has a
+large influence on the level of cooperation that is eventually
+displayed [\cite{alger_homo_2013}, \todo{cite more?}].
+
+In \cite{alger_homo_2013} Alger and Weibull perform a static analysis to
+conclude that specific relationship between assortativity and cooperation is an
+evolutionary stable strategy. The analysis undertaken in \cite{alger_homo_2013}
+makes no mention of how likely it is that this outcome is reached in a dynamic
+system that is allowed to freely evolve. So, that begs the first question that
+the proposed research will attempt to answer:
+\np\textbf{Does the Alger and Weibull result \cite{alger_homo_2013} hold in a dynamic system?}
+\begin{itemize}
+\item If yes, how likely is it to occur, if at all? 
+\item If no, what occurs in its place? 
+\end{itemize}
+Another consideration, is that the shifting of agents' preferences can take
+several forms. It can be the traditional sense of evolution, in which traits
+are passed down from generation to generation mutating and changing over time,
+mimicking Darwinian Evolution. Or, agents can learn within their own lifetime,
+via reinforcement learning. So, the next area of interest is:
+\np\textbf{Does "Darwinian Evolution" result in the same levels of cooperation as reinforcement learning?}
+\begin{itemize}
+\item If no, how are they different? Is one closer to result in \cite{alger_homo_2013}?
+\end{itemize}
+These two questions are in service of a more broad, overarching questions:
+\np\textbf{How does assortative matching effect the evolution of cooperation?}
+\np After undertaking the analysis required to answer the first two questions, the piece will be in a position to offer a contribution to answering this more broad question. This can be done with a comparison between the results of the previous discussion and analysis in the existing literature of uniform random matching.
 \subsection{Method}
 \section{Timeline}
 \bibliography{zotero_thesis}
