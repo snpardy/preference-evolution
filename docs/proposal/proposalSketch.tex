@@ -1,45 +1,185 @@
 % !BIB program = bibtex
-\documentclass{article}
+\documentclass[12pt]{article}
+
+\usepackage{chicago}
+\usepackage{xcolor}
+\usepackage[T1]{fontenc}
+\usepackage{fourier}
+\usepackage[utf8]{inputenc}
+
+\newcommand{\todo}[1]{\textcolor{red}{TODO:\newline #1}\PackageWarning{TODO:}{#1!}}
+\newcommand*{\np}{\par\noindent\newline}
+
+\title{Agent Based Modelling of the Formation of Social Preferences}
+\author{S Pardy}
 \begin{document}
-This is a document to flesh out ideas about the research proposal. \newline
-Look up -  "Adapted from Miner, J.T., \& Miner, L.E. (2005). Models of Proposal Planning and Writing (pp. 139). Praeger, Westport: CT."
-\begin{enumerate}
-    \item General statement: Dominant Trend
-    \item Identification of Gap
-    \item Significance of Gap
-    \item Implications of Gap in local context(?)
-    \item Statement of aims
-\end{enumerate}
+\begin{titlepage}
+	\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for horizontal lines, change thickness here
+	
+	\center % Centre everything on the page
+	
+	%------------------------------------------------
+	%	Headings
+	%------------------------------------------------
+	
+	\textsc{\LARGE Monash University}\\[1.5cm]	
+	\textsc{\Large Bachelor of Science (Honours)}\\[0.5cm] % Major heading such as course name
+	
+	\textsc{\large Computational Science}\\[0.5cm] % Minor heading such as course title
+	
+	%------------------------------------------------
+	%	Title
+	%------------------------------------------------
+	
+	\HRule\\[0.4cm]
+	
+	{\huge\bfseries Agent Based Modelling of the Formation of Social Preferences}\\[0.4cm]
+	
+	\HRule\\[1.5cm]
+	
+	%------------------------------------------------
+	%	Author(s)
+	%------------------------------------------------
+	
+	% \begin{minipage}{0.4\textwidth}
+	% 	\begin{flushleft}
+	% 		\large
+	% 		\textit{Author}\\
+	% 		S.N. \textsc{Pardy} % Your name
+	% 	\end{flushleft}
+	% \end{minipage}
+	% ~
+	% \begin{minipage}{0.4\textwidth}
+	% 	\begin{flushright}
+	% 		\large
+	% 		\textit{Supervisor}\\
+	% 		Dr. Julian \textsc{Garcia} 
+	% 	\end{flushright}
+	% \end{minipage}
+	
+	% If you don't want a supervisor, uncomment the two lines below and comment the code above
+	{\large\textit{Author}}\\
+	Sam \textsc{Pardy} % Your name
+	
+	%------------------------------------------------
+	%	Date
+	%------------------------------------------------
+	
+	\vfill\vfill\vfill % Position the date 3/4 down the remaining page
+	
+	{\large\today} % Date, change the \today to a set date if you want to be precise
+	
+	%------------------------------------------------
+	%	Logo
+	%------------------------------------------------
+	
+	%\vfill\vfill
+	%\includegraphics[width=0.2\textwidth]{placeholder.jpg}\\[1cm] % Include a department/university logo - this will require the graphicx package
+	 
+	%----------------------------------------------------------------------------------------
+	
+	\vfill % Push the date up 1/4 of the remaining page
+	
+\end{titlepage}
 \section{Introduction}
+The research proposed herein is intended to address questions in
+\textit{Evolutionary Game Theory} with a particular focus on the the formation
+of preferences that result in cooperative action amongst agents. This is an
+interdisciplinary research area, spanning biology, economics, philosophy and
+computer science.This piece will begin by laying out the broader context of the
+field and existing research before motivating the proposed research by
+describing the gaps in existing literature.
+\np Firstly, basic game theory is outlined before describing a version of
+game theory that includes \textit{preferences} and then \textit{social
+preferences}. We then move on to discussing evolutionary game theory, and the
+evolution of social preferences. The second main area of context that must be
+outlined is that of agent based modelling (ABM). We discuss ABM in a broad way
+- including evolutionary techniques and reinforcement learning - before moving
+onto an examination of methods to simulate social preferences in artificial
+agents.
+\np With the broader research space outlined, the piece moves onto a
+description of the proposed research in detail. Including a specific account of
+the questions the research intends to answer and the outcomes it intends to
+achieve, as well as the methods used to do so. The piece concludes with a
+preliminary timeline that the research project will adhere to. 
 \section{Research Context}
 \subsection{What is modelling social interactions?}
-Social interactions occur when people interact in a way such that the outcome of the interaction for
-one person is dependent not  only on that person's decision but on the decision of the person (or
-people) that they are interacting with ('playing against'). Such interactions can also be said to be
-'strategic'. There are no shortage of examples of interactions that fit this criteria - from playing
-chess, to investing in the stock market.
+Social interactions occur when people interact in a way such that the outcome
+of the interaction for one person is dependent not  only on that person's
+decision but on the decision of the person (or people) that they are interacting with ('playing against'). Such interactions can also be said to be
+'strategic'. There are no shortage of examples of interactions that fit this
+criteria - from playing chess, to investing in the stock market.
+\np To give an example, when you are playing chess whether your move is a good
+one or not depends on the moves your opponent intends to make in future. So,
+you take this into account - your move depends on what you think you opponent
+is going to do. However, your opponent knows this also, so, their move depends
+on what they think you're going to do. So, really your move depends on what you
+think your opponent thinks you're going to do. Of course, this recursion can be
+followed ad infinitum, so we need some formal way to model these interactions
+- this is where Game Theory becomes important.
 
-To expand a little, when you are playing chess whether your
-move is a good one or not depends on the moves your opponent intends to make in future. So, you take
-this into account - your move depends on what you think you opponent is going to do. However, your
-opponent knows this also, so, their move depends on what they think you're going to do. So, really
-your move depends on what you think your opponent thinks you're going to do. Of course, this
-recursion can be followed ad infinitum, so we need some a formal way to model these interactions -
-this is where Game Theory becomes important.
+\subsubsection{Games \& Nash Equilibrium}
+Formally, a person is playing a game in any situation in which the result they
+achieve is determined not only by their own decision but by the decisions of
+one or more other people involved \cite{angner_course_2012}. Game theory is the
+study of such 'strategic' interactions.
+The structure of a game includes: the finite set, N, of players; for each
+player, i $\in$ N, a set $A_i$, of actions available to that player
+$N_i$; and, for each player, i $\in$ N, the set $P_i$ of
+pay-offs associated with the available actions \cite{osborne_course_1994}.
+There are several of assumptions that are made about players in game theory:
+\begin{itemize}
+    \item They target some objective, material pay-off.
+    \item Their decisions in pursuit of this pay-off are rational.
+    \item They reason in a way that takes into account their beliefs about their opponent's action. 
+\end{itemize}
 
-The main paper I'll be citing is \cite{alger2013homo}
+\todo{Example of a game? Prisoner's Dilemma...\newline Talk about Nash}
 
 \subsubsection{Strategies}
-\subsubsection{With preferences}
-\subsubsection{Games \& Nash Equilibrium}
-\subsection{Social Preferences}
+In traditional game theory, what the internal desires of the players are is not
+taken into consideration. Players are assumed to be motivated by some objective
+pay-off. So, when choosing between two (or more) options a player only
+considers her own objective pay off and tries to maximise this. The 'options'
+that the player selects in a given strategic interaction are known as
+strategies. Strategies should not be confused with 'moves' or 'actions'. A
+strategy is not a single move, rather, it's an exhaustive delineation of how a
+player will act in any given situation in the game.
+\np A strategy can be 'pure' or 'mixed'. A pure strategy is an unconditional,
+complete definition of how the player will play the game - the set of pure
+Strategies depends only on the game that's being played. \textcolor{red}{For
+example, if, when playing rock paper scissors, a player decides to play
+scissors no matter what, then that player is implementing a pure strategy.
+Playing exclusively rock or paper are the other available pure strategies.}
+\np When implementing a mixed strategy, the player plays each strategy with
+some probability. This probability may be zero for some strategies. So, if a
+player plays rock with some probability and scissors with some probability, but
+never paper, they are implementing a mixed strategy.
+\subsubsection{With Preferences}
+In the real world, it is difficult to explain all the decisions that people
+make when analysing their action as being motivated only by their own material
+payoff. To include more complex motivations we can introduce preferences.
+Preferences map the payoff a player achieves in a game to a utility function.
+This utility function is what motivates the player's action. In a given
+situation, rather than attempting to maximise payoff players attempt to
+maximise utility. Another way to describe preferences, is that they include, as
+part of the motivation for action, more than just objective payoff. 
+\subsubsection{Social Preferences}
+A preference is considered 'social' when a players utility function is
+dependent on their opponent's payoff (or utility). A social preference may
+assign positive weight to the opponent's outcome (so our player is "happy" when
+their opponent goes well), but it may also assign negative weight - so, our
+player is "envious" when their opponent does well.
 \subsection{Evolution of Social Preferences}
 \subsection{Agent Based Modelling}
+\subsubsection{Evolution in Agent Based Models}
+\subsubsection{Reinforcement Learning in Agent Based Models}
 \subsubsection{Social Preferences in Artificial Agents}
 This is where the Peysacovich paper can be mentioned.
-\section{Research Questions/Outcomes}
-\section{Method}
+\section{Research Objectives and Methods}
+\subsection{Questions \& Objectives}
+\subsection{Method}
 \section{Timeline}
-\bibliography{thesis}
-\bibliographystyle{simple}
+\bibliography{zotero_thesis}
+\bibliographystyle{chicago}
 \end{document}
