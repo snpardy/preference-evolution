@@ -502,3 +502,17 @@ src/python/games/.idea/games.iml
 src/python/games/.idea/workspace.xml
 src/python/games/.idea/encodings.xml
 src/python/games/.idea/vcs.xml
+src/python/.idea/vcs.xml
+src/python/.idea/encodings.xml
+src/python/.idea/misc.xml
+src/python/.idea/modules.xml
+src/python/.idea/python.iml
+src/python/.idea/workspace.xml
+src/python/evolving_games/paramless/.idea/paramless.iml
+src/python/evolving_games/paramless/.idea/encodings.xml
+src/python/evolving_games/paramless/.idea/misc.xml
+src/python/evolving_games/paramless/.idea/modules.xml
+src/python/evolving_games/paramless/.idea/vcs.xml
+src/python/evolving_games/paramless/.idea/workspace.xml
+src/python/evolving_games/.vscode/settings.json
+docs/settings.json
