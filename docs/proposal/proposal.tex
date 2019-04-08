@@ -102,13 +102,13 @@ with a particular focus on the the formation of social preferences that result
 in cooperative action amongst agents. This is an interdisciplinary research
 area, spanning biology, economics, philosophy and computer science.
 
-\np I first outline the wider research context of game theory, evolutionary
-game theory and preferences; as well as agent based modelling. I also discuss
-\cite{alger_homo_2013}, which is a result that my research will pay specific
-attention to. With the broader research space outlined, I move on to a detailed
-discussion of the proposed research including a specific account of the
-questions the research intends to answer and the methods used to do so. The
-piece concludes with a preliminary timeline that the research project will
+\np In this piece, I first outline the wider research context of game theory,
+evolutionary game theory and preferences; as well as agent based modelling. I
+also discuss \cite{alger_homo_2013}, which is a result that my research will
+pay specific attention to. With the broader research space outlined, I move on
+to a detailed discussion of the proposed research including a specific account
+of the questions the research intends to answer and the methods used to do so.
+The piece concludes with a preliminary timeline that the research project will
 adhere to.
 \section{Research Context}
 \subsection{What is modelling social interactions?}\label{modelling_social_interactions}
@@ -284,6 +284,23 @@ forces rather than rationality.So, we can end up in a place in which people
 buy cans of soft drink and potentially cooperate when it is not in their
 immediate interest to do so.
 
+\np When analysing this process from a game theoretic perspective, an important
+aspect to this analysis is the notion of \textit{evolutionary stable
+strategies} (ESS). A strategy is considered to be evolutionary stable if it is
+resistant to invaders. That is, strategy $s$ is an evolutionary stable strategy
+if for any and all mutant strategies, $m'$, that can be introduced to the
+population, $s$ achieves a higher payoff playing against itself and $m'$, than
+$m'$ does \cite{shoham_multiagent_nodate}. In \cite{alger_homo_2013} the
+authors perform a static, mathematical analysis to conclude that a specific
+relationship between population structure and level of cooperation is
+evolutionary stable in an evolving system of preference formation. Two key
+observations about this result are \textit{a)} in there analysis, the authors
+impose linearity on the evolving utility functions \footnote{We will return to
+this observation in \ref{questions}}; and \textit{b)} it is a static analysis:
+the authors make no mention of the likelihood or possibility of an evolving
+system reaching this point of evolutionary stability. The research I propose,
+intends to ask questions of this result in dynamic, agent based models.
+
 \subsection{Agent Based Modelling}\label{abm}
 Agent based modelling is a kind of computational model that attempts to draw
 macro-level conclusions about a system by modelling the actions and behaviours
@@ -304,14 +321,7 @@ population structure. When drawing conclusions about evolution of preferences
 over time, we do so based on changes to the structure of the population (i.e.
 what utility function does the resident have?) \cite{shoham_multiagent_nodate}.
 
-\np An important aspect to this analysis is the notion of \textit{evolutionary
-stable strategies}. A strategy is considered to be evolutionary stable if it is
-resistant to invaders. That is, strategy $s$ is an evolutionary stable strategy
-if for any and all mutant strategies, $m'$, that can be introduced to the
-population, $s$ achieves a higher payoff playing against itself and $m'$, than
-$m'$ does \cite{shoham_multiagent_nodate}.
-
-\np Social preference formation by evolution though,  is not the only way.
+\np Social preference formation by evolution though, is not the only way.
 Reinforcement learning is a technique in which agents learn from their own
 experience and improve their understanding of their environment \textit{within}
 their own lifetime, as opposed to evolution in which changes only occur when
@@ -384,7 +394,7 @@ Monash's high-performance computing cluster, "MonARCH". MonARCH has nodes of
 several different configurations, with the number of cores per server ranging
 from 16 to 36. The MonARCH documentation can be viewed in detail at
 \cite{michnowicz_monarch_nodate}.
-\pagebreak
+% \pagebreak
 \subsection{Timeline}
 Below is preliminary timeline that I will attempt to adhere to in completing
 this research. Figure \ref{fig:main_gantt} shows the timeline of the work that
@@ -401,21 +411,17 @@ project.
 	\caption{A Gantt chart displaying the milestones and delivery dates of the project.}
 	\label{fig:delivery_gantt}
 \end{figure}
-\section{Questions \& Objectives}
-In the existing literature, analysis is often done on models in which agents
-are matched to play a two player cooperation game in a \textit{uniformly
-random} way \todo{add citation}. Firstly, in the real world this is often not
-the case - we are more likely to match with some kinds of people than others
-(depending on the context we're talking about) and secondly, it has been shown
-that the level of assortativity that is present in the matching process has a
-large influence on the level of cooperation that is eventually
-displayed \cite{alger_homo_2013}.
-
-In \cite{alger_homo_2013} the authors perform a static analysis to
-conclude that a specific relationship between assortativity and cooperation is
-an evolutionary stable strategy. The analysis undertaken in \cite{alger_homo_2013} makes no mention of how likely it is that this outcome
-is reached in a dynamic system that is allowed to freely evolve. So, that begs
-the first question that the proposed research will attempt to answer:
+\section{Questions \& Objectives}\label{questions}
+In the existing literature, static analysis is often done on models in which
+agents re matched to play a two player cooperation game with the intent to draw
+conclusions about the evolutionary stability of certain outcomes - one such
+example is \cite{alger_homo_2013}. In \cite{alger_homo_2013} the authors
+perform a static analysis to conclude that a specific relationship between
+assortativity and cooperation is an evolutionary stable strategy. The analysis
+undertaken in \cite{alger_homo_2013} makes no mention of how likely it is that
+this outcome is reached in a dynamic system that is allowed to freely evolve.
+So, that begs the first question that the proposed research will attempt to
+answer:
 \np\textbf{How does the formation of social preferences in a dynamically evolving system compare to the static analysis in \cite{alger_homo_2013}?}
 \begin{itemize}
 \item How likely is the \cite{alger_homo_2013} result to occur, if at all? 
