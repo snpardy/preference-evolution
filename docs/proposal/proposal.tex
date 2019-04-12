@@ -8,6 +8,8 @@
 \usepackage[hidelinks]{hyperref}
 \usepackage{slashbox}
 \usepackage{graphicx}
+\usepackage{url}
+
 
 \newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}\PackageWarning{TODO:}{#1!}}
 \newcommand{\note}[1]{\textcolor{red}{[NOTE: #1]}\PackageWarning{NOTE:}{#1!}}
@@ -91,13 +93,14 @@ mechanisms of cooperation is not only of intellectual value. Answering these
 questions will allow us to build systems that implement or engender cooperative
 behaviour. The increasing role of machines in our society renders human-machine
 interaction more and more important, to enhance these interactions,
-human-machine cooperation is required - better understanding cooperation will
-enable us to build machine of this kind \cite{hoc_human_2000}. Further, some of
-the biggest problems facing humanity (climate change, over-population) require
-cooperative solutions - if we know the mechanisms that lead to cooperation we
-will be able to design better public policy that encourages people to cooperate in support of solutions.
+better human-machine cooperation is required - to build machines that
+cooperate, we must first understand cooperation \cite{hoc_human_2000}. Further,
+some of the biggest problems facing humanity (climate change, over-population)
+require cooperative solutions - if we know the mechanisms that lead to
+cooperation we will be able to design better public policy that encourages
+people to cooperate in support of solutions.
 
-\np The research proposed herein is intended to contribute to the explanation
+\np The research I propose is intended to contribute to the explanation
 of cooperation by addressing questions in \textit{Evolutionary Game Theory}
 with a particular focus on the the formation of social preferences that result
 in cooperative action amongst agents. This is an interdisciplinary research
@@ -121,19 +124,17 @@ from playing chess; to investing in the stock market; to choosing which route
 to take on your daily commute; to political parties campaigning during an
 election.
 \np To give an example, when you are playing chess whether your move is a good
-one or not depends on the moves your opponent makes in future. So, you take
+one or not depends on the subsequent moves your opponent makes. So, you take
 this into account - your move depends on what you think you opponent is going
 to do. However, your opponent knows this also, so, their move depends on what
 they think you're going to do. So, really your move depends on what you think
-your opponent thinks you're going to do. There is no bound on how deep this
+your opponent thinks you're going to do. There is no limit to how deep this
 recursion can be followed, so we need some formal way to model these
 interactions - this is where Game Theory becomes important.
 \subsubsection{Games}
 Formally, a person is playing a game in any situation in which the result they
 achieve is determined not only by their own decision but by the decisions of
-one or more other agents involved \cite{angner_course_2012}. Game theory is the
-study of such `strategic' interactions.
-The structure of a game includes:
+one or more other agents involved \cite{angner_course_2012}. The structure of a game includes:
 \begin{itemize}
 	\item the finite set, N, of players;
 	\item for each player, i $\in$ N, a set $A_i$, of actions available to that
@@ -218,10 +219,10 @@ than just objective payoff. For example, buying and consuming a can of soft
 drink is something that must be motivated by subjective utility rather than
 material payoff. Not only does this \textit{cost} money it is also bad for your
 health, in fact, it is difficult to think of any material, objective payoff at
-all associated with soft drink. So, even though buying and consuming it is a
-net loss in terms of payoff, people buy and consume soft drink all the time.
-This must be because people derive some positive \textit{utility} from it,
-rather than objective payoff.
+all associated with purchasing soft drink. So, even though buying and consuming
+it is a net loss in terms of payoff, people buy and consume soft drink all the
+time. This must be because people derive some positive \textit{utility} from
+it, rather than objective payoff.
 
 \np A preference is considered `social' when a player's utility function is
 dependent on their opponent's payoff (or utility). A social preference may
@@ -264,9 +265,9 @@ making her decision? We come back to this problem later on.
 It has been purported that cooperation amongst humans is the result of the same
 kind of evolutionary forces that shaped cooperation amongst non-human animals
 \cite{silk_evolution_2016}. Simply, we assume that the preferences of
-people begun as purely selfish (i.e. utility = payoff) and over millennia, were
-shaped by Evolution to become prosocial. To model processes such as this, we
-can turn to evolutionary game theory. An evolutionary game theory model of
+agents starts as purely selfish (i.e. utility = payoff) and over millennia,
+were shaped by evolution to become prosocial. To model processes such as this,
+we can turn to evolutionary game theory. An evolutionary game theory model of
 social preference formation includes a population of \textit{agents}, the
 majority of which have some utility function r, and are known as Residents.
 There is a small portion of the population, known as Mutants, who are
@@ -286,11 +287,11 @@ their immediate interest to do so.
 evolutionary stable if it is resistant to invaders. That is, strategy $s$ is an
 evolutionary stable strategy if for any and all mutant strategies, $m'$, that
 can be introduced to the population, $s$ achieves a higher payoff playing
-against itself and $m'$, than $m'$ does \cite{shoham_multiagent_nodate}. In
+against itself and $m'$, than $m'$ does \cite{shoham_multiagent_2008}. In
 \cite{alger_homo_2013} the authors perform a static, mathematical analysis to
 conclude that a specific relationship between population structure and level of
 cooperation is evolutionary stable in an evolving system of preference
-formation. Two key observations about this result are \textit{a)} in there
+formation. Two key observations about this result are \textit{a)} in their
 analysis, the authors impose linearity on the evolving utility functions
 \footnote{We will return to this observation in \ref{questions}}; and
 \textit{b)} it is a static analysis: the authors make no mention of the
@@ -298,12 +299,11 @@ likelihood or possibility of an evolving system reaching this point of
 evolutionary stability. The research I'm proposing, intends to ask questions of this result in dynamic, agent based models.
 
 \subsection{Agent Based Modelling}\label{abm}
-Agent based modelling is a kind of computational model that attempts to draw
-macro-level conclusions about a system by modelling the actions and behaviours
-of individual agents. Agent based modelling is useful in a wide range of areas,
-it has been used to evaluate evacuation strategies\cite{taylor_agent-based_2014},
-simulate financial markets \cite{deissenberg_eurace:_2008} and investigate
-urban sprawl \cite{brown_effects_2006}. We are interested in its applicability
+Agent based modelling is a class of computational model that attempts to draw
+macro-level conclusions about a system by modelling the actions of individual
+agents. Agent based modelling is useful in a wide range of areas, it has been
+used to evaluate evacuation strategies\cite{taylor_agent-based_2014}, simulate
+financial markets \cite{deissenberg_eurace:_2008} and investigate urban sprawl \cite{brown_effects_2006}. We are interested in its applicability
 to social preference formation.
 
 \np When we talk about modelling evolution of social preferences using an
@@ -315,7 +315,7 @@ that the mutant type occupies. The individuals that are chosen to interact will
 be of resident type or mutant type with some probability according to the
 population structure. When drawing conclusions about evolution of preferences
 over time, we do so based on changes to the structure of the population (i.e.
-what utility function does the resident have?) \cite{shoham_multiagent_nodate}.
+what utility function does the resident have?) \cite{shoham_multiagent_2008}.
 
 \np Social preference formation by evolution though, is not the only way.
 Reinforcement learning (RL) is a technique in which agents learn from their own
@@ -327,12 +327,13 @@ agent can be in and the expected payoffs achieved for each available action
 given their current state. Agents use this representation to attempt to
 maximise cumulative payoff. As decisions are made, the agent updates its expected payoffs, thereby, "learning" over time.
 
-\np There is some existing work in this area. \cite{peysakhovich_prosocial_2017}
-investigates the development of cooperation between artificial agents in stag
-hunt games via deep reinforcement learning. Similar to the research proposed in
-in this piece, Peysacovich \& Lerer perform simulations of agent based models
-learning over time to explore the formation of cooperative preferences within
-artificial agents.
+\np There is some existing work in this area.
+\cite{peysakhovich_prosocial_2017} investigates the development of cooperation
+between artificial agents in stag hunt games via deep reinforcement learning.
+Similar to the research proposed in in this piece, Peysacovich \& Lerer perform
+simulations of agent based models learning over time to explore the formation
+of cooperative preferences within artificial agents.
+
 \section{Questions \& Objectives}\label{questions}
 In the existing literature, static analysis is often done on models in which
 agents are matched to play a two player cooperation game with the intent to
@@ -373,11 +374,12 @@ preference formation in which agents, motivated by their own preferences, match
 to play games and achieve some objective payoff. To shift this to a dynamic
 analysis, computer simulations will be performed. The software that will
 perform these simulations will be implemented inline with the techniques
-described in \ref{abm}, including evolution and reinforcement learning. Another
-useful technique in this area is Genetic Programming. Normally a process by
-which solutions to hard problems are optimised via evolution, the evolutionary
-process by which social preferences will be formed can be thought of as an
-instance of genetic programming; these techniques are drawn from
+described in \ref{abm}, including evolution and reinforcement learning. Dr
+Garcia has previously completed work regarding the intersection of computer
+simulations and game theory \cite{garcia_no_2018}. Another useful technique in
+this area is Genetic Programming. Normally a process by which solutions to hard
+problems are optimised via evolution, the evolutionary process by which social
+preferences will be strongly influenced by these techniques, drawn from
 \cite{poli_field_2008}.
 \np Once the simulations have been performed we will have data representing
 both the final preferences or utility function that was formed by the
@@ -389,9 +391,7 @@ investigate, among other things, the level of cooperation achieved and how this 
 Two main difficulties that are apparent from the outset are related to open
 questions in the literature surrounding evolutionary game theory. First, as
 referenced earlier, when preferences are taken into account it is reasonable to
-expect that players do not know their opponent's preferences; we are now
-dealing games of incomplete information, in which players do not have complete,
-common knowledge about the game that's being played. If this is the case, players will not be able to compute Nash Equilibrium as they normally
+expect that players do not know their opponent's preferences. If this is the case, players will not be able to compute Nash Equilibrium as they normally
 would (by taking into account their opponent's payoff). One potential solution
 to this problem is for players to assume that they and their opponent's have
 the same preferences or to just assume that the players somehow do know their
@@ -399,15 +399,17 @@ opponent's preferences. A more advanced solution is to model players
 uncertainty about the game they're playing using Bayesian statistics, these
 beliefs can be updated over time with experience. Games of incomplete
 information and Bayesian games are discussed in detail in
-\cite{shoham_multiagent_nodate}.
+\cite{shoham_multiagent_2008}.
+
 \np A second difficulty is deciding how to deal with multiple Nash
 Equilibria. A game may have several equilibria, but there is no universal
 mechanism for choosing between them. It may be reasonable to have players
 randomly select an equilibrium to play when there are multiple options, but
 there are more sophisticated potential solutions. One of which is presented in
 \cite{binmore_evolutionary_1999}. The model that is eventually implemented to
-undertake the research I'm proposing in this piece will need to
-settle on, and justify, answers to both the difficulties raised in this section.
+undertake the research I'm proposing will need to settle on, and
+justify, answers to both of these difficulties.
+
 \np Running simulations of the kind described is computationally expensive. The
 compute power of standard consumer computers will not be sufficient to run the
 simulations proposed. To solve this, we will utilise Monash's high-performance
@@ -415,7 +417,7 @@ computing cluster, "MonARCH". MonARCH is a state of the art computing facility
 equipped with a Mellanox high speed network and NVidia GPUs. MonArch has nodes
 of several different configurations, with the number of cores per server
 ranging from 16 to 36. The MonARCH documentation can be viewed in detail at
-\cite{michnowicz_monarch_nodate}.
+docs.monarch.erc.monash.edu; \cite{michnowicz_monarch_2018}.
 % \pagebreak
 \subsection{Timeline}
 Below is a preliminary timeline that I will attempt to adhere to in completing
@@ -433,6 +435,16 @@ project.
 	\caption{A Gantt chart displaying the milestones and delivery dates of the project.}
 	\label{fig:delivery_gantt}
 \end{figure}
+
+\section{Conclusion}
+The intent of the research I propose in this piece is to meaningfully
+contribute to the open questions surrounding cooperation. This study will be
+the first to investigate the dynamics of the system discussed in
+\cite{alger_homo_2013}. The hope is that this investigation will help
+researchers in artificial intelligence develop more cooperative autonomous
+agents as well as contribute to better understanding the assumptions that
+economists make when performing game theoretic analysis of real world interactions.
+
 \bibliography{zotero_thesis}
 \bibliographystyle{chicago}
 
