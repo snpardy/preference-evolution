@@ -22,15 +22,17 @@ class InitialUtility:
     """
     def __init__(self, payoff):
         self.mx = np.max(payoff)
-        self.selfish = deepcopy(payoff)
-        self.zeroes = np.zeros_like(payoff)
+        # Dividing by 10 here is a bit hacky, just put in to have a look at the
+        # plots with max Z axis of 1
+        self.selfish = deepcopy(payoff/10)
+        self.zeroes = np.zeros_like(payoff/10)
         self.random = np.zeros_like(payoff)
         self.randomize()
 
     def randomize(self):
         for i in range(len(self.selfish)):
             for j in range(len(self.selfish[i])):
-                self.random[i, j] = random.random() * self.mx
+                self.random[i, j] = random.random()
 
 
 
@@ -91,7 +93,7 @@ if __name__ == '__main__':
     X, Y = np.meshgrid(x, y, indexing='ij')
     iu = InitialUtility(X)
 
-    output, tsa = p.evolve([X, Y, iu.random], payoff_fitness, p.gaussian_mutation, 1000,
+    output, tsa = p.evolve([X, Y, iu.random], payoff_fitness, p.gaussian_mutation, 10000,
                            mutation_epsilon=.05,
                            payoff_game=games.prisoners_dilemma,
                            radius=4,
@@ -100,12 +102,12 @@ if __name__ == '__main__':
 
     p.create_gif("C:\\Users\\snpar\\Honours\\preference-evolution\\src\\python\\evolving_games\\paramless\\TimeSeries",
                  tsa,
-                 HIGHEST_PAYOFF+1)
+                 1.1)
 
     # Make a 3D plot
     fig = plt.figure()
     ax1 = fig.add_subplot(121, projection='3d')
-    ax1.set_zlim3d(0, HIGHEST_PAYOFF+1)
+    ax1.set_zlim3d(0, 1.1)
     ax1.plot_surface(X, Y, iu.random, cmap='viridis', linewidth=0)
     ax1.set_title('Initial Surface')
     ax1.set_xlabel('X axis')
@@ -113,7 +115,7 @@ if __name__ == '__main__':
     ax1.set_zlabel('Z axis')
 
     ax2 = fig.add_subplot(122, projection='3d')
-    ax2.set_zlim3d(0, HIGHEST_PAYOFF+1)
+    ax2.set_zlim3d(0, 1.1)
     ax2.plot_surface(X, Y, output[2], cmap='viridis', linewidth=0)
     ax2.set_title('Evolved Surface')
     ax2.set_xlabel('X axis')

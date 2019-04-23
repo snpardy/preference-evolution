@@ -134,6 +134,12 @@ def evolve(initial_surface, fitness_function, mutation_function, iterations,
 
 
 def create_gif(path, time_series_array, height):
+    """
+    This function does bad and slow gif creation, frames are made up of all
+    plots of the utility functions of all mutants that succesfully invade.
+    This function writes the plot images to disk, then reads them back in as a
+    stream to turn into a gif, then deletes them. 
+    """
     os.mkdir(path + "\\.plots")
     gif_fig = plt.figure()
     images = []
@@ -145,12 +151,16 @@ def create_gif(path, time_series_array, height):
         ax.set_ylabel('Y axis')
         ax.set_zlabel('Z axis')
         ax.plot_surface(item[0], item[1], item[2], cmap='viridis',linewidth=0)
-        file_name = path + "\\.plots\plot_" + str(i) + '.png'
+        file_name = path + "\\.plots\\plot_" + str(i) + '.png'
         gif_fig.savefig(file_name)
 
     for i in range(len(time_series_array)):
-        fn = path + "\\.plots\plot_" + str(i) + '.png'
+        fn = path + "\\.plots\\plot_" + str(i) + '.png'
         images.append(imageio.imread(fn))
         os.remove(fn)
     os.rmdir(path+"\\.plots")
     imageio.mimsave(path + '\\evolution.gif', images)
+
+    # getting rid of figure so it doesn't pop up again later (e.g. when
+    # plt.show() is called)
+    gif_fig = None
