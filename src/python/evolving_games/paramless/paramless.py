@@ -10,6 +10,11 @@ import math
 import matplotlib.pyplot as plt
 import os
 import imageio
+import time
+import progressbar
+import matplotlib.animation as animation
+from mpl_toolkits.mplot3d import Axes3D 
+from collections import namedtuple
 
 # default tolerance for float comparisons
 DEFAULT_ATOL = 1e-8
@@ -63,7 +68,6 @@ def gaussian_mutation(X,Y,Z, mutation_epsilon, radius, lower_bound=None, upper_b
         attempt += 1
         if attempt > MAX_ITERATIONS:
             raise RuntimeError("Attempted too many mutations without producing anythin within bounds")
-            pass
     return mutant
 
 
@@ -119,48 +123,59 @@ def evolve(initial_surface, fitness_function, mutation_function, iterations,
     """
     Evolve
     """
+    invasion_count = 0
     np.random.seed(seed)
     resident = np.copy(initial_surface)
     if time_series_data:
         time_series_array = [resident]
-    for step in range(1, iterations):
-        resident, invasion = evolution_step(resident, fitness_function, mutation_function, atol, **kwargs)
-        if invasion and time_series_data:
-            time_series_array.append(resident)
-            
+    with progressbar.ProgressBar(max_value=iterations) as bar:
+        for step in range(1, iterations):
+            bar.update(step)
+            resident, invasion = evolution_step(resident, fitness_function, mutation_function, atol, **kwargs)
+            if invasion:
+                invasion_count += 1
+                if time_series_data:
+                    time_series_array.append(resident)
+
+
     if time_series_data:
-        return resident, time_series_array
+        return resident, time_series_array, invasion_count
     return resident
 
 
-def create_gif(path, time_series_array, height):
+def create_gif(path, time_series_array, height, mp4=True, gif=False):
     """
     This function does bad and slow gif creation, frames are made up of all
     plots of the utility functions of all mutants that succesfully invade.
     This function writes the plot images to disk, then reads them back in as a
     stream to turn into a gif, then deletes them. 
     """
-    os.mkdir(path + "\\.plots")
-    gif_fig = plt.figure()
-    images = []
-    for i, item in enumerate(time_series_array):
-        ax = gif_fig.add_subplot(111, projection='3d')
-        ax.set_zlim3d(0, height)
-        ax.set_title('Evolved Surface')
-        ax.set_xlabel('X axis')
-        ax.set_ylabel('Y axis')
-        ax.set_zlabel('Z axis')
-        ax.plot_surface(item[0], item[1], item[2], cmap='viridis',linewidth=0)
-        file_name = path + "\\.plots\\plot_" + str(i) + '.png'
-        gif_fig.savefig(file_name)
+    
+    fps = 10 # frame per sec
 
-    for i in range(len(time_series_array)):
-        fn = path + "\\.plots\\plot_" + str(i) + '.png'
-        images.append(imageio.imread(fn))
-        os.remove(fn)
-    os.rmdir(path+"\\.plots")
-    imageio.mimsave(path + '\\evolution.gif', images)
+    x = time_series_array[0][0]
+    y = time_series_array[0][1]
+    z = []
 
-    # getting rid of figure so it doesn't pop up again later (e.g. when
-    # plt.show() is called)
-    gif_fig = None
+    for item in time_series_array:
+        z.append(item[2])
+
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    def update_plot(frame_number, z, plot):
+        plot[0].remove()
+        plot[0] = ax.plot_surface(x, y, z[frame_number], cmap="viridis", linewidth=0)
+        
+    plot = [ax.plot_surface(x, y, z[0], cmap='viridis', linewidth=0)]
+
+    ax.set_zlim(-height,height)
+
+    ani = animation.FuncAnimation(fig, update_plot, len(time_series_array), fargs=(z, plot), interval=1000/fps)
+
+    fn = 'plot_surface_animation'
+    if mp4:
+        ani.save(path+fn+'.mp4',writer='ffmpeg',fps=fps)
+    if gif:
+        ani.save(path+fn+'.gif',writer='imagemagick',fps=fps)

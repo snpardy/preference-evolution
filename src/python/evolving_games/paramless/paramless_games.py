@@ -5,7 +5,10 @@ from mpl_toolkits.mplot3d import axes3d
 import paramless as p
 from nashpy import Game
 import random
-
+import time
+import progressbar
+import os
+from collections import namedtuple
 
 class Games:
     """
@@ -33,7 +36,6 @@ class InitialUtility:
         for i in range(len(self.selfish)):
             for j in range(len(self.selfish[i])):
                 self.random[i, j] = random.random()
-
 
 
 def expected_payoff(payoff_matrices, equilibria):
@@ -83,6 +85,48 @@ def payoff_fitness(resident, mutant, payoff_game, r=0, **kwargs):
     return ep
 
 
+def save_run(path, time_series, run_data):
+    HEIGHT = 1.1
+    now = time.localtime(time.time())
+    run_id = str(now.tm_year) + "_"+str(now.tm_mon)+"_"+str(now.tm_mday)+"_"+str(now.tm_hour)+"_"+str(now.tm_min)+"_"+str(now.tm_sec)
+    path = path + run_id +"\\"
+    os.mkdir(path)
+
+    initial = time_series[0][2]
+    final = time_series[-1][2]
+
+    # Make a 3D plot
+    fig = plt.figure()
+    ax1 = fig.add_subplot(121, projection='3d')
+    ax1.set_zlim3d(-HEIGHT, HEIGHT)
+    ax1.plot_surface(X, Y, initial, cmap='viridis', linewidth=0)
+    ax1.set_title('Initial Surface')
+    ax1.set_xlabel('X axis')
+    ax1.set_ylabel('Y axis')
+    ax1.set_zlabel('Z axis')
+    plt.savefig(path+'\\initial.png', bbox_inches='tight')
+    plt.close(fig)
+
+    fig = plt.figure()
+    ax2 = fig.add_subplot(122, projection='3d')
+    ax2.set_zlim3d(-HEIGHT, HEIGHT)
+    ax2.plot_surface(X, Y, final, cmap='viridis', linewidth=0)
+    ax2.set_title('Evolved Surface')
+    ax2.set_xlabel('X axis')
+    ax2.set_ylabel('Y axis')
+    ax2.set_zlabel('Z axis')
+    plt.savefig(path+'final.png', bbox_inches='tight')
+    plt.close(fig)
+
+    p.create_gif(path,
+                 time_series,
+                 HEIGHT)
+
+    with open(path+"summary.txt", "w") as file:
+        for k, v in run_data.items():
+            file.write(k + ": " + str(v)+"\n")
+
+
 if __name__ == '__main__':
     games = Games()
     HIGHEST_PAYOFF = 5
@@ -93,33 +137,14 @@ if __name__ == '__main__':
     X, Y = np.meshgrid(x, y, indexing='ij')
     iu = InitialUtility(X)
 
-    output, tsa = p.evolve([X, Y, iu.random], payoff_fitness, p.gaussian_mutation, 10000,
-                           mutation_epsilon=.05,
-                           payoff_game=games.prisoners_dilemma,
-                           radius=4,
-                           r=0.8,
-                           time_series_data=True)
+    r1 = {"game": "prisoners_dilemma", "mutation_epsilon": .05, "r": .8, "iterations": 1000000, "sucessful_invasions": None}
 
-    p.create_gif("C:\\Users\\snpar\\Honours\\preference-evolution\\src\\python\\evolving_games\\paramless\\TimeSeries",
-                 tsa,
-                 1.1)
+    output, tsa, invasions = p.evolve([X, Y, iu.zeroes], payoff_fitness, p.gaussian_mutation, 1000000,
+                                      mutation_epsilon=.05,
+                                      payoff_game=games.prisoners_dilemma,
+                                      radius=4,
+                                      r=0.8,
+                                      time_series_data=True)
 
-    # Make a 3D plot
-    fig = plt.figure()
-    ax1 = fig.add_subplot(121, projection='3d')
-    ax1.set_zlim3d(0, 1.1)
-    ax1.plot_surface(X, Y, iu.random, cmap='viridis', linewidth=0)
-    ax1.set_title('Initial Surface')
-    ax1.set_xlabel('X axis')
-    ax1.set_ylabel('Y axis')
-    ax1.set_zlabel('Z axis')
-
-    ax2 = fig.add_subplot(122, projection='3d')
-    ax2.set_zlim3d(0, 1.1)
-    ax2.plot_surface(X, Y, output[2], cmap='viridis', linewidth=0)
-    ax2.set_title('Evolved Surface')
-    ax2.set_xlabel('X axis')
-    ax2.set_ylabel('Y axis')
-    ax2.set_zlabel('Z axis')
-
-    plt.show()
+    r1["sucessful_invasions"] = invasions
+    save_run("C:\\Users\\snpar\\Honours\\preference-evolution\\data\\paramless_run\\", tsa, r1)
