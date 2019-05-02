@@ -46,9 +46,13 @@ def _bivariate_normal_mutation(x, y, mutation_epsilon, mean_x, mean_y, variance)
 
 def _attempt_gaussian_mutation(X, Y, Z, mutation_epsilon, radius, lower_bound=None, upper_bound=None):
     location = np.array([np.random.randint(0, len(X)), np.random.randint(0, len(Y))])
+
+    # This creates an implicit dependency that X and Y are meshgrids with indexing='ij'
+    x_mean = X[location[0], 0]
+    y_mean = Y[0, location[1]]
     mutant = np.copy(Z)
     variance = np.random.rand() * radius
-    perturbation = _bivariate_normal_mutation(X, Y, mutation_epsilon, location[0], location[1], variance)
+    perturbation = _bivariate_normal_mutation(X, Y, mutation_epsilon, x_mean, y_mean, variance)
     # upwards
     if np.random.randint(2):
         mutant += perturbation
@@ -101,17 +105,16 @@ def distance_fitness_function(resident, mutant, target_surface, **kwargs):
     return fitness_resident, fitness_mutant
 
 
-def evolution_step(resident_surface, fitness_function, mutation_function, atol, **kwargs):
+def evolution_step(resident_surface, fitness_function, mutation_function, atol, step, **kwargs):
     """
     One generation iteration
     """
     invasion = False
-    mutant_vector = mutation_function(resident_surface[0], resident_surface[1],
-                                      resident_surface[2], **kwargs)
+    mutant = np.copy(resident_surface)
+    mutant_vector = mutation_function(mutant[0], mutant[1], mutant[2], **kwargs)
     fitness_resident, fitness_mutant = fitness_function(resident_surface[2],
                                                         mutant_vector, **kwargs)
     if fitness_resident < fitness_mutant and abs(fitness_resident - fitness_mutant) > atol:
-        # if fitness_resident <= fitness_mutant:
         resident_surface = np.copy(resident_surface)
         resident_surface[2] = np.copy(mutant_vector)
         invasion = True
@@ -124,35 +127,30 @@ def evolve(initial_surface, fitness_function, mutation_function, iterations,
     Evolve
     """
     invasion_count = 0
+    step_count = 0
     np.random.seed(seed)
     resident = np.copy(initial_surface)
     if time_series_data:
         time_series_array = [resident]
     with progressbar.ProgressBar(max_value=iterations) as bar:
         for step in range(1, iterations):
+            step_count += 1
             bar.update(step)
-            resident, invasion = evolution_step(resident, fitness_function, mutation_function, atol, **kwargs)
+            resident, invasion = evolution_step(resident, fitness_function, mutation_function, atol, step, **kwargs)
             if invasion:
                 invasion_count += 1
                 if time_series_data:
                     time_series_array.append(resident)
-
-
     if time_series_data:
         return resident, time_series_array, invasion_count
     return resident
 
 
-def create_gif(path, time_series_array, height, mp4=True, gif=False):
+def create_gif(path, time_series_array, height, fps, mp4=True, gif=False):
     """
-    This function does bad and slow gif creation, frames are made up of all
-    plots of the utility functions of all mutants that succesfully invade.
-    This function writes the plot images to disk, then reads them back in as a
-    stream to turn into a gif, then deletes them. 
+
     """
     
-    fps = 10 # frame per sec
-
     x = time_series_array[0][0]
     y = time_series_array[0][1]
     z = []
@@ -160,9 +158,10 @@ def create_gif(path, time_series_array, height, mp4=True, gif=False):
     for item in time_series_array:
         z.append(item[2])
 
-
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
+    plt.xlabel("My Payoff")
+    plt.ylabel("Opponent's Payoff")
 
     def update_plot(frame_number, z, plot):
         plot[0].remove()
@@ -170,7 +169,7 @@ def create_gif(path, time_series_array, height, mp4=True, gif=False):
         
     plot = [ax.plot_surface(x, y, z[0], cmap='viridis', linewidth=0)]
 
-    ax.set_zlim(-height,height)
+    ax.set_zlim(-height, height)
 
     ani = animation.FuncAnimation(fig, update_plot, len(time_series_array), fargs=(z, plot), interval=1000/fps)
 
