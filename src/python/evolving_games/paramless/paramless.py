@@ -11,8 +11,7 @@ import math
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
-import progressbar
-import random
+
 
 # default tolerance for float comparisons
 DEFAULT_ATOL = 1e-8
@@ -47,12 +46,6 @@ def _bivariate_normal_mutation(surface: UtilitySurface, mutation_epsilon, mean_x
 
 
 def _attempt_gaussian_mutation(surface: UtilitySurface, mutation_epsilon, radius):
-    # location = np.array([np.random.randint(0, len(X)), np.random.randint(0, len(Y))])
-
-    # This creates an implicit dependency that X and Y are meshgrids with indexing='ij'
-    # x_mean = X[location[0], 0]
-    # y_mean = Y[0, location[1]]
-
     x_mean = np.random.choice(surface.my_payoff)
     y_mean = np.random.choice(surface.opponent_payoff)
 
@@ -110,7 +103,8 @@ def _utility_transform(game: Game, row_utility, column_utility):
     :param column_utility: np mesh grid
     :return: Game: nashpy Game object
     """
-
+    row_payoff_matrix = game.payoff_matrices[0]
+    column_payoff_matrix = game.payoff_matrices[1]
     # There should be a better way to do this but ?? :(
     # This section just sets up arrays of the correct shape
     row_player = [[None for _ in range(len(game.payoff_matrices[0][0]))]
@@ -118,11 +112,10 @@ def _utility_transform(game: Game, row_utility, column_utility):
     column_player = [[None for _ in range(len(game.payoff_matrices[0][0]))]
                      for _ in range(len(game.payoff_matrices[0]))]
 
-    for i, _ in enumerate(game.payoff_matrices[0]):
-        for j, _ in enumerate(game.payoff_matrices[0][i]):
-            row_player[i][j] = row_utility[game.payoff_matrices[0][i][j], game.payoff_matrices[1][i][j]]
-            column_player[i][j] = column_utility[game.payoff_matrices[1][i][j], game.payoff_matrices[0][i][j]]
-
+    for i, _ in enumerate(row_payoff_matrix):
+        for j, _ in enumerate(row_payoff_matrix[i]):
+            row_player[i][j] = row_utility[column_payoff_matrix[i][j], row_payoff_matrix[i][j]]
+            column_player[i][j] = column_utility[column_payoff_matrix[i][j], row_payoff_matrix[i][j]]
     return Game(row_player, column_player)
 
 
@@ -144,10 +137,10 @@ def payoff_fitness(resident: np.meshgrid, mutant: np.meshgrid, **kwargs):
     for eq in equilibria:
         expected_payoff = _expected_payoff(payoff_game, eq)
         if expected_payoff[0] >= expected_payoff[1] or abs(expected_payoff[0] - expected_payoff[1]) < atol:
-            # resident achieves higher expected payoff
+            # resident achieves higher expected payoff (or at least as high)
             break
     else:
-        # Could just return change this to return invasion true/false
+        # Could change this to return invasion true/false
         # but returns are structured as (resident payoff, mutant payoff) so generality of evolution step is maintained
         return -1, 1
     return 1, -1
