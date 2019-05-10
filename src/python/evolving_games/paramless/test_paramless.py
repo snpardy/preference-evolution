@@ -6,7 +6,7 @@ import paramless as p
 # A prisoners dilemma game
 prisoners_dilemma = Game([[3, 0], [5, 1]], [[3, 5], [0, 1]])
 # A few different strategies
-#  in the form of ([row strategy], [column strategy])
+# in the form of ([row strategy], [column strategy])
 defect = ([0, 1], [0, 1])
 cooperate = ([1, 0], [1, 0])
 mixed = ([.5, .5], [.1, .9])
@@ -14,8 +14,8 @@ mixed = ([.5, .5], [.1, .9])
 # setting up player's utility functions
 x = np.arange(0, 6, 1, dtype=float)
 y = np.arange(0, 6, 1, dtype=float)
-selfless = np.meshgrid(x, y, indexing='ij')[0]
-selfish = np.meshgrid(x, y, indexing='ij')[1]
+selfish = np.meshgrid(x, y, indexing='ij')[0]
+selfless = np.meshgrid(x, y, indexing='ij')[1]
 
 selfish = UtilitySurface(x, y, selfish)
 selfless = UtilitySurface(x, y, selfless)
@@ -45,24 +45,45 @@ def test_utility_transform():
         for j in range(len(Z)):
             # i and j are equally weighted so an agent with this utility function
             # prefers to maximise overall payoff (her own or her opponent's)
-            Z[i, j] = 0.5*i + 0.5 *j
+            Z[i, j] = 0.5 * i + 0.5 * j
     # Given the prisoners_dilemma created above, if both players have the utility function Z,
     # we would expect the transformed utility game to have the equal payoffs for both players at each entry
-    equal_payoff = Game(np.array([[3, 2.5], [2.5, 1]]), np.array([[3, 2.5], [2.5, 1]])).payoff_matrices
+    equal_payoff = Game(np.array([[3, 2.5], [2.5, 1]]),
+                        np.array([[3, 2.5], [2.5, 1]])).payoff_matrices
     transformed_payoff = p._utility_transform(prisoners_dilemma, Z, Z).payoff_matrices
     assert np.array(equal_payoff).all() == np.array(transformed_payoff).all()
 
-    selfish_vs_selfless = Game(np.array([[3, 5], [0, 1]]), np.array([[3, 5], [0, 1]])).payoff_matrices
-    transformed_payoff = p._utility_transform(prisoners_dilemma, selfish.utility_grid, selfless.utility_grid).payoff_matrices
+    selfish_vs_selfless = Game(np.array([[3, 5], [0, 1]]),
+                               np.array([[3, 5], [0, 1]])).payoff_matrices
+    transformed_payoff = p._utility_transform(prisoners_dilemma, selfish.utility_grid,
+                                              selfless.utility_grid).payoff_matrices
     assert np.array(selfish_vs_selfless).all() == np.array(transformed_payoff).all()
 
-    # assert(False and "this fails when the resulting game is not symmetric/identical for each player")
 
+def test_exhaustive_payoff_fitness():
+    """
+    Tests the exhaustive_payoff_fitness function in paramless.
+    By extension, the magic methods of fitness.Exhaustive are tested.
+    """
+    # selfishness should be selected over selflessness
+    # given the payoffs of the prisoner's dilemma above,
+    # the fitnesses should be selfish=5 and selfless=0
+    selfish_fitness, selfless_fitness = p.exhaustive_payoff_fitness(selfish, selfless,
+                                                                    payoff_game=prisoners_dilemma)
+    assert selfish_fitness[0] == 5
+    assert selfless_fitness[0] == 0
+    # comparison is done with a less than because that is how it is done in the
+    # evolution_step function
+    # negating the expression indicates no invasion
+    assert not (selfish_fitness < selfless_fitness)
 
-def test_payoff_fitness():
-    # seflishness should be selected over selflessness
-    fitness = p.payoff_fitness(selfish.utility_grid, selfless.utility_grid, payoff_game=prisoners_dilemma, atol=p.DEFAULT_ATOL)
-    assert fitness[0] > fitness[1]
-    # line 117 of paramless - swapped the indexing of the meshgrid
-    # need to think more about whether this is correct
-    assert False
+    # When both players are purely selfish, they both achieve a payoff of 1
+    # when payoffs are equal, resident is considered to have greater fitness
+    resident_fitness, mutant_fitness = p.exhaustive_payoff_fitness(selfish, selfish,
+                                                                   payoff_game=prisoners_dilemma)
+    assert resident_fitness[0] == 1
+    assert mutant_fitness[0] == 1
+    # comparison is done with a less than because that is how it is done
+    # in the evolution_step function
+    # negating the expression indicates no invasion
+    assert not (resident_fitness < mutant_fitness)

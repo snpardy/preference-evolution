@@ -1,4 +1,3 @@
-
 """
 Created on 2019-03-05 12:59
 @summary: Paramless evolution on a 3D surface. Based on Julian Garcia's paramless - github.com/juliangarcia/paramless
@@ -7,11 +6,12 @@ Created on 2019-03-05 12:59
 from dataclasses import replace
 from nashpy import Game
 from utilitySurface import UtilitySurface
+import fitness
 import math
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
-
+import random
 
 # default tolerance for float comparisons
 DEFAULT_ATOL = 1e-8
@@ -37,12 +37,14 @@ def _within_bounds(vector, lower_bound, upper_bound):
 
 
 # Functions for Gaussian Mutation
-def _bivariate_normal_mutation(surface: UtilitySurface, mutation_epsilon, mean_x, mean_y, variance):
+def _bivariate_normal_mutation(surface: UtilitySurface, mutation_epsilon, mean_x, mean_y,
+                               variance):
     # This function assumes that the pearson correlation coefficient is 0
     # It creates grids of the payoff arrays so that output is in shape of grid.
     x_grid, y_grid = np.meshgrid(surface.my_payoff, surface.opponent_payoff)
     return mutation_epsilon * (
-                math.e ** -(.5 * ((((x_grid - mean_x) ** 2) / variance ** 2) + (((y_grid - mean_y) ** 2) / variance ** 2))))
+            math.e ** -(.5 * ((((x_grid - mean_x) ** 2) / variance ** 2) + (
+                ((y_grid - mean_y) ** 2) / variance ** 2))))
 
 
 def _attempt_gaussian_mutation(surface: UtilitySurface, mutation_epsilon, radius):
@@ -51,7 +53,8 @@ def _attempt_gaussian_mutation(surface: UtilitySurface, mutation_epsilon, radius
 
     variance = np.random.rand() * radius
 
-    perturbation = _bivariate_normal_mutation(surface, mutation_epsilon, x_mean, y_mean, variance)
+    perturbation = _bivariate_normal_mutation(surface, mutation_epsilon, x_mean, y_mean,
+                                              variance)
     # upwards
     if np.random.randint(2):
         mutant_utility_grid = surface.utility_grid + perturbation
@@ -61,7 +64,9 @@ def _attempt_gaussian_mutation(surface: UtilitySurface, mutation_epsilon, radius
     return replace(surface, utility_grid=mutant_utility_grid)
 
 
-def gaussian_mutation(surface: UtilitySurface, mutation_epsilon, radius, max_iterations=1000000, lower_bound=None, upper_bound=None, **kwargs):
+def gaussian_mutation(surface: UtilitySurface, mutation_epsilon, radius,
+                      max_iterations=1000000, lower_bound=None,
+                      upper_bound=None, **kwargs):
     is_inside = False
     attempt = 0
     mutant = None
@@ -70,7 +75,8 @@ def gaussian_mutation(surface: UtilitySurface, mutation_epsilon, radius, max_ite
         is_inside = _within_bounds(mutant, lower_bound, upper_bound)
         attempt += 1
         if attempt > max_iterations:
-            raise RuntimeError("Attempted too many mutations without producing anything within bounds")
+            raise RuntimeError(
+                "Attempted too many mutations without producing anything within bounds")
     return mutant
 
 
@@ -88,7 +94,8 @@ def _expected_payoff(game: Game, equilibrium):
     for i, _ in enumerate(row_strategy):
         for j, _ in enumerate(column_strategy):
             row_payoff += row_strategy[i] * column_strategy[j] * game.payoff_matrices[0][i][j]
-            column_payoff += row_strategy[i] * column_strategy[j] * game.payoff_matrices[1][i][j]
+            column_payoff += row_strategy[i] * column_strategy[j] * game.payoff_matrices[1][i][
+                j]
 
     return row_payoff, column_payoff
 
@@ -114,48 +121,62 @@ def _utility_transform(game: Game, row_utility, column_utility):
 
     for i, _ in enumerate(row_payoff_matrix):
         for j, _ in enumerate(row_payoff_matrix[i]):
-            row_player[i][j] = row_utility[column_payoff_matrix[i][j], row_payoff_matrix[i][j]]
-            column_player[i][j] = column_utility[column_payoff_matrix[i][j], row_payoff_matrix[i][j]]
+            row_player[i][j] = row_utility[row_payoff_matrix[i][j], column_payoff_matrix[i][j]]
+            column_player[i][j] = column_utility[
+                column_payoff_matrix[i][j], row_payoff_matrix[i][j]]
     return Game(row_player, column_player)
 
 
-def payoff_fitness(resident: np.meshgrid, mutant: np.meshgrid, **kwargs):
+def random_payoff_fitness(resident: np.meshgrid, mutant: np.meshgrid, **kwargs):
+    payoff_game: Game = kwargs['payoff_game']
+
+    utility_game = _utility_transform(payoff_game, resident, mutant)
+    equilibria = list(utility_game.support_enumeration())
+    equilibrium = random.choice(equilibria)
+
+    return _expected_payoff(payoff_game, equilibrium)
+
+
+def exhaustive_payoff_fitness(resident: np.meshgrid, mutant: np.meshgrid, **kwargs):
     """
-    Given the resident utility functions of the resident and the mutant to calculate the equilibria.
-    Then uses this equilibria to calculate the expected payoff of both players for the given game.
+    Given the resident utility functions of the resident and the mutant
+    to calculate the equilibria.
+    Then uses this equilibria to calculate the expected payoff of both
+    players for the given game.
+
     :param resident: np.meshgrid utility function
     :param mutant: np.meshgrid utility function
     :param payoff_game: nashpy game object
     :return: a tuple of (resident payoff, mutant payoff)
     """
-    atol = kwargs['atol']
     payoff_game: Game = kwargs['payoff_game']
+
     utility_game = _utility_transform(payoff_game, resident, mutant)
-    equilibria = list(utility_game.support_enumeration())
-    # mutant must achieve higher expected payoff playing all equilibria
-    # expected payoff returns (payoff_resident, payoff_mutant)
+    equilibria = utility_game.support_enumeration()
+
+    resident_payoff_list = []
+    mutant_payoff_list = []
     for eq in equilibria:
-        expected_payoff = _expected_payoff(payoff_game, eq)
-        if expected_payoff[0] >= expected_payoff[1] or abs(expected_payoff[0] - expected_payoff[1]) < atol:
-            # resident achieves higher expected payoff (or at least as high)
-            break
-    else:
-        # Could change this to return invasion true/false
-        # but returns are structured as (resident payoff, mutant payoff) so generality of evolution step is maintained
-        return -1, 1
-    return 1, -1
+        # For each equilibrium, we unpack the
+        # expected payoffs for both types for each
+        resident_payoff_list[len(resident_payoff_list):], \
+            mutant_payoff_list[len(mutant_payoff_list):] \
+            = tuple(zip(_expected_payoff(payoff_game, eq)))
+
+    return fitness.Exhaustive(resident_payoff_list), \
+        fitness.Exhaustive(mutant_payoff_list)
 
 
 # Evolution
-def evolution_step(resident: UtilitySurface, fitness_function, mutation_function, atol, **kwargs):
+def evolution_step(resident: UtilitySurface, fitness_function, mutation_function, atol,
+                   **kwargs):
     """
     One generation iteration
     """
-    # To pass atol to fitness without changing function signature
-    kwargs['atol'] = atol
 
     invasion = False
     mutant = mutation_function(resident, **kwargs)
+
     fitness_resident, fitness_mutant = fitness_function(resident.utility_grid,
                                                         mutant.utility_grid, **kwargs)
 
@@ -176,13 +197,14 @@ def evolve(initial_surface: UtilitySurface, fitness_function, mutation_function,
     resident = initial_surface
     if time_series_data:
         # Only care about saving the utility grid at each mutation
-        time_series_array = [resident.utility_grid]
+        time_series_array = [resident]
 
     # with progressbar.ProgressBar(max_value=iterations) as bar:
     for step in range(1, iterations):
         step_count += 1
         # bar.update(step)
-        resident, invasion = evolution_step(resident, fitness_function, mutation_function, atol, **kwargs)
+        resident, invasion = evolution_step(resident, fitness_function, mutation_function,
+                                            atol, **kwargs)
         if invasion:
             invasion_count += 1
             if time_series_data:
@@ -202,8 +224,8 @@ def create_animation(path, x, y, time_series_array, height, fps, mp4=True, gif=F
     """
 
     """
-    
-    fig =plt.figure()
+
+    fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     plt.xlabel("My Payoff")
     plt.ylabel("Opponent's Payoff")
@@ -211,18 +233,20 @@ def create_animation(path, x, y, time_series_array, height, fps, mp4=True, gif=F
     def update_plot(frame_number, z, plot):
         plot[0].remove()
         plot[0] = ax.plot_surface(x, y, z[frame_number], cmap="viridis", linewidth=0)
-        
+
     plot = [ax.plot_surface(x, y, time_series_array[0], cmap='viridis', linewidth=0)]
 
     ax.set_zlim(-height, height)
 
-    ani = animation.FuncAnimation(fig, update_plot, len(time_series_array), fargs=(time_series_array, plot), interval=1000/fps)
+    ani = animation.FuncAnimation(fig, update_plot, len(time_series_array),
+                                  fargs=(time_series_array, plot),
+                                  interval=1000 / fps)
 
     fn = 'plot_surface_animation'
     if mp4:
-        ani.save(path+fn+'.mp4',writer='ffmpeg',fps=fps)
+        ani.save(path + fn + '.mp4', writer='ffmpeg', fps=fps)
     if gif:
-        ani.save(path+fn+'.gif',writer='imagemagick',fps=fps)
+        ani.save(path + fn + '.gif', writer='imagemagick', fps=fps)
 
 
 # Unused and untested since recent changes
@@ -237,7 +261,7 @@ def _surface_distance(u, v):
         for j, _ in enumerate(u[0][i]):
             one_point_dist = 0
             for axis, _ in enumerate(u):
-                one_point_dist += (u[axis][i,j]-v[axis][i,j])**2
+                one_point_dist += (u[axis][i, j] - v[axis][i, j]) ** 2
             total += math.sqrt(one_point_dist)
 
     return total

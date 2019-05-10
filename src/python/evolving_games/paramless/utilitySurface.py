@@ -11,6 +11,9 @@ class UtilitySurface:
     Done so with two 1d np.ndarrays: my_payoff, opponent_payoff
     And one np.meshgrid utility_grid.
     """
+    # A lot of the time the payoff arrays will just be equal to the indexes of the utility_grid
+    # but this will not always be the case. This is why they're stored separately to the utility_grid.
+    # We store the payoff arrays
     my_payoff: np.ndarray
     opponent_payoff: np.ndarray
     utility_grid: np.meshgrid
@@ -26,3 +29,11 @@ class UtilitySurface:
         force arguments to meet the assumptions made in mutation methods.
         """
         pass
+
+    def __getitem__(self, args):
+        """
+        Can access the utility_grid by index by applying square brackets directly to UtilitySurface object.
+        :param args: must contain [my_payoff, opponent_payoff]
+        :return: self.utility_grid[args[0], args[1]]
+        """
+        return self.utility_grid[args[0], args[1]]
