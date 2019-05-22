@@ -531,5 +531,9 @@ src/java/preference-evolution/.idea/workspace.xml
 src/python/evolving_games/paramless/TimeSeries/evolution.gif
 src/python/evolving_games/paramless/.idea/other.xml
 src/python/evolving_games/paramless/.idea/dictionaries/snpar.xml
+<<<<<<< HEAD
 src/python/evolving_games/paramless/.idea/codeStyles/codeStyleConfig.xml
 docs/lit_review/lit_review.pdf
+=======
+/docs/proposal/slashbox.sty
+>>>>>>> 1b21fc2d1327a7996efa221722effdcd48135ff6
