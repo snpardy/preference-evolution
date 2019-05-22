@@ -1,15 +1,22 @@
-import numpy as np
+"""
+Created on 2019-05-10
+@summary: A file that defines classes for fitness objects that overload
+a number of operators to maintain generality of the fitness comparison in
+paramless.evolution_step
+@author: snpardy
+"""
 
 
 class Exhaustive(list):
     """
     All fitness values in one must be greater than the corresponding fitness
     value in the other.
-    @todo: change to numpy array
+    @todo: change to subclass numpy array
     """
 
     def __gt__(self, other):
-        if type(other) == type(self):
+
+        if isinstance(other, Exhaustive):
             # if comparing two Fitness objects, every fitness much be greater
             # than the corresponding fitness in other
             for s, o in zip(self, other):

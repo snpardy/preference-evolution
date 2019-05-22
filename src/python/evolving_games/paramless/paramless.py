@@ -3,15 +3,17 @@ Created on 2019-03-05 12:59
 @summary: Paramless evolution on a 3D surface. Based on Julian Garcia's paramless - github.com/juliangarcia/paramless
 @author: snpardy
 """
-from dataclasses import replace
-from nashpy import Game
-from utilitySurface import UtilitySurface
-import fitness
+from dataclasses import replace    # standard library
 import math
+import random
+
+from nashpy import Game    # 3rd party packages
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
-import random
+
+from utilitySurface import UtilitySurface    # local source
+import fitness
 
 # default tolerance for float comparisons
 DEFAULT_ATOL = 1e-8
@@ -23,10 +25,10 @@ MAX_ITERATIONS = 1000000
 def _within_bounds(vector, lower_bound, upper_bound):
     """
     @summary: Determines if the values of vector are in the [lower_bound, upper_bound] interval
-    @param vector: surface to test
-    @param lower_bound: lower_bound
-    @param upper_bound: upper_bound
-    @result: True or False
+    @:param vector: surface to test
+    @:param lower_bound: lower_bound
+    @:param upper_bound: upper_bound
+    @:return: True or False
     @todo: Add tolerance!
     """
     if lower_bound is not None and np.min(vector) < lower_bound:
@@ -48,6 +50,12 @@ def _bivariate_normal_mutation(surface: UtilitySurface, mutation_epsilon, mean_x
 
 
 def _attempt_gaussian_mutation(surface: UtilitySurface, mutation_epsilon, radius):
+    """
+    :param surface:
+    :param mutation_epsilon:
+    :param radius:
+    :return :param surface mutated by a randomly generate bivariate normal distribution
+    """
     x_mean = np.random.choice(surface.my_payoff)
     y_mean = np.random.choice(surface.opponent_payoff)
 

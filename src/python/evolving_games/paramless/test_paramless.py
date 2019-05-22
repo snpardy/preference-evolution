@@ -1,6 +1,7 @@
+import numpy as np
+
 from nashpy import Game
 from utilitySurface import UtilitySurface
-import numpy as np
 import paramless as p
 
 # A prisoners dilemma game
