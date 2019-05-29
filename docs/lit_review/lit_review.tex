@@ -94,21 +94,20 @@
 \section{Introduction}\label{intro}
 Understanding cooperation is greatly important to our understanding of why people behave the way they do.
 Understanding the kinds of environments that lead agents to behave cooperatively will allow us to create systems that
-encourage or enforce this behaviour. The fact that some of the biggest problems facing humanity require cooperation in
+encourage or engender this behaviour. The fact that some of the biggest problems facing humanity require cooperation in
 support of solutions is one of the factors that pushes the quest to understand cooperation from one of purely
-intellectual value to a thing of great importance to the designers of public policy. Despite the substantial amount of
-existing research in the area, understanding cooperation is still an open question.
+intellectual value to a thing of great practical importance. Despite the substantial amount of existing research in the area, understanding cooperation is still an open question.
 
 \np The aim of this review is to explore literature concerned with theories of the formation of social preferences and
 agent based models as applied to the formation of social preferences. This area of research is rich, with a wealth of
-published work in existence, as such only a portion will be covered in this piece. Particular interest will be paid to
+published work in existence, as such only a portion is be covered in this piece. Particular interest is be paid to
 results achieved in \citet{alger_homo_2013} and the surrounding literature, as well as the potential of extending such
 static analysis in dynamic models. With this in mind, it is necessary to explore the existing literature that supports
 and extends the work of \citet{alger_homo_2013} as well as work interested in the dynamic modelling of similar
 representations of preference formation.
 
-\np Broadly, I'll begin this review with a discussion of the techniques used widely in statically modelling social interactions, before shifting to a review of the literature surrounding dynamic, agent based modelling.
-Finally, I'll look at the current, state-of-the-art work in social preference formation as well as work that
+\np Broadly, I begin this review with a discussion of the techniques used widely in statically modelling social interactions, before shifting to a review of the literature surrounding dynamic, agent based modelling.
+Finally, I look at the current, state-of-the-art work in social preference formation as well as work that
 synthesises game theory research and dynamic modelling.
 
 
@@ -116,8 +115,7 @@ synthesises game theory research and dynamic modelling.
 \subsection{Games}\label{games}
 In order to think about and investigate the situations in which agents might act cooperatively, we need to be able to
 model the interactions themselves. These `social' interactions can be characterized as any interaction in which the
-payoff of one player is dependent on the action of one or more other players, as well as their own
-\citep{angner_course_2012} Game Theory is the study of such social interactions. More formally, according to
+payoff of one player is dependent not just on their own action but on the action of one or more other players involved \citep{angner_course_2012}. Game Theory is the study of such social interactions. More formally, according to
 \citet{osborne_course_1994} a game includes:
 \begin{itemize}
 	\item the finite set, N, of players;
@@ -128,11 +126,12 @@ payoff of one player is dependent on the action of one or more other players, as
 \end{itemize}
 It is assumed that the players are motivated solely by the payoffs on offer and, in pursuit of these payoffs, act
 rationally.
-\np One of the most common games used when investigating cooperation is the Prisoner's Dilemma. 
+\np An important game in the investigation of cooperative games is the Prisoner's Dilemma. 
 The Prisoner's Dilemma is described as as a situation in which two prisoners are being separately questioned in the hope
 that they turn on one another. If neither talk they will both receive a minimal jail sentence, while if one talk
 (defects) and the other stays silent (cooperates) the defector will go free and the cooperator will receive the maximum
-sentence. If both talk, they will both receive a medium length sentence.  The payoff structure is as follows:
+sentence. If both talk, they will both receive a medium length sentence.  The payoff structure, where high payoff
+corresponds to less prison time, is as follows:
 \begin{center}
 	\begin{tabular}{|l||*{5}{c|}}\hline
 	 \label{prisoner_payoff}
@@ -145,16 +144,16 @@ sentence. If both talk, they will both receive a medium length sentence.  The pa
  Influential game theorist Robert Axelrod holds that examples of the Prisoner's Dilemma can be seen in the military
  decisions of the cold war United States and Soviet Union as well as in their respective decisions regarding defence
  budgets \citep{axelrod_effective_1980}. Axelrod analyses the Prisoner's Dilemma as capturing the "tension between
- individual rationality ... and group rationality" \cite[p. 4]{axelrod_effective_1980}. This is captured in payoff
+ individual rationality ... and group rationality" \cite[p. 4]{axelrod_effective_1980}. This is captured in the payoff
  structure by incentivising both sides to be selfish while also awarding high payoff to both sides when they cooperate.
 
-\np When we talk about how agents play these games, we talk about 'strategies'. A strategy is a complete plan of how to
-play the game that includes actions under each possible circumstance \citep{angner_course_2012}. Some terminology used
-when discussing strategies: a strategy of the kind discussed above in relation to the prisoner's dilemma is often called
-a \textit{pure} strategy. A pure strategy is a deterministic plan of action for the entire game. Conversely, a player implementing a \textit{mixed} strategy will play each of the pure strategies with some probability (this
-probability could be zero for some strategies). So, in the Prisoner's Dilemma there are two pure strategies available to
-each player: Stay Silent or Talk, alternatively, Cooperate or Defect. A mixed strategy would playing each of these two
-strategies with some probability.
+\np When we talk about how agents play these games, we talk about `strategies'. A strategy is a complete plan of how to
+play the game that includes actions under each possible circumstance \citep{angner_course_2012}. A strategy of the kind
+discussed above in relation to the prisoner's dilemma is often called a \textit{pure} strategy. A pure strategy is a
+deterministic plan of action for the entire game. Conversely, a player implementing a \textit{mixed} strategy will play
+each of the pure strategies with some probability (this probability could be zero for some strategies). So, in the
+Prisoner's Dilemma there are two pure strategies available to each player: Stay Silent or Talk, alternatively, Cooperate
+or Defect. A mixed strategy would playing each of these two strategies with some probability.
 
 \np The next step in the analysis is to attempt to predict what strategies players will play when encountering one
 another in a game; the way that this is done is by finding \textit{Nash Equilibria}. If, when two players are engaged in
@@ -169,31 +168,31 @@ Nash concludes that, when mixed strategies are permitted, any game with a finite
 the tools mentioned so far will lead to un-cooperative behaviour. Two rational players, motivated by payoffs will
 engaged in a Prisoner's Dilemma will eventually play the Nash-Equilibrium strategy of both-defect. So how do reconcile
 such a model with cooperative behaviour? In the literature this is done by introducing preferences. In this context, a
-preference is a relation between two things \citep{angner_course_2012}; for example, Jane \textit{prefers} Coke to
-Pepsi. Of course, preferences such as this are subjective - Jill might prefer Pepsi to Coke - but since our agents are
-rational, they must also be rational about their preferences. When this is the case then preferences are transitive and
-this allows us to order all alternatives in a list from most preferred to least. This is trivial when an example is
-given - If Jane prefers Coke to Pepsi, and she prefers Pepsi to water then we can give a preferences ordering of Coke,
-Pepsi, water.
-Preferences are integral to this area of research as they allow us to bridge the gap between subjectivity and
-rationality; a rational agent can have subjective preferences that may go against their objective self interest while
-rationally pursuing the outcomes that they most prefer.
+preference is a relation between two things \citep{angner_course_2012}; for example, Jane \textit{prefers} cycling to
+walking. Of course, preferences such as this are subjective - Jill might prefer walking to cycling - but since our
+agents are rational, they must also be rational about their preferences. When this is the case then preferences are
+transitive and this allows us to order all alternatives in a list from most preferred to least. This is trivial when an
+example is given - If Jane prefers cycling to walking, and she prefers walking to horse riding then we can give a
+preferences ordering of cycling, walking, horse riding. Preferences are integral to this area of research as they allow
+us to bridge the gap between subjectivity and rationality; a rational agent can have subjective preferences that may go
+against their objective self interest but still rationally pursue the outcomes that they most prefer.
 
 \np In the pursuit of cooperation, we are interested in `social' preferences. A preference is considered to be social if
 it is a relation that considers the satisfaction of others as well (or even in place of) the satisfaction gained by
-oneself \citep{angner_course_2012}. Another way to phrase this definition is to say that an agent with social preferences
-is motivated by something other than pure self-interest. Traditionally, much of economics has been predicated on the
-assumption that rational actors are motivated solely by self interest, but it has been shown that this analysis fails to
-explain large portions of observed behaviour that can be explained when social preferences are considered
-\citep{fehr_why_2002}. Being motivated by more than just self-interest is not necessarily a `good' thing though - the
-definition says nothing about whether a social preference assigns positive (altruistic) or negative (jealous) weight to
-another agents satisfaction. In fact, a mixture of the two, known as reciprocal fairness, is an important preference
-type \citep{fehr_why_2002,guth_evolutionary_1995}. An agent who is said to act according to reciprocal fairness
-altruistically rewards those who cooperate while also going out of their way to (i.e. reducing their own satisfaction)
-to punish those who defect; this second part is often called altruistic punishment \citep{fehr_altruistic_2002}.
+oneself \citep{angner_course_2012}. Another way to phrase this definition is to say that an agent with social
+preferences is motivated by something other than pure self-interest. Traditionally, much of economics has been
+predicated on the assumption that rational actors are motivated solely by self interest, but it has been shown that this
+analysis fails to explain large portions of observed behaviour; behaviour that can be explained when social preferences
+are considered \citep{fehr_why_2002}. Being motivated by more than just self-interest is not necessarily a `good' thing
+though - the definition says nothing about whether a social preference assigns positive (altruistic) or negative
+(jealous) weight to another agents satisfaction. In fact, a mixture of the two, known as reciprocal fairness, is an
+important preference type \citep{fehr_why_2002,guth_evolutionary_1995}. An agent who is said to act according to
+reciprocal altruistically rewards those who cooperate while also going out of their way (i.e. reducing their own
+satisfaction) to punish those who defect; this second part is often called altruistic punishment
+\citep{fehr_altruistic_2002}.
 
 \np The way that we represent preferences numerically is with utility. The logic being that if an agent prefers one
-alternative to another, then they will achieve a higher utility when their prefer alternative eventuates. So, each
+alternative to another, then they will achieve a higher utility when their preferred alternative eventuates. So, each
 alternative in a particular set can be determined as having some level of utility associated with it based on the
 agent's preference ordering. This determination can be done via a utility function \citep{angner_course_2012}. A utility
 function maps from objective, material outcomes to the subjective utility that an agent achieves when that outcome
@@ -202,7 +201,7 @@ to write down a new game that is structured around the utility that each player 
 rather that the payoff outcome itself.
 
 \np For example, let's assume we have agents who have social preferences about the outcome of the game they're playing.
-In the following utility function, the player is some kind of utilitarian and cares about their opponent as much as themselves.
+In the following utility function, the player is some kind of utilitarian who cares about their opponent as much as themselves:
 \begin{center}
 	\(U(P_i, P_o) = \frac{1}{2} \times P_i + \frac{1}{2} \times P_o\) 
 \end{center}
@@ -225,26 +224,27 @@ Now, unlike the original Prisoner's Dilemma, both players cooperating is an equi
 In games where players only care about the payoff that they achieve it is often reasonable to assume that the players
 also know about the payoffs that their opponents might receive. In other words, the players know about the game that
 they're playing. When we take into account their subjective preferences, it does not seem plausible to assume that the
-players would know about each others internal desires. This is important because when deciding which action to take
-players must reason about and take into account the action that their opponent will take. Games of incomplete
-information are often called Bayesian Games.
+players would know about each others internal desires. This is important because when deciding which action to take,
+players must reason about and take into account the action that their opponent will take. When this information is
+unknown, it unclear how players should analyse and predict their opponent's action; games of this kind are often called Bayesian Games.
 
 \np Along with the basic building blocks of games listed in the beginning this section, Bayesian games can be understood
-by introducing the concept of \textit{types} \citep[~p. 167]{shoham_multiagent_2008}. Players of different types will
-receive different payoffs and so, will act differently to one another. Crucially, players do not know the type of their
-opponent and so must reason about their opponent's action with this uncertainty in mind. This is done via beliefs about
-the likelihood of facing the different possible types. A commonly used example to illustrate these concepts is that of a
-soccer goalkeeper facing a striker. The goalkeeper doesn't know whether the striker is left or right footed (ala their
-type) but has beliefs about how likely it is that she is facing a left or right footed striker (say a 50-50 chance).
-based on these beliefs, the goal keeper act in a way so as to maximise her \textit{expected} payoff. A crucial
-assumption in support of this analysis is the common-prior assumption; this assumption states that the players don't
-just have beliefs about the type of player they're facing, but also beliefs about that players beliefs, and so on along
-an infinite hierarchy of beliefs. This is a strong assumption, but it is one that is widely made in the literature
-surrounding Bayesian games \citep[~p. 164]{shoham_multiagent_2008}. The concept of a Bayesian Nash Equilibrium is
-similar to that of standard Nash Equilibria with the additional complexity of players attempting to maximise their
-expected payoff given their believes about the types that they're facing and that the best response set must provide a
-strategy for all possible types \citet{shoham_multiagent_2008}. Given the assumptions needed to support this solution
-concept, it is possible that it has limited applicability in practical scenarios.
+by introducing the concept of \textit{types} \citep[~p. 167]{shoham_multiagent_2008}. Faced with the same scenario,
+players of different types will receive different payoffs, and so will act differently to one another. Crucially,
+players do not know the type of their opponent and so must reason about their opponent's action with this uncertainty in
+mind. This is done via players having \textit{beliefs} about the likelihood of facing the different possible types. A
+commonly used example to illustrate these concepts is that of a soccer goalkeeper facing a striker. The goalkeeper
+doesn't know whether the striker is left or right footed (ala their type) but has beliefs about how likely it is that
+she is facing a left or right footed striker (say a 50-50 chance), based on these beliefs, the goal keeper act in a way
+so as to maximise her \textit{expected} payoff. 
+A crucial assumption in support of this analysis is the common-prior assumption; this assumption states that the players
+don't just have beliefs about the type of player they're facing, but also beliefs about that player's beliefs, and so on
+along an infinite hierarchy of beliefs. This is a strong assumption, but it is one that is widely made in the literature
+surrounding Bayesian games \citep[~p. 164]{shoham_multiagent_2008}. The solution concept for Bayesian games, Bayesian
+Nash Equilibrium, is similar to that of standard Nash Equilibria with the additional complexity of players attempting to
+maximise their expected payoff given their believes about the types that they're facing, and that the best response set
+must provide a strategy for all possible types \citet{shoham_multiagent_2008}. Given the assumptions needed to support
+this solution concept, it is possible that it has limited applicability in practical scenarios.
 An alternative described in \citet{kalai_rational_1993} holds that in the presence of incomplete information, when
 individuals have correct beliefs about the strategies of other players and games are repeated infinitely, play will end
 up in the same state as if complete information was present. This suggests it is possible, under certain circumstances,
@@ -262,7 +262,7 @@ run. In general, there is very little material payoff that can be gained from st
 has significant long term health benefits. So, when someone chooses to stay and lie on the couch rather than exercise it
 can, in most cases, be seen as an example of action being motivated by subjective utility rather than material payoff.
 
-\todo{expand evolutionary game theory discussion}
+\todo{add a sentence or two about mechanics of evolutionary game theory}
 
 \np Analogous to the Nash Equilibrium solution concept in pure game theory, is the idea of evolutionary stable
 strategies (ESS) in evolutionary game theory. A strategy is said to be evolutionary stable if it achieves a higher
@@ -307,13 +307,14 @@ derived from published literature, data analysis or even just stated as assumpti
 \citep{heppenstall_introduction_2012}. For example, agents of the kind discussed towards the end of section \ref{games}
 would all act in accordance with a rule to maximise utility. 
 
-\np Work at the nexus of computational modelling and game theory has been undertaken in \citep{garcia_no_2018}. This
+\np Work at the nexus of computational modelling and game theory has been undertaken in \citet{garcia_no_2018}. This
 paper finds that computer simulation agrees with game theoretic analysis of repeated prisoner's dilemmas. Namely, that
 no strategy can be entirely stable because for every equilibria certain sequences of mutants can destabilise them by
 performing \textit{as well as} (not better than) the equilibrium strategy. With the system having `drifted' away from
-the equilibrium point, the new resident strategy is now susceptible to invasion \citep{garcia_no_2018}.
+the equilibrium point, the new resident strategy is now susceptible to invasion \citep{garcia_no_2018}. \todo{ extend
+with reference to dynamic model}
 
-\np Another example of existing work at this intersection is that undertaken in \citep{powers_modelling_2018}. Powers,
+\np Another example of existing work at this intersection is that undertaken in \citet{powers_modelling_2018}. Powers,
 Ekárt and Lewis discuss the combination of agent based modelling and evolutionary game theory and characterize a
 distinction between the two as being one of \textit{content based models} and \textit{value based models}. Standard
 agent based modelling, the authors claim, captures the content of each agents strategy which determines their behaviour.
@@ -321,27 +322,27 @@ This can be considered the \textit{agent function}, as it maps from environmenta
 69]{powers_modelling_2018}. In comparison, evolutionary game theory does not capture the behaviour of individual agents
 but rather the strategies are considered as types with different levels of prevalence within a population. The
 \textit{value} of these strategies is captured by some fitness functions that depend on the strategies and the
-population structure. There is a sharp trade-off between the two kinds according to \citep{powers_modelling_2018}: ABM
+population structure. There is a sharp trade-off between the two kinds according to \citet{powers_modelling_2018}: ABM
 does not capture the value of the actions that are carried out and it is difficult to know the value without executing
 and observing the system; while EGT omits detail about the carrying out of strategies instead focusing on their overall
-expected value. With this difference in mind, it can be seen that, while neither system can replace the other
-\citep{powers_modelling_2018}, attacking the same problem with both kinds of model could be fruitful. This approach has
-been successful, notably in \citep{axelrod_effective_1980}. Powers et al. claim that the use of ABM can expand upon the results of existing EGT \citep[~p.71]{powers_modelling_2018}.
+expected value. With this difference in mind, it can be seen that, while neither system can replace the other, attacking
+the same problem with both kinds of model could be fruitful \citep{powers_modelling_2018}. This approach has
+been successful, notably in \citep{axelrod_effective_1980}. It is claimed that the use of ABM can expand upon the results of existing EGT \citep[~p.71]{powers_modelling_2018}.
 
 \section{The State-Of-The-Art}
 With the research framework laid out in an introductory way, we can now move to a discussion of more cutting edge
 literature in the area. Of course, formation of social preferences is broad and active research area that is impossible
 to cover completely in a review such as this, we instead focus on only a narrow portion of interest within the overall space.
 
-\np One significant contribution in the existing literature is \citep{alger_homo_2013}, in which the authors conclude
+\np One significant contribution in the existing literature is \citet{alger_homo_2013}, in which the authors conclude
 that when agents' preferences are their own private information, a particular utility function is an evolutionary stable
-strategy; this is done within the context of model that is of particular interest. The first thing to note is that
-rather than engaging in strategy evolution which is prevalent in the literature, \citep{alger_homo_2013} focus on the
-evolution of preferences. The encounters that drive this preference evolution are not between uniformly matched
+strategy; this is done within the context of model that hinges on some interesting assumptions. The first thing to note
+is that rather than engaging in strategy evolution which is prevalent in the literature, \citet{alger_homo_2013} focus
+on the evolution of preferences. The encounters that drive this preference evolution are not between uniformly matched
 individuals, rather the matching process is assortative with the \textit{index of assortativity,} $\sigma \in [0, 1]$,
 noted as a key parameter in the analysis. When the index of assortativity is zero then the matching process is
 equivalent to uniformly random, but when it's greater than zero the matching process is biased towards individuals
-matching with those of the same type. Second, as implied by agents' preferences being their own "private information",
+matching with other of the same type. Second, as implied by agents' preferences being their own "private information",
 the games that are analysed in this work are games of incomplete information and the concept of Bayesian Nash Equilibria
 is employed to ascertain how players will act. Another point of interest from the model is that Alger and Weibull place
 strict constraints on evolutionary stability and instability. To be considered an evolutionary stable strategy a
@@ -349,8 +350,8 @@ resident must achieve a strictly higher payoff than all potential mutants in \te
 2274]{alger_homo_2013}. Similarly, a strategy is evolutionary unstable if there exists some mutant against which the
 strategy achieves strictly less payoff in all equilibria \citep[~p. 2275]{alger_homo_2013}.
 
-\np The utility functions that Alger and Weibull call \textit{Homo Moralis} are a weighted linear combination of the
-expected payoffs of both players, they look like the following, in which $x$ and $y$ are types and $u_k(x, y)$ is
+\np The utility functions that \citet{alger_homo_2013} call \textit{Homo Moralis} are a weighted linear combination of
+the expected payoffs of both players, they look like the following, in which $x$ and $y$ are types and $u_k(x, y)$ is
 \textit{x's} utility when playing against \textit{y}:
 \begin{center}
 	$u_k(x, y) = (1 - k) \times \pi(x, y) + k \times \pi(x, x)$
@@ -358,9 +359,9 @@ expected payoffs of both players, they look like the following, in which $x$ and
 for some $k \in [0, 1]$, the agents "degree of morality" \citep[~p 2274.]{alger_homo_2013}. The degree of morality can
 be thought of as how much the individual `wants to do the right thing' - a degree of morality of $0$ corresponds to pure
 selfishness, while a degree of $1$ corresponds to pure morality. An interesting observation that can be made of this
-function is that the term that represents the opponent player's payoff treats the opponent as if they were the same type
-as the player who's utility function it is regardless of what their believed or actual type is. This would seem to
-ensure that any cooperation amongst agents of the same type is reciprocated. \todo{is this correct?}
+function is that the term that represents the opponent player's payoff -- that is, the term $\pi(x,x)$ -- treats the
+opponent as if they were the same type as the player who's utility function it is regardless of what their belief or
+actual type is. This would seem to ensure that any cooperation amongst agents of the same type is reciprocated. \todo{is this correct?}
 
 \np The  utility function that the authors conclude to be evolutionary stable is one that they call \textit{Homo
 Hamiltonensis}, in which the degree of morality is equal to the index of assortativity, $\sigma$:
@@ -368,27 +369,27 @@ Hamiltonensis}, in which the degree of morality is equal to the index of assorta
 	$u_k(x, y) = (1 - \sigma) \times \pi(x, y) + \sigma \times \pi(x, x)$
 \end{center}
 When an individual who possesses this utility function interacts in an environment in which they are highly likely
-to meet with another individual of the same type, they will act in a more 'moral' way, taking into consideration the
+to meet with another individual of the same type, they will act in a more `moral' way, taking into consideration the
 payoff that their opponent's achieve. A significant accomplishment of this result is that it can reconcile existing
-literature that suggests high levels of cooperation amongst kin, and low levels of cooperation in anonymous market games \citep[See ~p. 2296][]{alger_homo_2013}. While this result is significant, \citep{alger_homo_2013} makes no
-mention of how likely it is that a state representing \textit{Homo Hamiltonensis} is reached in a freely and dynamically evolving model,or under what conditions this is likely to occur.
+literature that suggests high levels of cooperation amongst kin, and low levels of cooperation in anonymous market games \citep[See ][~p. 2296]{alger_homo_2013}. While this result is significant, \citep{alger_homo_2013} makes no
+mention of how likely it is that a state representing \textit{Homo Hamiltonensis} is reached in a freely and dynamically
+evolving model,or under what conditions this may be likely to occur.
 
 \np Interesting work has been undertaken exploring the result achieved by \citet{alger_homo_2013}, one example of this
-is \citet{newton_preferences_2017}. Newton holds that assumption in \citet{alger_homo_2013} that the assortativity of
-matching is exogenous and type independent is "very strong" \citep{newton_preferences_2017}. Newton discusses an area of
-literature that is interested in the cultural or biological determination of the assortative behaviour in which the so
-called index of assortativity evolves. When the evolution of assortativity is considered, Newton claims, the result of
-\citet{alger_homo_2013} no longer holds. While Newton concedes that if the rate of mutation of assortativity was much
-slower than that of preference the result may hold, he claims that situations in which this is the case are
-"difficult to conceive" \citep{newton_preferences_2017}.
+is \citet{newton_preferences_2017}. Newton holds that the assumption in \citet{alger_homo_2013} that the assortativity
+of matching is exogenous and type independent is "very strong" \citep{newton_preferences_2017}. Newton discusses an area
+of literature that is interested in the cultural or biological determination of assortativity in which the
+so called index of assortativity is subject to evolution. When the evolution of assortativity is considered, Newton
+claims, the result of \citet{alger_homo_2013} no longer holds. While Newton concedes that if the rate of mutation of
+assortativity was much slower than that of preference the result may hold, he claims that situations in which this is
+the case are "difficult to conceive" \citep{newton_preferences_2017}.
 
-\np Returning to the discussion of the synthesis of game theory and computer modelling, \citep
-{peysakhovich_prosocial_2017} employed agent based models and deep reinforcement learning to draw conclusions about the
+\np Returning to the discussion of the synthesis of game theory and computer modelling, \citet{peysakhovich_prosocial_2017} employed agent based models and deep reinforcement learning to draw conclusions about the
 performance of artificial agents with social preference in Stag Hunt games. \citet{peysakhovich_prosocial_2017} focuses
 on practical considerations surrounding the formation "pro-social" preferences in agents. This is done so by introducing
 agents with preferences that are already prosocial and observing the effect this has on the wider population. The paper
 concludes that introducing prosocial agents into a population of other reactive learning agents increases (a) the
-individual agent's long-term payoff and (b) increases the likelihood that the group converges to cooperative outcomes.
+individual agent's long-term payoff and (b) the likelihood that the group converges to cooperative outcomes.
 The Deep reinforcement learning method used in \citet{peysakhovich_prosocial_2017} has the learner treat other agents as
 part of the static environment and optimises its own payoff. The authors also discuss other work in the field in which
 agents are aware that others are also learning and that their behaviour can influence their opponent's future behaviour
@@ -396,21 +397,23 @@ agents are aware that others are also learning and that their behaviour can infl
 \citet{peysakhovich_prosocial_2017} resulted in insightful findings and their use in this case could be used to inform any reinforcement learning based model that is implemented in extension of existing static models.
 
 
-\todo{talk about julian?}
+% \todo{talk about julian?}
 
 \section{Conclusion}\label{conc}
 The literature on the formation of social preferences is rich and varied. With particular interest paid to the formation
 of cooperative preferences, the literature reviewed in this paper spans the outlining of basic behavioural analysis in
 games and strategies to state-of-the-art findings in static evolutionary game theory. An important point in the
-literature is the definition of preferences as a bridge between subjective desire and rational behaviour. While not
-entirely novel, there remains much unexplored territory in the dynamic modelling of statically defined evolutionary
-models. The existing work at the intersection of computational modelling and game theoretic analysis reviewed in this
-piece could be viewed as instructive for future work in the area. A useful characterization of the distinction between
-the two models is that as content based and value based. Agent based models are one useful technique to model systems of
-preference formation. ABMs offer the ability do encode simple and individualised behaviour at the low level before
-drawing macro-level observations about the system as a whole. The literature reviewed in this piece that is concerned
-with game theory and static modelling directly has hopefully highlighted the space still left to fill in this area of
-enquiry, while the discussions of dynamic techniques are offered as a method by which this space can be contributed to.
+literature is the definition of preferences as a bridge between subjective desire and rational behaviour. 
+
+\np While not entirely novel, there remains much unexplored territory in the dynamic modelling of evolutionary models
+initially defined within a context of static analysis. The existing work at the intersection of computational modelling
+and game theoretic analysis reviewed in this piece could be viewed as instructive for future work in the area. A useful
+characterization of the distinction between the two models is that as content based and value based. Agent based models
+are one useful technique to model systems of preference formation. ABMs offer the ability do encode simple and
+individualised behaviour at the low level before drawing macro-level observations about the system as a whole.
+
+\np The literature reviewed in this piece that is concerned with game theory and static modelling directly has hopefully
+highlighted the space still left to fill in this area of enquiry, while the discussions of dynamic techniques are offered as a method by which this space can be contributed to.
  
 \newpage
 \bibliography{lit_review}
