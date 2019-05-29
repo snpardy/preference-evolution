@@ -262,7 +262,14 @@ run. In general, there is very little material payoff that can be gained from st
 has significant long term health benefits. So, when someone chooses to stay and lie on the couch rather than exercise it
 can, in most cases, be seen as an example of action being motivated by subjective utility rather than material payoff.
 
-\todo{add a sentence or two about mechanics of evolutionary game theory}
+\np Taking a step back, the standard static evolutionary game theory model outlined in \citet{weibull_introduction_1992}
+assumes a large population of agents all playing the same strategy (called residents). These agents match and play
+pairwise games to achieve some payoff, this payoff is linked to the agent's evolutionary fitness. At some point, a group
+of "mutants" enters the population. These mutants all play the same strategy - this strategy being different to that
+employed by the resident. It is assumed that mutation occurs at such a rate that only one mutant is present in the
+population at a time. So now, the population contains some mixture of residents and mutants, and the expected fitness of
+each group is determined by their expected payoff given new population structure; "biological intuition" suggests that
+the mutants will invade the population if their expected fitness is greater than that of the residents \citep[~p. 9]{weibull_introduction_1992}.
 
 \np Analogous to the Nash Equilibrium solution concept in pure game theory, is the idea of evolutionary stable
 strategies (ESS) in evolutionary game theory. A strategy is said to be evolutionary stable if it achieves a higher
@@ -308,11 +315,13 @@ derived from published literature, data analysis or even just stated as assumpti
 would all act in accordance with a rule to maximise utility. 
 
 \np Work at the nexus of computational modelling and game theory has been undertaken in \citet{garcia_no_2018}. This
-paper finds that computer simulation agrees with game theoretic analysis of repeated prisoner's dilemmas. Namely, that
+paper finds that computer simulations agrees with game theoretic analysis of repeated prisoner's dilemmas. Namely, that
 no strategy can be entirely stable because for every equilibria certain sequences of mutants can destabilise them by
 performing \textit{as well as} (not better than) the equilibrium strategy. With the system having `drifted' away from
-the equilibrium point, the new resident strategy is now susceptible to invasion \citep{garcia_no_2018}. \todo{ extend
-with reference to dynamic model}
+the equilibrium point, the new resident strategy is now susceptible to invasion \citep{garcia_no_2018}. To arrive at
+this result \citet{garcia_no_2018} perform simulations by employing genetic programming techniques akin to those
+described at the beginning of this section. The set of strategies is represented as a population of finite state
+automata, with mutations in the form of slight modifications to these automata.
 
 \np Another example of existing work at this intersection is that undertaken in \citet{powers_modelling_2018}. Powers,
 Ekárt and Lewis discuss the combination of agent based modelling and evolutionary game theory and characterize a
@@ -396,8 +405,6 @@ agents are aware that others are also learning and that their behaviour can infl
 (e.g Babes et al. as seen in \citealt{peysakhovich_prosocial_2017}). The use of these techniques by 
 \citet{peysakhovich_prosocial_2017} resulted in insightful findings and their use in this case could be used to inform any reinforcement learning based model that is implemented in extension of existing static models.
 
-
-% \todo{talk about julian?}
 
 \section{Conclusion}\label{conc}
 The literature on the formation of social preferences is rich and varied. With particular interest paid to the formation
