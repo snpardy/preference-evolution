@@ -1,8 +1,9 @@
 import numpy as np
 
 from nashpy import Game
-from utilitySurface import UtilitySurface
-import paramless as p
+from paramless import utilitySurface as us
+
+from paramless import paramless as p
 
 # A prisoners dilemma game
 prisoners_dilemma = Game([[3, 0], [5, 1]], [[3, 5], [0, 1]])
@@ -18,8 +19,8 @@ y = np.arange(0, 6, 1, dtype=float)
 selfish = np.meshgrid(x, y, indexing='ij')[0]
 selfless = np.meshgrid(x, y, indexing='ij')[1]
 
-selfish = UtilitySurface(x, y, selfish)
-selfless = UtilitySurface(x, y, selfless)
+selfish = us.UtilitySurface(x, y, selfish)
+selfless = us.UtilitySurface(x, y, selfless)
 
 
 def test_expected_payoff():
