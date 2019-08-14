@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from dpcontracts import require
-import math
 import numpy as np
 
 
@@ -13,7 +12,6 @@ class UtilitySurface:
     """
     # A lot of the time the payoff arrays will just be equal to the indexes of the utility_grid
     # but this will not always be the case. This is why they're stored separately to the utility_grid.
-    # We store the payoff arrays
     my_payoff: np.ndarray
     opponent_payoff: np.ndarray
     utility_grid: np.meshgrid

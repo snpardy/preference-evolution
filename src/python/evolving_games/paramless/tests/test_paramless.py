@@ -28,7 +28,8 @@ def test_expected_payoff():
     # different strategies that may be played
     assert p._expected_payoff(prisoners_dilemma, defect) == (1, 1)
     assert p._expected_payoff(prisoners_dilemma, cooperate) == (3, 3)
-    # mixed strategy results in an expected payoff is accurate to 15 decimal places (in this case)
+    # mixed strategy results in an expected payoff that is accurate with acceptable
+    # rounding error, in this case, 15 decimal places
     assert tuple(np.round(p._expected_payoff(prisoners_dilemma, mixed), 15)) == (0.85, 2.85)
 
 
@@ -88,3 +89,4 @@ def test_exhaustive_payoff_fitness():
     # in the evolution_step function
     # negating the expression indicates no invasion
     assert not (resident_fitness < mutant_fitness)
+
