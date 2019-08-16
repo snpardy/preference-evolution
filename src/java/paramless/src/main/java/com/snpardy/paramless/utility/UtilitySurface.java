@@ -1,7 +1,5 @@
 package com.snpardy.paramless.utility;
 
-import java.math.BigDecimal;
-
 
 /**
  * An immutable class representing a two parameter utility surface and the array of parameter
@@ -11,62 +9,83 @@ import java.math.BigDecimal;
 public class UtilitySurface {
   
   // step must be the difference between each element in the x & y arrays
-  private BigDecimal step;
-  private final BigDecimal[] x;
-  private final BigDecimal[] y;
-  private final BigDecimal[][] utilityGrid;
+  private double step;
+  private final double[] x;
+  private final double[] y;
+  private final double[][] utilityGrid;
   
-  public UtilitySurface(BigDecimal[] x, BigDecimal[] y, BigDecimal[][] utilityGrid, BigDecimal step) {
+  public UtilitySurface(double[] x, double[] y, double[][] utilityGrid, double step) {
     this.x = x;
     this.y = y;
     this.utilityGrid = utilityGrid;
     this.step = step;
   }
   
-  public static UtilitySurface selfless(int size, BigDecimal step) {
+  /*  STATIC FACTORY METHODS  */
+  public static UtilitySurface selfish(int min, int max, double step) {
     
-    BigDecimal[] x = new BigDecimal[size];
-    BigDecimal[] y = new BigDecimal[size];
-    BigDecimal[][] grid = new BigDecimal[size][size];
+    int len = (int)Math.floor((max-min)/step);
     
-    for (int i = 0; i < size; i++) {
-      x[i] = BigDecimal.valueOf(i);
-      y[i] = BigDecimal.valueOf(i);
-      for (int j = 0; j < size; j++) {
-        grid[i][j] = BigDecimal.valueOf(i);
+    double[] x = new double[len];
+    double[] y = new double[len];
+    double[][] grid = new double[len][len];
+    
+    double current = min;
+    
+    for (int i = 0; i < len; i++) {
+      x[i] = current;
+      y[i] = current;
+      for (int j = 0; j < len; j++) {
+        grid[i][j] = current;
       }
+      current += step;
     }
     return new UtilitySurface(x, y, grid, step);
   }
   
-  public static UtilitySurface selfish(int size, BigDecimal step) {
-    BigDecimal[] x = new BigDecimal[size];
-    BigDecimal[] y = new BigDecimal[size];
-    BigDecimal[][] grid = new BigDecimal[size][size];
-    for (int i = 0; i < size; i++) {
-      x[i] = BigDecimal.valueOf(i);
-      y[i] = BigDecimal.valueOf(i);
-      for (int j = 0; j < size; j++) {
-        grid[i][j] = BigDecimal.valueOf(i);
+  public static UtilitySurface selfless(int min, int max, double step) {
+    
+    int len = (int)Math.floor((max-min)/step);
+    
+    double[] x = new double[len];
+    double[] y = new double[len];
+    double[][] grid = new double[len][len];
+    
+    double current = min;
+    
+    for (int i = 0; i < len; i++) {
+      x[i] = current;
+      y[i] = current;
+      for (int j = 0; j < len; j++) {
+        grid[j][i] = current;
       }
+      current += step;
     }
     return new UtilitySurface(x, y, grid, step);
   }
   
-  public static UtilitySurface random(int size, BigDecimal step){
-    BigDecimal x[] = new BigDecimal[size];
-    BigDecimal y[] = new BigDecimal[size];
-    BigDecimal grid[][] = new BigDecimal[size][size];
+  public static UtilitySurface random(int min, int max, double step){
   
-    for (int i = 0; i < size; i++) {
-      x[i] = BigDecimal.valueOf(i);
-      y[i] = BigDecimal.valueOf(i);
-      for (int j = 0; j < size; j++) {
-        grid[i][j] = BigDecimal.valueOf(Math.random()*size);
+    int len = (int)Math.floor((max-min)/step);
+    
+    double[] x = new double[len];
+    double[] y = new double[len];
+    double[][] grid = new double[len][len];
+    
+    double current = min;
+    for (int i = 0; i < len; i++) {
+      x[i] = current;
+      y[i] = current;
+      for (int j = 0; j < len; j++) {
+        grid[i][j] = Math.random()*len;
       }
+      current += step;
     }
     return new UtilitySurface(x, y, grid, step);
   }
+  
+  
+  /*  LOGIC METHODS  */
   
   /**
    * Create a new UtilitySurface with a different utility grid.
@@ -74,8 +93,8 @@ public class UtilitySurface {
    * @param newGrid : a BigDecimal[][]
    * @return new UtilitySurface with {@param newGrid} in place of this.utilityGrid.
    */
-  public UtilitySurface replaceGrid(BigDecimal[][] newGrid) {
-    return new UtilitySurface(getX(), getY(), newGrid, getStep());
+  public UtilitySurface replaceGrid(double[][] newGrid) {
+    return new UtilitySurface(x, y, newGrid, step);
   }
   
   /**
@@ -85,14 +104,14 @@ public class UtilitySurface {
    * @return UtilitySurface : creates a new surface with a utility grid made of
    * {@param otherGrid} added {this.UtilityGrid}
    */
-  public UtilitySurface addToGrid(BigDecimal[][] otherGrid) {
-    BigDecimal[][] newGrid = new BigDecimal[x.length][y.length];
-    for (int i = 0; i < getX().length; i++) {
-      for (int j = 0; j < getY().length; j++) {
-        newGrid[i][j] = getUtilityGrid()[i][j].add(otherGrid[i][j]);
+  public UtilitySurface addToGrid(double[][] otherGrid) {
+    double[][] newGrid = new double[x.length][y.length];
+    for (int i = 0; i < this.utilityGrid.length; i++) {
+      for (int j = 0; j < this.utilityGrid[i].length; j++) {
+        newGrid[i][j] = utilityGrid[i][j] + otherGrid[i][j];
       }
     }
-    return new UtilitySurface(getX(), getY(), newGrid, getStep());
+    return new UtilitySurface(x, y, newGrid, step);
   }
   
   /**
@@ -103,54 +122,55 @@ public class UtilitySurface {
    * @return UtilitySurface : creates a new surface with a utility grid made of
    * {@param otherGrid} subtracted from {this.UtilityGrid}.
    */
-  public UtilitySurface subFromGrid(BigDecimal[][] otherGrid) {
-    BigDecimal[][] newGrid = new BigDecimal[x.length][y.length];
+  public UtilitySurface subFromGrid(double[][] otherGrid) {
+    double[][] newGrid = new double[x.length][y.length];
     for (int i = 0; i < x.length; i++) {
       for (int j = 0; j < y.length; j++) {
-        newGrid[i][j] = utilityGrid[i][j].subtract(otherGrid[i][j]);
+        newGrid[i][j] = utilityGrid[i][j] - otherGrid[i][j];
       }
     }
-    return new UtilitySurface(getX(), getY(), newGrid, getStep());
+    return new UtilitySurface(x, y, newGrid, step);
   }
   
   /**
    * Converts the given payoffs to the nearest grid index and returns the corresponding utility.
    *
-   * @param x_i : the x payoff (usually the resident)
-   * @param y_i : the y payoff (usually the mutant)
+   * @param x_payoff : the x payoff (usually the resident)
+   * @param y_payoff : the y payoff (usually the mutant)
    * @return BigDecimal payoff at x_i, y_i.
    */
-  public BigDecimal getUtilityAtPayoff(BigDecimal x_i, BigDecimal y_i){
-    int x_index = x_i.divideToIntegralValue(step).intValue();
-    int y_index = y_i.divideToIntegralValue(step).intValue();
+  public double getUtilityAtPayoff(double x_payoff, double y_payoff){
+    
+    int x_index = (int)Math.round(x_payoff/step);
+    int y_index = (int)Math.round(y_payoff/step);
+    
     return getGridValueAt(x_index, y_index);
     
   }
   
   
-  /** BASIC GETTERS**/
-  
+  /*  BASIC GETTERS  */
   
   // These three getters are a memory leak and so break the immutability of the class
   // but defensively copying will affect performance.
-  public BigDecimal[] getX() {
+  public double[] getX() {
     return x;
   }
   
-  public BigDecimal[] getY() {
+  public double[] getY() {
     return y;
   }
   
-  public BigDecimal[][] getUtilityGrid() {
+  public double[][] getUtilityGrid() {
     return utilityGrid;
   }
   
   // This one is ok because it indexes the grid directly.
-  public BigDecimal getGridValueAt(int x_i, int y_j) {
+  public double getGridValueAt(int x_i, int y_j) {
     return utilityGrid[x_i][y_j];
   }
   
-  public BigDecimal getStep() {
+  public double getStep() {
     return this.step;
   }
 

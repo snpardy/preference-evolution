@@ -2,26 +2,30 @@ package com.snpardy.paramless.game;
 
 import com.snpardy.paramless.utility.UtilitySurface;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
+
 import java.util.Arrays;
 
-
+/**
+ * A class the represents a two player game.
+ */
 public class Game {
-  private BigDecimal[][] rowPayoff;
-  private BigDecimal[][] columnPayoff;
+  private double[][] rowPayoffMatrix;
+  private double[][] columnPayoffMatrix;
   
-  public Game(BigDecimal[][] rowPayoff, BigDecimal[][] columnPayoff) {
-    this.rowPayoff = rowPayoff;
-    this.columnPayoff = columnPayoff;
+  public Game(double[][] rowPayoff, double[][] columnPayoff) {
+    this.rowPayoffMatrix = rowPayoff;
+    this.columnPayoffMatrix = columnPayoff;
   }
   
   public static Game randomTwoByTwoGame(int minPayoff, int maxPayoff){
-    BigDecimal[][] rowPayoff = new BigDecimal[2][2];
-    BigDecimal[][] colPayoff = new BigDecimal[2][2];
+    
+    int range = maxPayoff - minPayoff;
+    
+    double[][] rowPayoff = new double[2][2];
+    double[][] colPayoff = new double[2][2];
     for(int i = 0; i < rowPayoff.length; i++){
       for(int j = 0; j < rowPayoff[0].length; j++){
-        BigDecimal rand = BigDecimal.valueOf(minPayoff + Math.random()* maxPayoff);
+        double rand = minPayoff + Math.random()* range;
         rowPayoff[i][j] = rand;
         colPayoff[j][i] = rand;
       }
@@ -29,19 +33,47 @@ public class Game {
     return new Game(rowPayoff, colPayoff);
   }
   
-  
-  @Override
-  public String toString(){
-    return "Row player:\n" + Arrays.toString(rowPayoff) + "\n\n" + "Column player:\n" + Arrays.toString(columnPayoff);
-  }
-  
-  public ArrayList<int[]> findRandomEquilibria(){
-    ArrayList<int[]> equilibria = new ArrayList<>();
+  /**
+   *
+   * @return double[][] representing a set of Nash equilibrium strategies. The array at
+   * position 0 is the strategy of row player, position 1 is the strategy of column player.
+   */
+  public double[][] findRandomEquilibria(){
+    double[][] equilibria = new double[2][2];
     
     // @TODO implement support enumeration => select random support, check if Nash, if yes return
     //  if no keep going => all games have a Nash so will terminate.
     
     return equilibria;
+  }
+  
+  /**
+   * Given a set of strategies, returns the expected payoff of each player.
+   *
+   * @param strategies : a double[][] representing row player strategy and column player
+   *                   strategies. Position 0 is thought of as the row player, position 1 is the
+   *                   column player. The contents of the arrays at each place is the probability
+   *                   that the player will play that strategy.
+   * @return double[] : Position 0 is the expected payoff of the row player (or the player
+   * with strategies at position 0 in the {@param strategies}, position 1 is expected payoff of
+   * column player.
+   */
+  public double[] expectedPayoff(double[][] strategies){
+    double[] rowStrategy = strategies[0];
+    double[] colStrategy = strategies[1];
+    
+    double colExpectedPayoff = 0;
+    double rowExpectedPayoff = 0;
+    
+    for(int i = 0; i < rowStrategy.length; i++){
+      for(int j = 0; j < colStrategy.length; j++){
+        rowExpectedPayoff =
+            rowExpectedPayoff + (rowStrategy[i] * colStrategy[j] * rowPayoffMatrix[i][j]);
+        colExpectedPayoff =
+            colExpectedPayoff + (rowStrategy[i] * colStrategy[j] * columnPayoffMatrix[i][j]);
+      }
+    }
+    return new double[]{rowExpectedPayoff, colExpectedPayoff};
   }
   
   /**
@@ -56,20 +88,35 @@ public class Game {
    */
   public Game utilityConversion(UtilitySurface rowSurface, UtilitySurface columnSurface){
     
-    BigDecimal[][] new_row_payoff = new BigDecimal[this.rowPayoff.length][this.rowPayoff[0].length];
-    BigDecimal[][] new_col_payoff = new BigDecimal[this.columnPayoff.length][this.columnPayoff[0].length];
+    double[][] new_row_payoff = new double[this.rowPayoffMatrix.length][this.rowPayoffMatrix[0].length];
+    double[][] new_col_payoff = new double[this.columnPayoffMatrix.length][this.columnPayoffMatrix[0].length];
     
     
     for(int i = 0; i < new_row_payoff.length; i++){
       for(int j = 0; j < new_row_payoff[0].length; j++){
-//        @TODO test this a lot - not sure if just swapping rol/col parameters is correct
-        new_row_payoff[i][j] = rowSurface.getUtilityAtPayoff(this.rowPayoff[i][j],
-            this.columnPayoff[i][j]);
-        new_col_payoff[i][j] = columnSurface.getUtilityAtPayoff(this.columnPayoff[i][j],
-            this.rowPayoff[i][j]);
+//        @TODO test this a lot - not sure if just swapping row/col parameters is correct
+        new_row_payoff[i][j] = rowSurface.getUtilityAtPayoff(this.rowPayoffMatrix[i][j],
+            this.columnPayoffMatrix[i][j]);
+        new_col_payoff[i][j] = columnSurface.getUtilityAtPayoff(this.columnPayoffMatrix[i][j],
+            this.rowPayoffMatrix[i][j]);
       }
     }
     return new Game(new_row_payoff, new_col_payoff);
+  }
+  
+  
+//  BASICS  //
+  @Override
+  public String toString(){
+    return "Row player:\n" + Arrays.toString(rowPayoffMatrix) + "\n\n" + "Column player:\n" + Arrays.toString(columnPayoffMatrix);
+  }
+  
+  public double[][] getRowPayoffMatrix() {
+    return rowPayoffMatrix;
+  }
+  
+  public double[][] getColumnPayoffMatrix() {
+    return columnPayoffMatrix;
   }
   
 }

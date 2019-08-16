@@ -15,29 +15,29 @@ import java.util.ArrayList;
  */
 public class Evolution {
   
-  public static final BigDecimal DEFAULT_ATOL = BigDecimal.valueOf(1e-8);
+  public static final double DEFAULT_ATOL = 1e-8;
   public static final int MAX_ITERATIONS = 1000000;
   
   private UtilitySurface initial;
-  private Fitness fitnessFunction;
-  private Mutation mutationFunction;
+  private Fitness fitness;
+  private Mutation mutation;
   private int iterations;
-  private BigDecimal tolerance;
+  private double tolerance;
   
 //  Constructors //
   public Evolution(UtilitySurface initial, Fitness fitnessFunction, Mutation mutationFunction, int iterations) {
     this.initial = initial;
-    this.fitnessFunction = fitnessFunction;
-    this.mutationFunction = mutationFunction;
+    this.fitness = fitnessFunction;
+    this.mutation = mutationFunction;
     this.iterations = iterations;
     this.tolerance = DEFAULT_ATOL;
   }
   
   public Evolution(UtilitySurface initial, Fitness fitnessFunction, Mutation mutationFunction,
-                   int iterations, BigDecimal tolerance) {
+                   int iterations, double tolerance) {
     this.initial = initial;
-    this.fitnessFunction = fitnessFunction;
-    this.mutationFunction = mutationFunction;
+    this.fitness = fitnessFunction;
+    this.mutation = mutationFunction;
     this.iterations = iterations;
     this.tolerance = tolerance;
   }
@@ -54,7 +54,7 @@ public class Evolution {
    */
   public ArrayList<UtilitySurface> run(){
     
-    UtilitySurface resident = getInitial();
+    UtilitySurface resident = this.initial;
     
     ArrayList<UtilitySurface> timeSeriesData = new ArrayList<>();
     timeSeriesData.add(resident);
@@ -62,7 +62,7 @@ public class Evolution {
     UtilitySurface tmp;
     
     // main loop
-    for(int i = 0; i < getIterations(); i++){
+    for(int i = 0; i < this.iterations; i++){
       tmp = evolutionStep(resident);
       if(tmp != null){
         resident = tmp;
@@ -81,13 +81,13 @@ public class Evolution {
    */
   private UtilitySurface evolutionStep(UtilitySurface resident){
     // Mutating the resident
-    UtilitySurface mutant = getMutationFunction().mutate(resident);
+    UtilitySurface mutant = this.mutation.mutate(resident);
     
     // Comparing fitness
-    BigDecimal[] fitness = getFitnessFunction().evaluate(resident, mutant, getTolerance());
+    double[] fitness = this.fitness.evaluate(resident, mutant, this.tolerance);
     
-    //compareTo is weird => returns -1, 0 or 1 to mean less than, equal to or greater than.
-    if(fitness[0].compareTo(fitness[1]) < 0){
+    // if mutant has greater fitness than resident, return mutant
+    if(fitness[1] > fitness[0]){
       return mutant;
     }
     return null;
@@ -100,18 +100,18 @@ public class Evolution {
   }
   
   public Fitness getFitnessFunction() {
-    return fitnessFunction;
+    return fitness;
   }
   
   public Mutation getMutationFunction() {
-    return mutationFunction;
+    return mutation;
   }
   
   public int getIterations() {
     return iterations;
   }
   
-  public BigDecimal getTolerance() {
+  public double getTolerance() {
     return tolerance;
   }
 }

@@ -51,8 +51,13 @@ def _bivariate_normal_mutation(surface: UtilitySurface, mutation_epsilon, mean_x
     # It creates grids of the payoff arrays so that output is in shape of grid.
     x_grid, y_grid = np.meshgrid(surface.my_payoff, surface.opponent_payoff)
     return mutation_epsilon * (
-            math.e ** -(.5 * ((((x_grid - mean_x) ** 2) / variance ** 2) + (
-                ((y_grid - mean_y) ** 2) / variance ** 2))))
+            math.e ** 
+            -(.5 * (
+                (((x_grid - mean_x) ** 2) / variance ** 2) + 
+                (((y_grid - mean_y) ** 2) / variance ** 2)
+                )
+            )
+        )
 
 
 def _attempt_gaussian_mutation(surface: UtilitySurface, mutation_epsilon, radius):
@@ -75,6 +80,7 @@ def _attempt_gaussian_mutation(surface: UtilitySurface, mutation_epsilon, radius
     # downwards
     else:
         mutant_utility_grid = surface.utility_grid - perturbation
+
     return replace(surface, utility_grid=mutant_utility_grid)
 
 
@@ -311,7 +317,7 @@ def create_animation(path, x, y, time_series_array, height, fps, mp4=True, gif=F
 
     plot = [ax.plot_surface(x, y, time_series_array[0], cmap='viridis', linewidth=0)]
 
-    ax.set_zlim(-height, height)
+    ax.set_zlim(-1, height)
 
     ani = animation.FuncAnimation(fig, update_plot, len(time_series_array),
                                   fargs=(time_series_array, plot),
@@ -324,8 +330,9 @@ def create_animation(path, x, y, time_series_array, height, fps, mp4=True, gif=F
         ani.save(path + fn + '.gif', writer='imagemagick', fps=fps)
 
 
-def save_run(path, time_series, initial_surface: UtilitySurface, height):
-    HEIGHT = height
+def save_run(path, time_series, initial_surface: UtilitySurface, lower_bound=0,
+             upper_bound=10):
+
     now = time.localtime(time.time())
     run_id = str(now.tm_year) + "_"+str(now.tm_mon)+"_"+str(now.tm_mday)+"_"+str(now.tm_hour)+"_"+str(now.tm_min)+"_"+str(now.tm_sec)
     path = path + run_id +"\\"
@@ -339,7 +346,7 @@ def save_run(path, time_series, initial_surface: UtilitySurface, height):
     # Make a 3D plot
     fig = plt.figure()
     ax1 = fig.add_subplot(111, projection='3d')
-    ax1.set_zlim3d(-6, 6)
+    ax1.set_zlim3d(-1, upper_bound)
     ax1.plot_surface(X, Y, initial_Z, cmap='viridis', linewidth=0)
     ax1.set_title('Initial Surface')
     ax1.set_xlabel('My Payoff')
@@ -350,7 +357,7 @@ def save_run(path, time_series, initial_surface: UtilitySurface, height):
 
     fig = plt.figure()
     ax2 = fig.add_subplot(111, projection='3d')
-    ax2.set_zlim3d(-HEIGHT, HEIGHT)
+    ax2.set_zlim3d(-1, upper_bound)
     ax2.plot_surface(X, Y, final_Z, cmap='viridis', linewidth=0)
     ax2.set_title('Evolved Surface')
     ax2.set_xlabel('My Payoff')
@@ -363,8 +370,8 @@ def save_run(path, time_series, initial_surface: UtilitySurface, height):
                        X,
                        Y,
                        time_series,
-                       HEIGHT,
-                       1)
+                       upper_bound,
+                       17)
 
 
 # Unused and untested since recent changes
