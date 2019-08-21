@@ -2,8 +2,15 @@ package com.snpardy.paramless.game;
 
 import com.snpardy.paramless.utility.UtilitySurface;
 
-
+import java.lang.reflect.Array;
+import java.util.HashSet;
 import java.util.Arrays;
+import java.util.Random;
+
+import org.jblas.Solve;
+import org.jblas.DoubleMatrix;
+
+
 
 /**
  * A class the represents a two player game.
@@ -11,6 +18,7 @@ import java.util.Arrays;
 public class Game {
   private double[][] rowPayoffMatrix;
   private double[][] columnPayoffMatrix;
+  private Random random = new Random();
   
   public Game(double[][] rowPayoff, double[][] columnPayoff) {
     this.rowPayoffMatrix = rowPayoff;
@@ -39,12 +47,93 @@ public class Game {
    * position 0 is the strategy of row player, position 1 is the strategy of column player.
    */
   public double[][] findRandomEquilibria(){
-    double[][] equilibria = new double[2][2];
+    boolean foundEquilibria = false;
+    DoubleMatrix[] internalResult = null;
+    HashSet<int[][]> supportsChecked = new HashSet<>();
+    // Finding the maximum size of the support
+    // only recording the smallest max as we'll only look at supports of the same size
+    // @TODO extend to handle supports of multiple sizes
+    int maxSize = this.rowPayoffMatrix[0].length;
+    if(this.columnPayoffMatrix.length < maxSize){
+      maxSize = this.columnPayoffMatrix.length;
+    }
     
-    // @TODO implement support enumeration => select random support, check if Nash, if yes return
-    //  if no keep going => all games have a Nash so will terminate.
     
-    return equilibria;
+//  Initializing support
+    /////////////////////////////////////////////////////////////////
+    int size = random.nextInt(maxSize)+1;
+    System.out.println("max: " + maxSize);
+    System.out.println("size: " + size);
+    // Randomly select support
+    int[] I = new int[size];
+    int[] J = new int[size];
+    int[][] support = {I, J};
+    // Randomly select support
+
+    I[0] = random.nextInt(maxSize);
+    J[0] = random.nextInt(maxSize);
+    // randomly selecting indices of the support
+    for (int index = 1; index < size; index++) {
+      I[index] = random.nextInt(maxSize);
+      // Making sure we don't select the same index twice
+      // Making sure randomly selected indexes increase in size
+      while(I[index] == I[index-1]){
+        I[index] = random.nextInt(maxSize);
+      }
+      J[index] = random.nextInt(maxSize);
+      while(J[index] == J[index-1]){
+        J[index] = random.nextInt(maxSize);
+      }
+    }
+    Arrays.sort(J);
+    Arrays.sort(I);
+    //////////////////////////////////////////////////////////////////
+    while(!foundEquilibria) {
+
+      // Checking support
+      while (supportsChecked.contains(support)) {
+        // Make sure that we're looking at a support that hasn't already been checked
+        
+        // Populating support
+        size = random.nextInt(maxSize)+1;
+        // Randomly select support
+        I = new int[size];
+        J = new int[size];
+        support[0] = I;
+        support[1] = J;
+        I[0] = random.nextInt(maxSize);
+        J[0] = random.nextInt(maxSize);
+        // randomly selecting indices of the support
+        for (int index = 1; index < size; index++) {
+          I[index] = random.nextInt(maxSize);
+          // Making sure we don't select the same index twice
+          // Making sure randomly selected indexes increase in size
+          while(I[index] == I[index-1]){
+            I[index] = random.nextInt(maxSize);
+          }
+          J[index] = random.nextInt(size);
+          while(J[index] == J[index-1]){
+            J[index] = random.nextInt(maxSize);
+          }
+        }
+        Arrays.sort(J);
+        Arrays.sort(I);
+        
+      } // End while loop
+      /////////////////////////////////////////////////////////
+      
+      
+      
+      internalResult = solveGame(size, support[0], support[1]);
+      supportsChecked.add(support);
+      
+      if(coherentResponse(internalResult[0], internalResult[1]) &&
+             bestResponse(support[0], support[1], internalResult[0], internalResult[1])) {
+        foundEquilibria = true;
+      }
+    }
+    
+    return formatResult(support[0], support[1], internalResult[0], internalResult[1]);
   }
   
   /**
@@ -117,6 +206,131 @@ public class Game {
   
   public double[][] getColumnPayoffMatrix() {
     return columnPayoffMatrix;
+  }
+  
+  
+  // HELPER METHODS //
+  
+  private boolean bestResponse(int[] rowSupport, int[] colSupport, DoubleMatrix rowStrategy,
+                               DoubleMatrix colstrategy){
+    if(rowSupport.length == this.rowPayoffMatrix.length && colSupport.length == this.columnPayoffMatrix[0].length){
+      // support is the entire game
+      return true;
+    }
+    
+    double expectedPayoff;
+    for(int j = 0; j < this.columnPayoffMatrix[0].length; j++){
+      expectedPayoff = 0;
+      for(int i=0; i < rowStrategy.columns -1; i++) {
+        expectedPayoff += rowStrategy.get(i)*this.columnPayoffMatrix[i][j];
+      }
+      if(expectedPayoff >= rowStrategy.get(rowStrategy.length-1)){
+        return false;
+      }
+    }
+    
+    for(int j = 0; j < this.rowPayoffMatrix.length; j++){
+      expectedPayoff = 0;
+      for(int i = 0; i < colstrategy.columns-1; i++){
+        expectedPayoff += this.rowPayoffMatrix[j][i] * colstrategy.get(i);
+      }
+      if(expectedPayoff >= colstrategy.get(colstrategy.length-1));
+    }
+    
+    return true;
+  }
+  
+  /**
+   * Checks that the strategies calulated for both players contain probabilities (i.e. between 0
+   * and 1).
+   *
+   * @param rowStrategy : an representing the strategy of the row player, the final element being
+   *                   the expected payoff.
+   * @param colStrategy : an representing the strategy of the column player, the final element being
+   *                   the expected payoff.
+   * @return boolean : true if the probabilities in both strategies are between 0 and 1, false
+   *                   otherwise.
+   */
+  private boolean coherentResponse(DoubleMatrix rowStrategy, DoubleMatrix colStrategy){
+    for(int i = 0; i < rowStrategy.length-1; i++){
+      if(rowStrategy.get(i) < 0 || rowStrategy.get(i) > 1){
+        return false;
+      }
+    }
+    for(int i =0; i <colStrategy.length-1; i++){
+      if(colStrategy.get(i) < 0 || colStrategy.get(i) > 1){
+        return false;
+      }
+    }
+    return true;
+  }
+  
+  public DoubleMatrix[] solveGame(int size, int[] rowSupport, int[] columnSupport) {
+    // Solve linear equations
+    //@TODO remove print statements
+    System.out.println("Row: ");
+    System.out.println(Arrays.toString(rowSupport));
+    System.out.println("Col: ");
+    System.out.println(Arrays.toString(columnSupport));
+    // Constructing linear equations
+  
+    //The row player must play in a way that makes the column player indifferent
+    //The column player must play in a way that makes the column player indifferent
+    DoubleMatrix rowEqMatrix = new DoubleMatrix(size + 1, size + 1);
+    DoubleMatrix colEqMatrix = new DoubleMatrix(size + 1, size + 1);
+    for (int r : rowSupport) {
+      for (int c : columnSupport) {
+        rowEqMatrix.put(r, c, this.columnPayoffMatrix[c][r]);
+        colEqMatrix.put(r, c, this.rowPayoffMatrix[r][c]);
+      }
+    }
+  
+    for (int i = 0; i < size; i++) {
+      // filling the last column here (it's always -1!)
+      rowEqMatrix.put(i, size, -1);
+      colEqMatrix.put(i, size, -1);
+      // filling the last row here (it's always 1)
+      rowEqMatrix.put(size, i, 1);
+      colEqMatrix.put(size, i, 1);
+    
+      // filling the bottom right
+      rowEqMatrix.put(size, size, 0);
+      colEqMatrix.put(size, size, 0);
+    }
+  
+    // The 'B' in A*X=B
+    // E.g. First two elems represent the payoff in each case being
+    // equal, the third elem represents the fact that the probabililty must sum to 1
+    DoubleMatrix B = DoubleMatrix.zeros(size + 1);
+    B.put(size, 1);
+  
+    DoubleMatrix rowResult = Solve.solve(rowEqMatrix, B);
+    DoubleMatrix colResult = Solve.solve(colEqMatrix, B);
+    
+    return new DoubleMatrix[] {rowResult, colResult};
+  }
+  
+  private double[][] formatResult(int[] rowSupport, int[] columnSupport, DoubleMatrix rowResult,
+                                      DoubleMatrix colResult){
+    
+    double[] rowStrategy = new double[this.rowPayoffMatrix.length];
+    // i indexes the result array (results will be ordered the same as in r but not at the same
+    // index e.g. support of {0, 2} will have indices of [0,1]
+    int i = 0;
+    for(int r : rowSupport){
+      rowStrategy[r] = rowResult.get(i);
+      i++;
+    }
+  
+    double[] colStrategy = new double[this.columnPayoffMatrix[0].length];
+    // i indexes the result array (results will be ordered the same as in r but not at the same
+    // index e.g. support of {0, 2} will have indices of [0,1]
+    i = 0;
+    for(int c : columnSupport){
+      colStrategy[c] = colResult.get(i);
+      i++;
+    }
+    return new double[][] {rowStrategy, colStrategy};
   }
   
 }
