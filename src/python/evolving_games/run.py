@@ -1,27 +1,51 @@
-from numpy import *
+
+import json
+import sys
+import random
+
+import numpy as np
 
 
 from paramless import paramless as p
-
+from paramless import utils
 
 if __name__ == "__main__":
 
-    payoff_size = 10
+    with open(sys.argv[1]) as read_file:
+        params = json.loads(read_file.read())
 
-    # setting up player's utility functions
-    x = arange(0, payoff_size, .5, dtype=float)
-    y = arange(0, payoff_size, .5, dtype=float)
-    X, Y = meshgrid(x, y, indexing='ij')
-    selfless = meshgrid(x, y, indexing='ij')[1]
-    selfless = p.UtilitySurface(x, y, selfless)
+    seed = params["seed"]
+    iterations = params["iterations"]
+    payoff_size = params["maxPayoff"]
+    step = params["step"]
+    initial_shape = params["initialShape"]
+    population_epsilon = params["mutantShareOfPopulation"]
+    assortativity = params["assortativity"]
+    save_data_at_step = params["reportEveryTimeSteps"]
+    output_file_name = params["outputFileName"]
+    mutation_epsilon = params["mutationEpsilon"]
+    radius = params["mutationRadius"]
 
-    resident, time_series, invasion_count = p.evolve(selfless, p.tournament_fitness_function,
-                                                     p.gaussian_mutation, 1500,
-                                                     mutation_epsilon=.2, radius=4,
-                                                     payoff_game=None,
-                                                     time_series_data=True,
-                                                     lower_bound=0,
-                                                     upper_bound=10)
-    print(invasion_count)
+    # Setting seeds
+    random.seed(seed)
+    np.random.seed(seed)
 
-    p.save_run(".", time_series, selfless, 11)
+    # Setting initial utility surface
+    if hasattr(p.UtilitySurface, initial_shape):
+        initial = getattr(p.UtilitySurface, initial_shape)(payoff_size, step)
+    else:
+        raise ValueError("Please provide one of the built in initial shapes: selfish, \
+                         selfless or random")
+
+
+    _, time_series, _ = p.evolve(initial,
+                                 p.tournament_local_fitness_function,
+                                 p.gaussian_mutation_more_info, iterations,
+                                 seed=seed, time_series_data=True,
+                                 mutation_epsilon=mutation_epsilon, radius=radius,
+                                 population_epsilon=population_epsilon,  # assortativity,
+                                 payoff_game=None,
+                                 lower_bound=0,
+                                 upper_bound=5)
+
+    utils.time_series_to_csv(output_file_name, time_series)

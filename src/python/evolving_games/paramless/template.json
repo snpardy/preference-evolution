@@ -1,0 +1,13 @@
+{
+  "seed": SEED,
+  "iterations": 100,
+  "maxPayoff": MAXPAYOFF,
+  "step": STEP,
+  "initialShape": "INITIALSHAPE",
+  "mutantShareOfPopulation": EPSILON,
+  "assortativity": 0,
+  "reportEveryTimeSteps": 10,
+  "outputFileName": "OUTPUTFILE",
+  "mutationEpsilon": MUTATIONSIZE,
+  "mutationRadius": MUTATIONRADIUS
+}

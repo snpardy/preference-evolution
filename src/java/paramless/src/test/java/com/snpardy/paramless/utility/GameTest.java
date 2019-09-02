@@ -4,7 +4,6 @@ import com.snpardy.paramless.game.Game;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.jblas.Solve;
 import org.jblas.DoubleMatrix;
 
 import java.util.Arrays;

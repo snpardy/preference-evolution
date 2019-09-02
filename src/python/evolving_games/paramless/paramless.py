@@ -5,21 +5,15 @@ Created on 2019-03-05 12:59
 """
 from dataclasses import replace    # standard library
 import math
-import os
 import random
-import time
 
 
-import matplotlib.animation as animation      # 3rd party packages
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import axes3d
-from matplotlib import cm
+import progressbar    # 3rd party packages
 import numpy as np
 
-from .fitness import Exhaustive   # local source
+from .fitness_class import Exhaustive   # local source
 from .game import Game
 from .utilitySurface import UtilitySurface
-
 
 # default tolerance for float comparisons
 DEFAULT_ATOL = 1e-8
@@ -84,6 +78,47 @@ def _attempt_gaussian_mutation(surface: UtilitySurface, mutation_epsilon, radius
     return replace(surface, utility_grid=mutant_utility_grid)
 
 
+def _attempt_gaussian_mutation_more_info(surface: UtilitySurface, mutation_epsilon, radius):
+    """
+    :param surface:
+    :param mutation_epsilon:
+    :param radius:
+    :return :param surface mutated by a randomly generate bivariate normal distribution
+    """
+    x_mean = np.random.choice(surface.my_payoff)
+    y_mean = np.random.choice(surface.opponent_payoff)
+
+    variance = np.random.rand() * radius
+
+    perturbation = _bivariate_normal_mutation(surface, mutation_epsilon, x_mean, y_mean,
+                                              variance)
+    # upwards
+    if np.random.randint(2):
+        mutant_utility_grid = surface.utility_grid + perturbation
+    # downwards
+    else:
+        mutant_utility_grid = surface.utility_grid - perturbation
+
+    return replace(surface, utility_grid=mutant_utility_grid), (variance, x_mean, y_mean)
+
+
+def gaussian_mutation_more_info(surface: UtilitySurface, mutation_epsilon, radius,
+                      max_iterations=1000000, lower_bound=None,
+                      upper_bound=None, **kwargs):
+    is_inside = False
+    attempt = 0
+    mutant = None
+    while not is_inside:
+        mutant, mutation_info = _attempt_gaussian_mutation_more_info(surface,
+                                                                     mutation_epsilon, radius)
+        is_inside = _within_bounds(mutant.utility_grid, lower_bound, upper_bound)
+        attempt += 1
+        if attempt > max_iterations:
+            raise RuntimeError(
+                "Attempted too many mutations without producing anything within bounds")
+    return mutant, mutation_info
+
+
 def gaussian_mutation(surface: UtilitySurface, mutation_epsilon, radius,
                       max_iterations=1000000, lower_bound=None,
                       upper_bound=None, **kwargs):
@@ -120,7 +155,7 @@ def _expected_payoff(game: Game, equilibrium):
     return row_payoff, column_payoff
 
 
-def _utility_transform(game: Game, row_utility, column_utility):
+def _utility_transform(game: Game, row_utility: UtilitySurface, column_utility: UtilitySurface):
     """
     Returns a new Game with the pay-off altered by the given utility functions.
     Assumes that the utility 'functions' are grids that accept arguments in the form of utility_function[my_payoff, opponents_payoff]
@@ -141,13 +176,14 @@ def _utility_transform(game: Game, row_utility, column_utility):
 
     for i, _ in enumerate(row_payoff_matrix):
         for j, _ in enumerate(row_payoff_matrix[i]):
-            row_player[i][j] = row_utility[row_payoff_matrix[i][j], column_payoff_matrix[i][j]]
-            column_player[i][j] = column_utility[
-                column_payoff_matrix[i][j], row_payoff_matrix[i][j]]
+            row_player[i][j] = row_utility.get_utility_by_payoff(row_payoff_matrix[i][j],
+                                                                 column_payoff_matrix[i][j])
+            column_player[i][j] = column_utility.get_utility_by_payoff(
+                column_payoff_matrix[i][j], row_payoff_matrix[i][j])
     return Game(row_player, column_player)
 
 
-def random_payoff_fitness(resident: np.meshgrid, mutant: np.meshgrid, **kwargs):
+def random_payoff_fitness(resident: UtilitySurface, mutant: UtilitySurface, **kwargs):
     payoff_game: Game = kwargs['payoff_game']
 
     utility_game = _utility_transform(payoff_game, resident, mutant)
@@ -171,7 +207,7 @@ def exhaustive_payoff_fitness(resident: UtilitySurface, mutant: UtilitySurface, 
     """
     payoff_game: Game = kwargs['payoff_game']
 
-    utility_game = _utility_transform(payoff_game, resident.utility_grid, mutant.utility_grid)
+    utility_game = _utility_transform(payoff_game, resident, mutant)
     equilibria = utility_game.support_enumeration()
 
     resident_payoff_list = []
@@ -203,7 +239,7 @@ def exhaustive_payoff_fitness_random_game(resident: UtilitySurface, mutant: Util
     old_game: Game = kwargs['payoff_game']
     payoff_game = old_game.shift_game(min(resident.my_payoff), max(resident.my_payoff))
 
-    utility_game = _utility_transform(payoff_game, resident.utility_grid, mutant.utility_grid)
+    utility_game = _utility_transform(payoff_game, resident, mutant)
     equilibria = utility_game.support_enumeration()
 
     resident_payoff_list = []
@@ -219,8 +255,12 @@ def exhaustive_payoff_fitness_random_game(resident: UtilitySurface, mutant: Util
         Exhaustive(mutant_payoff_list)
 
 
-def tournament_fitness_function(resident: UtilitySurface, mutant: UtilitySurface,
-                                rounds=100, max_payoff=10, **kwargs):
+def tournament_deterministic_fitness_function(resident: UtilitySurface, mutant:
+                                              UtilitySurface, population_epsilon: float,
+                                              assortativity: float=0,
+                                              rounds=100,
+                                              max_payoff=5,
+                                              **kwargs):
     """
     :param resident: np.meshgrid utility function
     :param mutant: np.meshgrid utility function
@@ -228,24 +268,101 @@ def tournament_fitness_function(resident: UtilitySurface, mutant: UtilitySurface
     :param max_payoff: max payoff that can be generated in a game.
     :return: a tuple of (resident payoff, mutant payoff)
     """
+
     resident_fitness, mutant_fitness = 0, 0
     for _ in range(rounds):
         # Generating game for the round
-        payoffs = np.reshape(np.floor(max_payoff * np.random.random(4)), (-1, 2)).astype(int)
+        payoffs = np.reshape((max_payoff * np.random.random(4)), (-1, 2))
         game: Game = Game(payoffs, np.transpose(payoffs))
 
         # Converting to utility based game
-        utility_game = _utility_transform(game, resident.utility_grid, mutant.utility_grid)
+        resident_mutant_utility_game = _utility_transform(game, resident, mutant)
+        resident_resident_utility_game = _utility_transform(game, resident, resident)
 
-        equilibria = random.choice(list(utility_game.support_enumeration()))
+        # Selecting equilibria
+        resident_mutant_equilibria = random.choice(list(
+            resident_mutant_utility_game.support_enumeration()))
+        resident_resident_equilibria = random.choice(list(
+            resident_resident_utility_game.support_enumeration()))
 
-        resident_payoff, mutant_payoff = _expected_payoff(game, equilibria)
+        resident_payoff = (1-population_epsilon) * (
+                               _expected_payoff(game,resident_resident_equilibria)[0])\
+                          + population_epsilon*_expected_payoff(game, resident_mutant_equilibria)[0]
+
+        mutant_payoff = _expected_payoff(game, resident_mutant_equilibria)[1]
 
         resident_fitness += resident_payoff
         mutant_fitness += mutant_payoff
-
+    #     do we need to divide by something here to get average?
     return resident_fitness, mutant_fitness
 
+
+def tournament_local_fitness_function(resident: UtilitySurface,
+                                      mutant: UtilitySurface,
+                                      mutation_info: tuple,
+                                      population_epsilon: float,
+                                      assortativity: float=0,
+                                      rounds=100,
+                                      max_payoff=5,
+                                              **kwargs):
+
+    """
+    :param resident: np.meshgrid utility function
+    :param mutant: np.meshgrid utility function
+    :param rounds: number of rounds the tournament goes for.
+    :param max_payoff: max payoff that can be generated in a game.
+    :return: a tuple of (resident payoff, mutant payoff)
+    """
+
+    variance = mutation_info[0]
+    x_mean = mutation_info[1]
+    y_mean = mutation_info[2]
+
+    locality = 2*(variance**2)
+
+    x_min = x_mean-locality
+    x_max = x_mean+locality
+    y_min = y_mean-locality
+    y_max = y_mean+locality
+
+    if x_min < 0:
+        x_min = 0
+    if y_min < 0:
+        y_min = 0
+    if x_max > max_payoff:
+        x_max = max_payoff
+    if y_max > max_payoff:
+        y_max = max_payoff
+
+    resident_fitness, mutant_fitness = 0, 0
+    for _ in range(rounds):
+        # Generating game for the round
+        payoffs = np.reshape((np.random.random(4)), (-1, 2))
+        x_payoffs = x_min + payoffs*(x_max-x_min)
+        y_payoffs = y_min + np.transpose(payoffs)*(y_max-y_min)
+        game_resident_mutant: Game = Game(x_payoffs, y_payoffs)
+        game_resident_resident: Game = Game(x_payoffs, np.transpose(x_payoffs))
+
+        # Converting to utility based game
+        resident_mutant_utility_game = _utility_transform(game_resident_mutant, resident, mutant)
+        resident_resident_utility_game = _utility_transform(game_resident_resident, resident, resident)
+
+        # Selecting equilibria
+        resident_mutant_equilibria = random.choice(list(
+            resident_mutant_utility_game.support_enumeration()))
+        resident_resident_equilibria = random.choice(list(
+            resident_resident_utility_game.support_enumeration()))
+
+        resident_payoff = (1-population_epsilon) * (
+                               _expected_payoff(game_resident_resident, resident_resident_equilibria)[0])\
+                          + population_epsilon*_expected_payoff(game_resident_mutant, resident_mutant_equilibria)[0]
+
+        mutant_payoff = _expected_payoff(game_resident_mutant, resident_mutant_equilibria)[1]
+
+        resident_fitness += resident_payoff
+        mutant_fitness += mutant_payoff
+    #     do we need to divide by something here to get average?
+    return resident_fitness, mutant_fitness
 
 # Evolution
 def evolution_step(resident: UtilitySurface, fitness_function, mutation_function, atol,
@@ -255,16 +372,17 @@ def evolution_step(resident: UtilitySurface, fitness_function, mutation_function
     """
 
     invasion = False
-    mutant = mutation_function(resident, **kwargs)
-
+    mutant, mutation_info = mutation_function(resident, **kwargs)
     fitness_resident, fitness_mutant = fitness_function(resident,
-                                                        mutant, **kwargs)
+                                                        mutant,
+                                                        mutation_info,
+                                                        **kwargs)
 
     if fitness_resident < fitness_mutant and abs(fitness_resident-fitness_mutant) > atol:
         # if fitness_resident <= fitness_mutant:
         resident = mutant
         invasion = True
-    return resident, invasion
+    return resident, invasion, (fitness_mutant-fitness_resident)
 
 
 def evolve(initial_surface: UtilitySurface, fitness_function, mutation_function, iterations,
@@ -280,98 +398,27 @@ def evolve(initial_surface: UtilitySurface, fitness_function, mutation_function,
         # Only care about saving the utility grid at each mutation
         time_series_array = [resident.utility_grid]
 
-    # with progressbar.ProgressBar(max_value=iterations) as bar:
-    for step in range(1, iterations):
-        step_count += 1
-        # bar.update(step)
-        resident, invasion = evolution_step(resident, fitness_function, mutation_function,
-                                            atol, **kwargs)
-        if invasion:
-            invasion_count += 1
-            if time_series_data:
-                # Only care about saving the utility grid at each mutation
-                time_series_array.append(resident.utility_grid)
-    if time_series_data:
-        return resident, time_series_array, invasion_count
-    return resident
+    with progressbar.ProgressBar(max_value=iterations) as bar:
+        for step in range(1, iterations):
+            step_count += 1
+            bar.update(step)
+            resident, invasion, fitness_diff = evolution_step(resident, fitness_function,
+                                                  mutation_function,
+                                                atol, **kwargs)
+            if invasion:
+                invasion_count += 1
+                if time_series_data:
+                    # Only care about saving the utility grid at each mutation
+                    time_series_array.append(resident.utility_grid)
+            # print(fitness_diff)
+        if time_series_data:
+            return resident, time_series_array, invasion_count
+        return resident
 
 
 '''
 Extra functions - not part of main evolution simulation.
 '''
-
-
-def create_animation(path, x, y, time_series_array, height, fps, mp4=True, gif=False):
-    """
-
-    """
-
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    plt.xlabel("My Payoff")
-    plt.ylabel("Opponent's Payoff")
-
-    def update_plot(frame_number, z, plot):
-        plot[0].remove()
-        plot[0] = ax.plot_surface(x, y, z[frame_number], cmap="viridis", linewidth=0)
-
-    plot = [ax.plot_surface(x, y, time_series_array[0], cmap='viridis', linewidth=0)]
-
-    ax.set_zlim(-1, height)
-
-    ani = animation.FuncAnimation(fig, update_plot, len(time_series_array),
-                                  fargs=(time_series_array, plot),
-                                  interval=1000 / fps)
-
-    fn = 'plot_surface_animation'
-    if mp4:
-        ani.save(path + fn + '.mp4', writer='ffmpeg', fps=fps)
-    if gif:
-        ani.save(path + fn + '.gif', writer='imagemagick', fps=fps)
-
-
-def save_run(path, time_series, initial_surface: UtilitySurface, lower_bound=0,
-             upper_bound=10):
-
-    now = time.localtime(time.time())
-    run_id = str(now.tm_year) + "_"+str(now.tm_mon)+"_"+str(now.tm_mday)+"_"+str(now.tm_hour)+"_"+str(now.tm_min)+"_"+str(now.tm_sec)
-    path = path + run_id +"\\"
-    print(path)
-    os.mkdir(path)
-
-    X, Y = np.meshgrid(initial_surface.my_payoff, initial_surface.opponent_payoff, indexing='ij')
-    initial_Z = initial_surface.utility_grid
-    final_Z = time_series[-1]
-
-    # Make a 3D plot
-    fig = plt.figure()
-    ax1 = fig.add_subplot(111, projection='3d')
-    ax1.set_zlim3d(-1, upper_bound)
-    ax1.plot_surface(X, Y, initial_Z, cmap='viridis', linewidth=0)
-    ax1.set_title('Initial Surface')
-    ax1.set_xlabel('My Payoff')
-    ax1.set_ylabel("Opponent's Payoff")
-    ax1.set_zlabel('My Utility')
-    plt.savefig(path+'\\initial.png')
-    plt.close(fig)
-
-    fig = plt.figure()
-    ax2 = fig.add_subplot(111, projection='3d')
-    ax2.set_zlim3d(-1, upper_bound)
-    ax2.plot_surface(X, Y, final_Z, cmap='viridis', linewidth=0)
-    ax2.set_title('Evolved Surface')
-    ax2.set_xlabel('My Payoff')
-    ax2.set_ylabel("Opponent's Payoff")
-    ax2.set_zlabel('My Utility')
-    plt.savefig(path+'final.png')
-    plt.close(fig)
-
-    create_animation(path,
-                       X,
-                       Y,
-                       time_series,
-                       upper_bound,
-                       17)
 
 
 # Unused and untested since recent changes

@@ -1,4 +1,4 @@
-from paramless import fitness as f
+from paramless import fitness_class as f
 
 
 def test_exhaustive_abs():

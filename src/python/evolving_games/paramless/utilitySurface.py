@@ -15,6 +15,7 @@ class UtilitySurface:
     my_payoff: np.ndarray
     opponent_payoff: np.ndarray
     utility_grid: np.meshgrid
+    step: float
 
     @require("`my_payoff` must be the same shape as `opponent_payoff`",
              lambda args: args.self.my_payoff.shape == args.self.opponent_payoff.shape )
@@ -28,10 +29,48 @@ class UtilitySurface:
         """
         pass
 
+    @classmethod
+    def selfish(cls, max: int, step: float, min: int=0):
+        x = np.arange(min, max, step, dtype=float)
+        y = np.arange(min, max, step, dtype=float)
+        z = np.meshgrid(x, y, indexing='ij')[0]
+
+        return cls(x, y, z, step)
+
+    @classmethod
+    def selfless(cls, max: int, step: float, min: int = 0):
+        x = np.arange(min, max, step, dtype=float)
+        y = np.arange(min, max, step, dtype=float)
+        z = np.meshgrid(x, y, indexing='ij')[1]
+
+        return cls(x, y, z, step)
+
+    @classmethod
+    def random(cls, max: int, step: float, min: int = 0):
+        x = np.arange(min, max, step, dtype=float)
+        y = np.arange(min, max, step, dtype=float)
+        z = (np.random.rand(len(x), len(y)) * max)-min
+
+        return cls(x, y, z, step)
+
     def __getitem__(self, args):
         """
         Can access the utility_grid by index by applying square brackets directly to UtilitySurface object.
         :param args: must contain [my_payoff, opponent_payoff]
         :return: self.utility_grid[args[0], args[1]]
         """
-        return self.utility_grid[args[0], args[1]]
+        raise Exception('use get_utility_by_payoff')
+
+    def get_utility_by_payoff(self, my_payoff: float, opponent_payoff: float):
+        my_index = int(round(my_payoff / self.step))
+        opp_index = int(round(opponent_payoff / self.step))
+
+        if my_index == len(self.utility_grid):
+            my_index -= 1
+        if opp_index == len(self.utility_grid[my_index]):
+            opp_index -= 1
+
+        return self.utility_grid[my_index][opp_index]
+
+
+
