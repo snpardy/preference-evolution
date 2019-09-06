@@ -110,6 +110,12 @@ def time_series_to_csv(file_name: str, time_series_array: list):
             f.write("<break/>\n")
 
 
+def append_matrix_to_csv(file_name: str, matrix):
+    with open(file_name, 'a+') as f:
+        np.savetxt(f, matrix, delimiter=',')
+        f.write("<break/>\n")
+
+
 def csv_to_time_series_array(file_name: str):
     out_arr = []
     with open(file_name, 'r') as f:

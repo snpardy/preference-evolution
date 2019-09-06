@@ -1,6 +1,6 @@
 {
   "seed": SEED,
-  "iterations": 500000,
+  "iterations": 200000,
   "maxPayoff": MAXPAYOFF,
   "step": STEP,
   "initialShape": "INITIALSHAPE",

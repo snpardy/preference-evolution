@@ -12,7 +12,7 @@ class Game(nash.Game):
         :param upper_bound:
         :return: None
         """
-
+        
         new_payoffs = self.payoff_matrices
 
         # kinda gross

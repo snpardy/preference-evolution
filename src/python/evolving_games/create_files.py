@@ -25,9 +25,9 @@ def remplazar(diccionario, nombre_template):
 TEMPLATE_NAME = 'template.json'
 
 inital_shapes = ['selfless', 'random']
-mutant_shares = [.05, .1, .2]
-mutationSizes = [.05, .1, .3, .5, 1]
-mutationRadius = [.5, .8, 2]
+mutant_shares = [.2, .5]
+mutationSizes = [.1, .3, .5]
+mutationRadius = [2, 4]
 maxPayoff = 5
 steps = [.1, .5, 1]
 
@@ -39,7 +39,7 @@ def create_filenames():
     for shape in inital_shapes:
         for epsilon in mutant_shares:
             for mutationEp in mutationSizes:
-                for radius in mutant_shares:
+                for radius in mutationRadius:
                     for step in steps:
                         # for _ in range(50):
                         seed = np.random.randint(999999999)

@@ -8,12 +8,12 @@ import math
 import random
 
 
-import progressbar    # 3rd party packages
 import numpy as np
 
 from .fitness_class import Exhaustive   # local source
 from .game import Game
 from .utilitySurface import UtilitySurface
+from .utils import append_matrix_to_csv
 
 # default tolerance for float comparisons
 DEFAULT_ATOL = 1e-8
@@ -364,6 +364,7 @@ def tournament_local_fitness_function(resident: UtilitySurface,
     #     do we need to divide by something here to get average?
     return resident_fitness, mutant_fitness
 
+
 # Evolution
 def evolution_step(resident: UtilitySurface, fitness_function, mutation_function, atol,
                    **kwargs):
@@ -386,10 +387,16 @@ def evolution_step(resident: UtilitySurface, fitness_function, mutation_function
 
 
 def evolve(initial_surface: UtilitySurface, fitness_function, mutation_function, iterations,
-           atol=DEFAULT_ATOL, seed=None, time_series_data=False, **kwargs):
+           record_invasion_each_step: int, atol=DEFAULT_ATOL, seed=None,
+           time_series_data=False, save_as_we_go=False, file_name: str=None, **kwargs):
     """
     Evolve
     """
+
+    # No point starting the run if no file_name given
+    if save_as_we_go and file_name is None:
+        raise ValueError("file_name paramater cannot be None if save_as_we_go is True")
+
     invasion_count = 0
     step_count = 0
     np.random.seed(seed)
@@ -398,22 +405,22 @@ def evolve(initial_surface: UtilitySurface, fitness_function, mutation_function,
         # Only care about saving the utility grid at each mutation
         time_series_array = [resident.utility_grid]
 
-    with progressbar.ProgressBar(max_value=iterations) as bar:
-        for step in range(1, iterations):
-            step_count += 1
-            bar.update(step)
-            resident, invasion, fitness_diff = evolution_step(resident, fitness_function,
-                                                  mutation_function,
-                                                atol, **kwargs)
-            if invasion:
-                invasion_count += 1
-                if time_series_data:
-                    # Only care about saving the utility grid at each mutation
-                    time_series_array.append(resident.utility_grid)
-            # print(fitness_diff)
-        if time_series_data:
-            return resident, time_series_array, invasion_count
-        return resident
+
+    for step in range(1, iterations):
+        step_count += 1
+        resident, invasion, fitness_diff = evolution_step(resident, fitness_function,
+                                              mutation_function,
+                                            atol, **kwargs)
+        if invasion:
+            invasion_count += 1
+            if time_series_data and (invasion_count % record_invasion_each_step == 0):
+                # Only care about saving the utility grid at each mutation
+                time_series_array.append(resident.utility_grid)
+            if save_as_we_go and (invasion_count % record_invasion_each_step == 0):
+                append_matrix_to_csv(file_name, resident.utility_grid)
+    if time_series_data:
+        return resident, time_series_array, invasion_count
+    return resident
 
 
 '''
