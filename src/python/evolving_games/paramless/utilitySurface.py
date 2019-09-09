@@ -67,10 +67,28 @@ class UtilitySurface:
 
         if my_index == len(self.utility_grid):
             my_index -= 1
+        elif my_index > len(self.utility_grid):
+            raise Exception("Payoff out of bounds")
         if opp_index == len(self.utility_grid[my_index]):
             opp_index -= 1
+        elif opp_index > len(self.utility_grid[my_index]):
+            raise Exception("Payoff out of bounds")
 
         return self.utility_grid[my_index][opp_index]
 
+    def get_grid_index_by_payoff(self, my_payoff: float, opponent_payoff: float):
+        my_index = int(round(my_payoff / self.step))
+        opp_index = int(round(opponent_payoff / self.step))
+
+        if my_index == len(self.utility_grid):
+            my_index -= 1
+        elif my_index > len(self.utility_grid):
+            raise Exception("Payoff out of bounds")
+        if opp_index == len(self.utility_grid[my_index]):
+            opp_index -= 1
+        elif opp_index > len(self.utility_grid[my_index]):
+            raise Exception("Payoff out of bounds")
+
+        return (my_index, opp_index)
 
 

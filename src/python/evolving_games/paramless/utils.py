@@ -121,7 +121,7 @@ def csv_to_time_series_array(file_name: str):
     with open(file_name, 'r') as f:
         curr_matrix = []
         for line in f:
-            if line == "<break/>\n":
+            if (line == "<break/>\n") or (line == "<break/>"):
                  # reached the end of a matrix
                 out_arr.append(np.array(curr_matrix))
                 curr_matrix = []

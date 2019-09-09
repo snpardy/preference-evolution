@@ -45,3 +45,4 @@ class Game(nash.Game):
                 payoffs -= payoff_shift
 
         return Game(*new_payoffs)
+

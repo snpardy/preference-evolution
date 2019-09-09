@@ -1,12 +1,11 @@
-
-import json
+import json    # standard library
 import sys
 import random
 
-import numpy as np
+import numpy as np   # 3rd party library
 
 
-from paramless import paramless as p
+from paramless import paramless as p   # local source
 from paramless import utils
 
 if __name__ == "__main__":
@@ -39,9 +38,10 @@ if __name__ == "__main__":
 
 
     _, time_series, _ = p.evolve(initial,
-                                 p.tournament_local_fitness_function,
+                                 p.localised_tournament_fitness_function,
                                  p.gaussian_mutation_more_info, iterations,
-                                 seed=seed, time_series_data=True,
+                                 seed=seed, time_series_data=True, save_as_we_go=True,
+                                 file_name=output_file_name,
                                  mutation_epsilon=mutation_epsilon, radius=radius,
                                  population_epsilon=population_epsilon,  # assortativity,
                                  payoff_game=None,

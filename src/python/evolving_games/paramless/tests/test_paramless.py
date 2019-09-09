@@ -1,9 +1,14 @@
 import numpy as np
-
 from nashpy import Game
-from paramless import utilitySurface as us
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
+
+from paramless import utilitySurface as us
 from paramless import paramless as p
+
+
+
 
 
 # A few different strategies
@@ -66,42 +71,49 @@ def test_utility_transform():
     assert np.array(selfish_vs_selfless).all() == np.array(transformed_payoff).all()
 
 
-def test_exhaustive_payoff_fitness():
-    """
-    Tests the exhaustive_payoff_fitness function in paramless.
-    By extension, the magic methods of fitness.Exhaustive are tested.
-    """
-    # selfishness should be selected over selflessness
-    # given the payoffs of the prisoner's dilemma above,
-    # the fitnesses should be selfish=5 and selfless=0
-
-    # A prisoners dilemma game
-    prisoners_dilemma = Game([[3, 0], [5, 1]], [[3, 5], [0, 1]])
-
-    selfish_fitness, selfless_fitness = p.exhaustive_payoff_fitness(selfish, selfless,
-                                                                    payoff_game=prisoners_dilemma)
-    assert selfish_fitness[0] == 5
-    assert selfless_fitness[0] == 0
-    # comparison is done with a less than because that is how it is done in the
-    # evolution_step function
-    # negating the expression indicates no invasion
-    assert not (selfish_fitness < selfless_fitness)
-
-    # When both players are purely selfish, they both achieve a payoff of 1
-    # when payoffs are equal, resident is considered to have greater fitness
-    resident_fitness, mutant_fitness = p.exhaustive_payoff_fitness(selfish, selfish,
-                                                                   payoff_game=prisoners_dilemma)
-    assert resident_fitness[0] == 1
-    assert mutant_fitness[0] == 1
-    # comparison is done with a less than because that is how it is done
-    # in the evolution_step function
-    # negating the expression indicates no invasion
-    assert not (resident_fitness < mutant_fitness)
-
 def test_real_number_payoffs():
     x = np.arange(0, 10, .3, dtype=float)
     y = np.arange(0, 10, .3, dtype=float)
     selfish = np.meshgrid(x, y, indexing='ij')[0]
 
 
+def test_gaussian_mutation():
+    my_payoff = np.arange(0, 10, 1)
+    opponent_payoff = np.arange(0, 10, 1)
+
+    X, Y = np.meshgrid(my_payoff, opponent_payoff, indexing='ij')
+
+    resident = np.meshgrid(np.zeros(10), np.zeros(10), indexing='ij')[0]
+    resident = us.UtilitySurface(my_payoff, opponent_payoff, resident, 1)
+    mutant, mutation_info = p._attempt_gaussian_mutation_more_info(resident, 1, 3)
+    np.set_printoptions(precision=3)
+    print("\n")
+    print(resident.utility_grid)
+    print("\n ############ \n")
+    print(mutation_info)
+    print("\n ##########\n")
+    np.set_printoptions(precision=3)
+    for line in mutant.utility_grid:
+
+        print(line)
+
+
+    # Make a 3D plot
+    fig = plt.figure()
+    ax1 = fig.add_subplot(121, projection='3d')
+    ax1.set_zlim3d(-1, 10 + 1)
+    ax1.plot_surface(X, Y, resident.utility_grid, cmap='viridis', linewidth=0)
+    ax1.set_title('Initial Surface')
+    ax1.set_xlabel('My Payoff')
+    ax1.set_ylabel("Opponent's Payoff")
+    ax1.set_zlabel('My Utility')
+
+    ax2 = fig.add_subplot(122, projection='3d')
+    ax2.set_zlim3d(-1, 10 + 1)
+    ax2.plot_surface(X, Y, mutant.utility_grid, cmap='viridis', linewidth=0)
+    ax2.set_title('Evolved Surface')
+    ax2.set_xlabel('My Payoff')
+    ax2.set_ylabel("Opponent's Payoff")
+    ax2.set_zlabel('My Utility')
+    plt.show()
 

@@ -8,7 +8,7 @@ import math
 import random
 
 
-import numpy as np
+import numpy as np   # 3rd party library
 
 from .fitness_class import Exhaustive   # local source
 from .game import Game
@@ -136,6 +136,30 @@ def gaussian_mutation(surface: UtilitySurface, mutation_epsilon, radius,
 
 
 # Fitness Functions for payoff-utility fitness
+def _bayesian_nash_resident_vs_mutant(game: Game, population_epsilon: float):
+    
+    rowRes = game.payoff_matrices[0]
+    colRes = np.transpose(game.payoff_matrices[0])
+    colMut = game.payoff_matrices[1]
+
+
+    mutant_share = population_epsilon
+    resident_share = 1 - population_epsilon
+    
+    combined_resident = [[] for _ in range(len(game.payoff_matrices[0]))]
+    combined_mutant = [[] for _ in range(len(game.payoff_matrices[0]))]
+
+    for rowIndex, row in enumerate(combined_resident):
+        for i in (0,1):
+            for j in (0,1):
+                row.append(resident_share*rowRes[index][i] + mutant_share*rowRes[index][j])
+                combined_mutant[rowIndex].append(resident_share*colRes[index][i] + mutant_share*colMut[index][j])
+
+    bayesian_game = Game(combined_resident, combined_mutant)
+    
+    return bayesian_game.vertex_enumeration()
+    
+
 def _expected_payoff(game: Game, equilibrium):
     """
     Given a game with payoff structure of :param payoff_matrices:
@@ -183,79 +207,8 @@ def _utility_transform(game: Game, row_utility: UtilitySurface, column_utility: 
     return Game(row_player, column_player)
 
 
-def random_payoff_fitness(resident: UtilitySurface, mutant: UtilitySurface, **kwargs):
-    payoff_game: Game = kwargs['payoff_game']
 
-    utility_game = _utility_transform(payoff_game, resident, mutant)
-    equilibria = list(utility_game.support_enumeration())
-    equilibrium = random.choice(equilibria)
-
-    return _expected_payoff(payoff_game, equilibrium)
-
-
-def exhaustive_payoff_fitness(resident: UtilitySurface, mutant: UtilitySurface, **kwargs):
-    """
-    Given the resident utility functions of the resident and the mutant
-    to calculate the equilibria.
-    Then uses this equilibria to calculate the expected payoff of both
-    players for the given game.
-
-    :param resident: np.meshgrid utility function
-    :param mutant: np.meshgrid utility function
-    :param payoff_game: nashpy game object
-    :return: a tuple of (resident payoff, mutant payoff)
-    """
-    payoff_game: Game = kwargs['payoff_game']
-
-    utility_game = _utility_transform(payoff_game, resident, mutant)
-    equilibria = utility_game.support_enumeration()
-
-    resident_payoff_list = []
-    mutant_payoff_list = []
-    for eq in equilibria:
-        # For each equilibrium, we unpack the
-        # expected payoffs for both types for each
-        resident_payoff_list[len(resident_payoff_list):], \
-            mutant_payoff_list[len(mutant_payoff_list):] \
-            = tuple(zip(_expected_payoff(payoff_game, eq)))
-
-    return Exhaustive(resident_payoff_list), \
-        Exhaustive(mutant_payoff_list)
-
-
-def exhaustive_payoff_fitness_random_game(resident: UtilitySurface, mutant: UtilitySurface,
-                                          **kwargs):
-    """
-    Given the resident utility functions of the resident and the mutant
-    to calculate the equilibria.
-    Then uses this equilibria to calculate the expected payoff of both
-    players for the given game.
-
-    :param resident: np.meshgrid utility function
-    :param mutant: np.meshgrid utility function
-    :param payoff_game: nashpy game object
-    :return: a tuple of (resident payoff, mutant payoff)
-    """
-    old_game: Game = kwargs['payoff_game']
-    payoff_game = old_game.shift_game(min(resident.my_payoff), max(resident.my_payoff))
-
-    utility_game = _utility_transform(payoff_game, resident, mutant)
-    equilibria = utility_game.support_enumeration()
-
-    resident_payoff_list = []
-    mutant_payoff_list = []
-    for eq in equilibria:
-        # For each equilibrium, we unpack the
-        # expected payoffs for both types for each
-        resident_payoff_list[len(resident_payoff_list):], \
-            mutant_payoff_list[len(mutant_payoff_list):] \
-            = tuple(zip(_expected_payoff(payoff_game, eq)))
-
-    return Exhaustive(resident_payoff_list), \
-        Exhaustive(mutant_payoff_list)
-
-
-def tournament_deterministic_fitness_function(resident: UtilitySurface, mutant:
+def tournament_fitness_function(resident: UtilitySurface, mutant:
                                               UtilitySurface, population_epsilon: float,
                                               assortativity: float=0,
                                               rounds=100,
@@ -297,7 +250,7 @@ def tournament_deterministic_fitness_function(resident: UtilitySurface, mutant:
     return resident_fitness, mutant_fitness
 
 
-def tournament_local_fitness_function(resident: UtilitySurface,
+def localised_tournament_fitness_function(resident: UtilitySurface,
                                       mutant: UtilitySurface,
                                       mutation_info: tuple,
                                       population_epsilon: float,
@@ -315,33 +268,33 @@ def tournament_local_fitness_function(resident: UtilitySurface,
     """
 
     variance = mutation_info[0]
-    x_mean = mutation_info[1]
-    y_mean = mutation_info[2]
+    resident_mean = mutation_info[1]
+    mutant_mean = mutation_info[2]
 
-    locality = 2*(variance**2)
+    locality = variance*1.5
 
-    x_min = x_mean-locality
-    x_max = x_mean+locality
-    y_min = y_mean-locality
-    y_max = y_mean+locality
+    resident_min = resident_mean-locality
+    resident_max = resident_mean+locality
+    mutant_min = mutant_mean-locality
+    mutant_max = mutant_mean+locality
 
-    if x_min < 0:
-        x_min = 0
-    if y_min < 0:
-        y_min = 0
-    if x_max > max_payoff:
-        x_max = max_payoff
-    if y_max > max_payoff:
-        y_max = max_payoff
+    if resident_min < 0:
+        resident_min = 0
+    if mutant_min < 0:
+        mutant_min = 0
+    if resident_max > max_payoff:
+        resident_max = max_payoff
+    if mutant_max > max_payoff:
+        mutant_max = max_payoff
 
     resident_fitness, mutant_fitness = 0, 0
     for _ in range(rounds):
         # Generating game for the round
         payoffs = np.reshape((np.random.random(4)), (-1, 2))
-        x_payoffs = x_min + payoffs*(x_max-x_min)
-        y_payoffs = y_min + np.transpose(payoffs)*(y_max-y_min)
-        game_resident_mutant: Game = Game(x_payoffs, y_payoffs)
-        game_resident_resident: Game = Game(x_payoffs, np.transpose(x_payoffs))
+        resident_payoffs = resident_min + payoffs*(resident_max-resident_min)
+        mutant_payoffs = mutant_min + np.transpose(payoffs)*(mutant_max-mutant_min)
+        game_resident_mutant: Game = Game(resident_payoffs, mutant_payoffs)
+        game_resident_resident: Game = Game(resident_payoffs, np.transpose(resident_payoffs))
 
         # Converting to utility based game
         resident_mutant_utility_game = _utility_transform(game_resident_mutant, resident, mutant)
@@ -394,9 +347,11 @@ def evolve(initial_surface: UtilitySurface, fitness_function, mutation_function,
     """
 
     # No point starting the run if no file_name given
-    if save_as_we_go and file_name is None:
-        raise ValueError("file_name paramater cannot be None if save_as_we_go is True")
-
+    if save_as_we_go:
+        if file_name is None:
+            raise ValueError("file_name paramater cannot be None if save_as_we_go is True")
+        else:
+            append_matrix_to_csv(file_name, initial_surface.utility_grid)
     invasion_count = 0
     step_count = 0
     np.random.seed(seed)
@@ -412,49 +367,12 @@ def evolve(initial_surface: UtilitySurface, fitness_function, mutation_function,
                                               mutation_function,
                                             atol, **kwargs)
         if invasion:
+            # Only care about saving the utility grid when an invasion occurs
             invasion_count += 1
             if time_series_data and (invasion_count % record_invasion_each_step == 0):
-                # Only care about saving the utility grid at each mutation
                 time_series_array.append(resident.utility_grid)
             if save_as_we_go and (invasion_count % record_invasion_each_step == 0):
                 append_matrix_to_csv(file_name, resident.utility_grid)
     if time_series_data:
         return resident, time_series_array, invasion_count
     return resident
-
-
-'''
-Extra functions - not part of main evolution simulation.
-'''
-
-
-# Unused and untested since recent changes
-def _surface_distance(u, v):
-    """
-    Calculates the sum of euclidian distance between respective points in two given surfaces.
-    Used as a distance function.
-    Assumes that the arrays representing the surfaces are the same shape.
-    """
-    total = 0
-    for i, _ in enumerate(u[0]):
-        for j, _ in enumerate(u[0][i]):
-            one_point_dist = 0
-            for axis, _ in enumerate(u):
-                one_point_dist += (u[axis][i, j] - v[axis][i, j]) ** 2
-            total += math.sqrt(one_point_dist)
-
-    return total
-
-
-# Unused and untested since recent changes
-def _distance_fitness_function(resident, mutant, target_surface, **kwargs):
-    """
-    Returns the fitness of surfaces of two parameters.
-    @returns fitness_resident, fitness_mutant
-    @param resident: the resident surface, of which the fitness will be returned
-    @param mutant: the mutant surface, of which the fitness will be returned
-    @param target_surface: the surface against which the fitness of the other two will be measured
-    """
-    fitness_resident = 1.0 / _surface_distance(resident, target_surface)
-    fitness_mutant = 1.0 / _surface_distance(mutant, target_surface)
-    return fitness_resident, fitness_mutant
