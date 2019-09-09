@@ -10,7 +10,7 @@ from paramless import utils
 
 if __name__ == "__main__":
 
-    with open(sys.argv[1]) as read_file:
+    with open('test.json') as read_file:
         params = json.loads(read_file.read())
 
     seed = params["seed"]
@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
     _, time_series, _ = p.evolve(initial,
                                  p.localised_tournament_fitness_function,
-                                 p.gaussian_mutation_more_info, iterations,
+                                 p.gaussian_mutation_more_info, iterations, save_data_at_step,
                                  seed=seed, time_series_data=True, save_as_we_go=True,
                                  file_name=output_file_name,
                                  mutation_epsilon=mutation_epsilon, radius=radius,
