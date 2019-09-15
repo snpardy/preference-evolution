@@ -85,7 +85,7 @@ def test_gaussian_mutation():
 
     resident = np.meshgrid(np.zeros(10), np.zeros(10), indexing='ij')[0]
     resident = us.UtilitySurface(my_payoff, opponent_payoff, resident, 1)
-    mutant, mutation_info = p._attempt_gaussian_mutation_more_info(resident, 1, 3)
+    mutant, mutation_info = p.gaussian_mutation_more_info(resident, .2, 3)
     np.set_printoptions(precision=3)
     print("\n")
     print(resident.utility_grid)

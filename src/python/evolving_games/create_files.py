@@ -26,25 +26,26 @@ TEMPLATE_NAME = 'template.json'
 
 inital_shapes = ['selfless', 'random']
 mutant_shares = [.2, .5]
-mutationSizes = [.1, .3, .5]
-mutationRadius = [2, 4]
+mutationSizes = [.1, .3]
+mutationRadius = [4]
 maxPayoff = 5
-steps = [.1, .5, 1]
+steps = [.1, .5]
 
 
 def create_filenames():
     ans = []
     blueprint = 'Evolution_initial_{}_popShare_{}_mutationEp_{}_mutationR_{}_payoff_{' \
                 '}_step_{}_seed_{}'
+
     for shape in inital_shapes:
         for epsilon in mutant_shares:
             for mutationEp in mutationSizes:
                 for radius in mutationRadius:
                     for step in steps:
-                        # for _ in range(50):
-                        seed = np.random.randint(999999999)
-                        ans.append(blueprint.format(
-                            shape, epsilon, mutationEp, radius, maxPayoff, step, seed))
+                        for _ in range(10):
+                            seed = np.random.randint(999999999)
+                            ans.append(blueprint.format(
+                                shape, epsilon, mutationEp, radius, maxPayoff, step, seed))
     return ans
 
 
