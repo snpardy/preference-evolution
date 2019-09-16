@@ -847,3 +847,6 @@ src/python/paramless_run_250k_iterations/paramless/game.py
 src/python/paramless_run_250k_iterations/paramless/fitness_class.py
 src/python/paramless_run_250k_iterations/paramless/__init__.py
 src/python/paramless_run_250k_iterations/create_files.py
+src/python/evolving_games/test.json
+src/python/evolving_games/test.csv
+src/python/evolving_games/plot.csv

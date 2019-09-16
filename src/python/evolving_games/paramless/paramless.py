@@ -376,7 +376,7 @@ def evolution_step(resident: UtilitySurface, fitness_function, mutation_function
     mutant, mutation_info = mutation_function(resident, **kwargs)
     fitness_resident, fitness_mutant = fitness_function(resident,
                                                         mutant,
-                                                        mutation_info,
+                                                        
                                                         **kwargs)
 
     if fitness_resident < fitness_mutant and abs(fitness_resident-fitness_mutant) > atol:

@@ -98,10 +98,6 @@ def test_exhaustive_payoff_fitness():
     # negating the expression indicates no invasion
     assert not (resident_fitness < mutant_fitness)
 
-def test_real_number_payoffs():
-    x = np.arange(0, 10, .3, dtype=float)
-    y = np.arange(0, 10, .3, dtype=float)
-    selfish = np.meshgrid(x, y, indexing='ij')[0]
 
 
 

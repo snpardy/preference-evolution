@@ -1,6 +1,6 @@
 \documentclass[11pt]{book}
 
-\usepackage{chicago}
+\usepackage[authoryear]{natbib}
 \usepackage{xcolor}
 \usepackage[T1]{fontenc}
 \usepackage{fourier}
@@ -94,10 +94,46 @@
 \chapter{Literature Review}
 
 \chapter{Research Methods}
+\chapter{The Model}
+\section{To Be Young and Fit}
+Fitness in our source material, \citet{alger_homo_2013},is stringent: for a population state to be considered \textit{unstable} the resident must achieve a payoff strictly less than that achieved by the mutant.
+In practice, in our simulations, to calculate fitness we pit two utility surfaces (the resident and mutant) against one another and calculate the expected payoffs for each.
+This is done with some population structure, $\epsilon$ in mind. So the expected payoff of the resident is given by:
+\begin{center}
+$\Pi(r, m, \epsilon) = (1-\epsilon)\pi(r,r) + \epsilon\pi(r,m)$
+\end{center}
+
+\section{The Games We will Play}
+
+A key part of any game-theoretic model that attempts to represent the process preference formation, is the kinds of games that are played.
+For the most part, our source material (\citet{alger_homo_2013}, \citet{newton_preferences_2017}) is largely agnostic about the games that are played in the models the work describes.
+This work assumes only that the games are symmetric and two player. 
+With this minimum assumption in mind, and given that we are interested in how cooperative preferences can develop we begin with a model in which the players are matched to play a single type of non-cooperative game.
+It is quickly apparent that a fitness measure that is determined by the players' expected payoff in only one game does not yield the results as desired.
+For example, using a prisoner's dilemma type we can write down a game with the following payoffs:
+
+\begin{center}
+	\begin{tabular}{|l||*{5}{c|}}\hline
+	 \label{prisoner_payoff}
+	 \backslashbox{Prisoner A}{Prisoner B}
+	 &\makebox[7em]{Remain Silent}&\makebox[7em]{Talk}\\\hline\hline
+	 Remain Silent & 3, 3 & 0, 5\\\hline
+	 Talk & 5, 0 & 1, 1 \\\hline
+	 \end{tabular}
+ \end{center}\mbox{}\\
+
+
+When running simulations in which each type's fitness is determined by their expected payoff when playing the above game,
+it becomes clear that only mutations that occur near to the payoff points ever lead to invasions. 
+
+ 
 
 \chapter{Results \& Discussion}
 
 \chapter{Conclusion}
 
+\newpage
+\bibliography{thesis}
+\bibliographystyle{apalike}
 
 \end{document}
