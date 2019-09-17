@@ -20,7 +20,7 @@ def test_local_fitness_average_payoff():
 
     actual_fitness = p.exhaustive_local_average_tournament_fitness_function(resident, mutant, mutation_info,
                                                            population_epsilon,
-                                                      rounds=100)
+                                                      rounds=1)
 
     payoff_array = np.array([3.56782016, 4.01994434, 1.03029842, 1.28499477])
     resident_payoffs = np.reshape(payoff_array, (-1, 2))
@@ -47,5 +47,5 @@ def test_local_fitness_average_payoff():
     print(resident_actual)
     print(mutant_actual)
 
-    # assert approx(resident_payoff, abs=1e-6) == resident_actual
-    # assert approx(mutant_payoff, abs=1e-6) == mutant_actual
+    assert approx(resident_payoff, abs=1e-6) == resident_actual
+    assert approx(mutant_payoff, abs=1e-6) == mutant_actual

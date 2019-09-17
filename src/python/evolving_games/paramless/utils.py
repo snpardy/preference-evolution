@@ -7,7 +7,8 @@ creating animations)
 
 import os
 import time
-
+import glob
+from collections import deque
 
 import matplotlib.animation as animation      # 3rd party packages
 import matplotlib.pyplot as plt
@@ -128,3 +129,51 @@ def csv_to_time_series_array(file_name: str):
             else:
                 curr_matrix.append(np.array(line.strip().split(sep=','), dtype=float))
     return out_arr
+
+def _readlines_reverse(filename):
+    with open(filename) as qfile:
+        qfile.seek(0, os.SEEK_END)
+        position = qfile.tell()
+        line = ''
+        while position >= 0:
+            qfile.seek(position)
+            next_char = qfile.read(1)
+            if next_char == "\n":
+                yield line[::-1]
+                line = ''
+            else:
+                line += next_char
+            position -= 1
+        yield line[::-1]
+
+def average_surface(path:str):
+    """
+    Takes a parameter of a path to a directory containing csv files of time series
+    arrays.
+    Averages across the final matrix of each array and returns this average matrix.
+    BEWARE matrices in csv time series array must be the same shape (i.e. arrays can be
+    different lengths, but the matrices within the arrays need to be the same.
+    :param path:
+    :return: average_matrix
+    """
+    file_name_array = glob.glob(path + '/*.csv')
+
+    matrix_array = []
+    for file_name in file_name_array:
+        curr_matrix = deque()
+        breaks_seen = 0
+        for line in _readlines_reverse(file_name):
+            if line == '':
+                # blank line is the last in file (first read)
+                pass
+            elif (line == '<break/>' or line == '<break/>\n'):
+                if breaks_seen <1:
+                    breaks_seen += 1
+                else:
+                    break
+            else:
+                curr_matrix.appendleft(np.array(line.strip().split(sep=','), dtype=float))
+        matrix_array.append(np.array(curr_matrix))
+    matrix_array = np.array(matrix_array)
+
+    return np.average(matrix_array, axis=0)

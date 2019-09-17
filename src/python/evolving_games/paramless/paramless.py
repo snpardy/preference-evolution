@@ -327,6 +327,94 @@ def localised_tournament_fitness_function(resident: UtilitySurface,
     return resident_fitness, mutant_fitness
 
 
+def exhaustive_localised_tournament_stringent_fitness_function(resident: UtilitySurface,
+                                                  mutant: UtilitySurface,
+                                                  mutation_info: tuple,
+                                                  population_epsilon: float,
+                                                  assortativity: float=0,
+                                                  rounds=100,
+                                                  max_payoff=5,
+                                                  **kwargs):
+
+    """
+    :param resident: np.meshgrid utility function
+    :param mutant: np.meshgrid utility function
+    :param rounds: number of rounds the tournament goes for.
+    :param max_payoff: max payoff that can be generated in a game.
+    :return: a tuple of (resident payoff, mutant payoff)
+    """
+
+
+    variance = mutation_info[0]
+    resident_mean = mutation_info[1]
+    mutant_mean = mutation_info[2]
+
+    locality = variance*1.5
+
+    resident_min = resident_mean-locality
+    resident_max = resident_mean+locality
+    mutant_min = mutant_mean-locality
+    mutant_max = mutant_mean+locality
+
+    if resident_min < 0:
+        resident_min = 0
+    if mutant_min < 0:
+        mutant_min = 0
+    if resident_max > max_payoff:
+        resident_max = max_payoff
+    if mutant_max > max_payoff:
+        mutant_max = max_payoff
+
+    resident_fitness, mutant_fitness = 0, 0
+    for _ in range(rounds):
+        # Generating game for the round
+        payoff_array = np.zeros(4)
+        # A
+        payoff_array[0] = np.random.random(1) * 5
+        # D
+        payoff_array[3] = np.random.random(1) * 5
+        # B
+        payoff_array[1] = resident_min + np.random.random(1) * (resident_max - resident_min)
+        # C
+        payoff_array[2] = mutant_min + np.random.random(1) * (mutant_max - mutant_min)
+
+        resident_payoffs = np.reshape(payoff_array, (-1, 2))
+        mutant_payoffs = np.reshape(np.transpose(resident_payoffs), (-1, 2))
+
+        game: Game = Game(resident_payoffs, mutant_payoffs)
+
+        # Converting to utility based game
+        resident_mutant_utility_game = _utility_transform(game, resident, mutant)
+        resident_resident_utility_game = _utility_transform(game, resident, resident)
+
+        # Iterating through all equilibria
+        resident_mutant_equilibria = list(resident_mutant_utility_game.support_enumeration())
+        resident_resident_equilibria = list(resident_resident_utility_game.support_enumeration())
+        resident_payoff = 0
+        mutant_payoff = 0
+
+        resident_v_resident_payoff = 0
+        resident_v_mutant_payoff = 0
+
+        for r_r_eq in resident_resident_equilibria:
+            resident_v_resident_payoff += (1 - population_epsilon) * (_expected_payoff(game,r_r_eq)[0])
+
+        resident_v_resident_payoff = resident_v_resident_payoff/len(resident_resident_equilibria)
+
+        for r_m_eq in resident_mutant_equilibria:
+            resident_v_mutant_payoff += population_epsilon * (_expected_payoff(game, r_m_eq)[0])
+            mutant_payoff += _expected_payoff(game, r_m_eq)[1]
+
+        resident_v_mutant_payoff = resident_v_mutant_payoff/len(resident_mutant_equilibria)
+        mutant_payoff = mutant_payoff/len(resident_mutant_equilibria)
+
+        resident_payoff = resident_v_resident_payoff + resident_v_mutant_payoff
+        if not (mutant_payoff > resident_payoff):
+            return 1, 0
+
+    return 0, 1
+
+
 def exhaustive_local_average_tournament_fitness_function(resident: UtilitySurface,
                                       mutant: UtilitySurface,
                                       mutation_info: tuple,
