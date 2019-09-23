@@ -53,6 +53,14 @@ class UtilitySurface:
 
         return cls(x, y, z, step)
 
+    @classmethod
+    def zeros(cls, max: int, step: float, min: int = 0):
+        x = np.arange(min, max, step, dtype=float)
+        y = np.arange(min, max, step, dtype=float)
+        z = np.zeros_like(np.meshgrid(x, y, indexing='ij')[0])
+
+        return cls(x, y, z, step)
+
     def __getitem__(self, args):
         """
         Can access the utility_grid by index by applying square brackets directly to UtilitySurface object.

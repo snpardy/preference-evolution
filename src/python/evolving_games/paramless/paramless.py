@@ -208,12 +208,14 @@ def _utility_transform(game: Game, row_utility: UtilitySurface, column_utility: 
     return Game(row_player, column_player)
 
 
-def tournament_fitness_function(resident: UtilitySurface, mutant: UtilitySurface,
-                                population_epsilon: float,
-                                assortativity: float=0,
-                                rounds=100,
-                                max_payoff=5,
-                                **kwargs):
+def nonsymmetric_tournament_fitness_function(resident: UtilitySurface,
+                                                  mutant: UtilitySurface,
+                                                  mutation_info: tuple,
+                                                  population_epsilon: float,
+                                                  assortativity: float=0,
+                                                  rounds=1000,
+                                                  max_payoff=5,
+                                                  **kwargs):
     """
     :param resident: np.meshgrid utility function
     :param mutant: np.meshgrid utility function
@@ -225,28 +227,39 @@ def tournament_fitness_function(resident: UtilitySurface, mutant: UtilitySurface
     resident_fitness, mutant_fitness = 0, 0
     for _ in range(rounds):
         # Generating game for the round
-        payoffs = np.reshape((max_payoff * np.random.random(4)), (-1, 2))
-        game: Game = Game(payoffs, np.transpose(payoffs))
+        row_payoffs = np.reshape((max_payoff * np.random.random(4)), (-1, 2))
+        col_payoffs = np.reshape((max_payoff * np.random.random(4)), (-1, 2))
+        game: Game = Game(row_payoffs, col_payoffs)
 
         # Converting to utility based game
         resident_mutant_utility_game = _utility_transform(game, resident, mutant)
         resident_resident_utility_game = _utility_transform(game, resident, resident)
 
-        # Selecting equilibria
-        resident_mutant_equilibria = random.choice(list(
-            resident_mutant_utility_game.support_enumeration()))
-        resident_resident_equilibria = random.choice(list(
-            resident_resident_utility_game.support_enumeration()))
+        # Iterating through all equilibria
+        resident_mutant_equilibria = list(resident_mutant_utility_game.support_enumeration())
+        resident_resident_equilibria = list(resident_resident_utility_game.support_enumeration())
+        resident_payoff = 0
+        mutant_payoff = 0
 
-        resident_payoff = (1-population_epsilon) * (
-                               _expected_payoff(game,resident_resident_equilibria)[0])\
-                          + population_epsilon*_expected_payoff(game, resident_mutant_equilibria)[0]
+        resident_v_resident_payoff = 0
+        resident_v_mutant_payoff = 0
 
-        mutant_payoff = _expected_payoff(game, resident_mutant_equilibria)[1]
+        resident_equilibria_faced = len(resident_resident_equilibria) + len(resident_mutant_equilibria)
+
+        for r_r_eq in resident_resident_equilibria:
+            resident_v_resident_payoff += (1 - population_epsilon) * (_expected_payoff(game,r_r_eq)[0])
+
+        for r_m_eq in resident_mutant_equilibria:
+            resident_v_mutant_payoff += population_epsilon * (_expected_payoff(game, r_m_eq)[0])
+            mutant_payoff += _expected_payoff(game, r_m_eq)[1]
+
+        
+        resident_payoff = (resident_v_resident_payoff + resident_v_mutant_payoff)/resident_equilibria_faced
+        mutant_payoff = mutant_payoff/len(resident_mutant_equilibria)
 
         resident_fitness += resident_payoff
         mutant_fitness += mutant_payoff
-    #     do we need to divide by something here to get average?
+
     return resident_fitness, mutant_fitness
 
 
@@ -349,7 +362,7 @@ def exhaustive_localised_tournament_stringent_fitness_function(resident: Utility
     resident_mean = mutation_info[1]
     mutant_mean = mutation_info[2]
 
-    locality = variance*1.5
+    locality = variance
 
     resident_min = resident_mean-locality
     resident_max = resident_mean+locality
@@ -393,25 +406,20 @@ def exhaustive_localised_tournament_stringent_fitness_function(resident: Utility
         resident_payoff = 0
         mutant_payoff = 0
 
-        resident_v_resident_payoff = 0
-        resident_v_mutant_payoff = 0
+        resident_v_resident_payoff = []
 
+        # Calculate all payoffs that the resident achieved playing against itself
         for r_r_eq in resident_resident_equilibria:
-            resident_v_resident_payoff += (1 - population_epsilon) * (_expected_payoff(game,r_r_eq)[0])
-
-        resident_v_resident_payoff = resident_v_resident_payoff/len(resident_resident_equilibria)
+            resident_v_resident_payoff.append(_expected_payoff(game,r_r_eq)[0])
 
         for r_m_eq in resident_mutant_equilibria:
-            resident_v_mutant_payoff += population_epsilon * (_expected_payoff(game, r_m_eq)[0])
-            mutant_payoff += _expected_payoff(game, r_m_eq)[1]
-
-        resident_v_mutant_payoff = resident_v_mutant_payoff/len(resident_mutant_equilibria)
-        mutant_payoff = mutant_payoff/len(resident_mutant_equilibria)
-
-        resident_payoff = resident_v_resident_payoff + resident_v_mutant_payoff
-        if not (mutant_payoff > resident_payoff):
-            return 1, 0
-
+            curr_mutant_payoff = _expected_payoff(game, r_m_eq)[1]
+            for resident_payoff in resident_v_resident_payoff:
+                # All mutant payoffs must be greater than all resident payoffs
+                if not curr_mutant_payoff > resident_payoff:
+                    # No invasion
+                    return 1, 0
+    # If we've made it to here, then the mutant invades
     return 0, 1
 
 
@@ -483,19 +491,20 @@ def exhaustive_local_average_tournament_fitness_function(resident: UtilitySurfac
         resident_v_resident_payoff = 0
         resident_v_mutant_payoff = 0
 
+        resident_equilibria_faced = len(resident_resident_equilibria) + len(resident_mutant_equilibria)
+
         for r_r_eq in resident_resident_equilibria:
             resident_v_resident_payoff += (1 - population_epsilon) * (_expected_payoff(game,r_r_eq)[0])
-
-        resident_v_resident_payoff = resident_v_resident_payoff/len(resident_resident_equilibria)
 
         for r_m_eq in resident_mutant_equilibria:
             resident_v_mutant_payoff += population_epsilon * (_expected_payoff(game, r_m_eq)[0])
             mutant_payoff += _expected_payoff(game, r_m_eq)[1]
 
-        resident_v_mutant_payoff = resident_v_mutant_payoff/len(resident_mutant_equilibria)
+        
+        resident_payoff = (resident_v_resident_payoff + resident_v_mutant_payoff)/resident_equilibria_faced
         mutant_payoff = mutant_payoff/len(resident_mutant_equilibria)
 
-        resident_fitness += resident_v_resident_payoff + resident_v_mutant_payoff
+        resident_fitness += resident_payoff
         mutant_fitness += mutant_payoff
 
     return resident_fitness, mutant_fitness
@@ -536,6 +545,7 @@ def evolve(initial_surface: UtilitySurface, fitness_function, mutation_function,
         else:
             append_matrix_to_csv(file_name, initial_surface.utility_grid)
     invasion_count = 0
+    rejected_mutant_count = 0
     step_count = 0
     np.random.seed(seed)
     resident = initial_surface
@@ -555,6 +565,8 @@ def evolve(initial_surface: UtilitySurface, fitness_function, mutation_function,
                 time_series_array.append(resident.utility_grid)
             if save_as_we_go and (invasion_count % record_invasion_each_step == 0):
                 append_matrix_to_csv(file_name, resident.utility_grid)
+        else:
+            rejected_mutant_count += 1
     if time_series_data:
         return resident, time_series_array, invasion_count
     return resident
