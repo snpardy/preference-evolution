@@ -848,3 +848,11 @@ src/python/paramless_run_250k_iterations/paramless/game.py
 src/python/paramless_run_250k_iterations/paramless/fitness_class.py
 src/python/paramless_run_250k_iterations/paramless/__init__.py
 src/python/paramless_run_250k_iterations/create_files.py
+src/python/symbolic_regression/.idea/misc.xml
+src/python/symbolic_regression/.idea/modules.xml
+src/python/symbolic_regression/.idea/vcs.xml
+src/python/symbolic_regression/.idea/symbolic_regression.iml
+src/python/symbolic_regression/.idea/inspectionProfiles/profiles_settings.xml
+res/scatter_plots/prisoners_dilemma_payoffs.png
+src/python/symbolic_regression/.idea/$PRODUCT_WORKSPACE_FILE$
+src/python/symbolic_regression/.idea/.gitignore
