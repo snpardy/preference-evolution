@@ -1,7 +1,6 @@
 import random
 import nashpy as nash
 import numpy as np
-from .utilitySurface import UtilitySurface
 
 
 class Game(nash.Game):
@@ -27,8 +26,7 @@ class Game(nash.Game):
 
         return row_payoff, column_payoff
 
-
-    def utility_transform(self, row_utility: UtilitySurface, column_utility: UtilitySurface):
+    def utility_transform(self, row_utility, column_utility):
         """
         Returns a new Game with the pay-off altered by the given utility functions.
         Assumes that the utility 'functions' are grids that accept arguments in the form of utility_function[my_payoff, opponents_payoff]
@@ -49,10 +47,13 @@ class Game(nash.Game):
 
         for i, _ in enumerate(row_payoff_matrix):
             for j, _ in enumerate(row_payoff_matrix[i]):
-                row_player[i][j] = row_utility.get_utility_by_payoff(row_payoff_matrix[i][j],
-                                                                    column_payoff_matrix[i][j])
-                column_player[i][j] = column_utility.get_utility_by_payoff(
-                    column_payoff_matrix[i][j], row_payoff_matrix[i][j])
+
+                my_payoff = row_payoff_matrix[i][j]
+                opponent_payoff = column_payoff_matrix[i][j]
+
+                row_player[i][j] = row_utility(row_payoff_matrix[i][j], column_payoff_matrix[i][j])
+                column_player[i][j] = column_utility(column_payoff_matrix[i][j], row_payoff_matrix[i][j])
+
         return Game(row_player, column_player)
 
 
