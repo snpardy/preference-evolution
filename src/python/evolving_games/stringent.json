@@ -1,0 +1,14 @@
+{
+  "seed": 521648,
+  "iterations": 10000,
+  "maxPayoff": 5,
+  "step": 0.5,
+  "initialShape": "random",
+  "mutantShareOfPopulation": 0.05,
+  "assortativity": 0.0,
+  "reportEveryTimeSteps": 10,
+  "outputFileName": "stringent.csv",
+  "mutationEpsilon": 0.1,
+  "mutationRadius": 2,
+  "jsonFileName": "stringent.json"
+}

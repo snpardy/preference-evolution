@@ -25,20 +25,29 @@ if __name__ == "__main__":
     output_file_name = params["outputFileName"]
     mutation_epsilon = params["mutationEpsilon"]
     radius = params["mutationRadius"]
+    fitness_function_name = params["fitnessFunction"]
 
     # Setting seeds
     random.seed(seed)
     np.random.seed(seed)
 
-    # Setting initial utility surface
-    if hasattr(p.UtilitySurface, initial_shape):
+    # Setting initzenial utility surface
+    if initial_shape == "restart_run":
+      path_to_csv = params["path_to_csv"]
+      raise ValueError("Functionality incomplete")
+    elif hasattr(p.UtilitySurface, initial_shape):
         initial = getattr(p.UtilitySurface, initial_shape)(payoff_size, step)
     else:
         raise ValueError("Please provide one of the built in initial shapes: selfish, \
                          selfless or random")
 
+    if hasattr(p, fitness_function_name):
+        fitness_function = getattr(p, fitness_function_name)
+    else:
+        raise ValueError("Fitness Function provided is not defined in paramless")
+
     _, time_series, _ = p.evolve(initial,
-                                 p.exhaustive_local_average_tournament_fitness_function,
+                                 fitness_function,
                                  p.gaussian_mutation_more_info, iterations, save_data_at_step,
                                  seed=seed, time_series_data=True, save_as_we_go=True,
                                  file_name=output_file_name,

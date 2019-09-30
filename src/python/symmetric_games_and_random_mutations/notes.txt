@@ -1,0 +1,13 @@
+//assumption//
+Eq selection: out perform in all equilibria
+OR out perform on average across all equilibria 
+either way, deterministic.
+
+Natural selection: out perform across all random games
+dgg
+
+scp spardy@monarch-dtn.erc.monash.edu:~//Mona0036/spardy/transfers/local_tournament_average/20190915/Evolution_initial_selfless_popShare_0.5_mutationEp_0.1_mutationR_3_payoff_5_step_0.1_seed_*.csv .
+
+Evolution_initial_selfless_popShare_0.5_mutationEp_0.1_mutationR_3_payoff_5_step_0.1_seed_*.csv
+
+Evolution_initial_selfless_popShare_0.5_mutationEp_0.1_mutationR_3_payoff_5_step_0.5_seed_*.csv

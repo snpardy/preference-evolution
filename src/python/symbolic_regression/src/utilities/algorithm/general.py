@@ -1,5 +1,5 @@
 from sys import version_info
-
+from algorithm.parameters import params
 
 def check_python_version():
     """
@@ -13,3 +13,20 @@ def check_python_version():
         s = "\nError: Python version not supported.\n" \
             "       Must use at least Python 3.5."
         raise Exception(s)
+
+
+def function_builder(string: str):
+
+    if params["GRAMMAR"] == "utility" or params["GRAMMAR"] == "linear":
+        def function(my_payoff, opponent_payoff):
+            res = eval(string)
+            return res
+    elif params["GRAMMAR"] == "convex_combination":
+        def function(my_payoff, opponent_payoff):
+            x = eval(string)
+            res = x * my_payoff + (1-x) * opponent_payoff
+            return res
+    else:
+        raise ValueError("'GRAMMAR' param must be 'utility', 'linear', "
+                         "or 'convex_combination'.")
+    return function

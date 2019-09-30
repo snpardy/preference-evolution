@@ -10,6 +10,7 @@
   "outputFileName": "OUTPUTFILE",
   "mutationEpsilon": MUTATIONSIZE,
   "mutationRadius": MUTATIONRADIUS,
-  "jsonFileName": "JSON_FILENAME"
+  "jsonFileName": "JSON_FILENAME",
+  "fitnessFunction": "exhaustive_local_average_tournament_fitness_function"
 
 }

@@ -146,7 +146,14 @@ Plotted in figure \ref{prisoners_payoff_plot}.
 	\item for a mutant to invade, they must achieve a fitness \textit{greater} than that achieved by the resident - as opposed to greater than or equal to.	
 \end{enumerate} 
 \np
-So, if a mutation occurs at the point (2, 2), given that this mutation has a relatively small radius, the expected payoff of the mutation will not change because the none of the payoff points of the game being played are effected.
+So, if a mutation occurs at the point (2, 2), given that this mutation has a relatively small radius, 
+the expected payoff of the mutant will not differ from that of the resident because the mutation does not touch any of the payoff points.
+Hence, the fitnesses are equal, and no invasion occurs. Running large scale simulations using this model results in `utility surfaces' like figure \todo{prisoner's dillema run}.
+
+\todo{is this to speculative/waffley?}
+Intuitively, these non-meaningful results fit with out analogy of the utility surface representing the real-world preferences of some agent.\
+In reality, agents face many more kinds of situations than just one instance of a prisoner's dilemma,
+and so to generate a preference surface that is potentially recognisable as one of a real-world agent it will need to be resilient to many different situations.
 
 
 \chapter{Results \& Discussion}
@@ -154,6 +161,7 @@ So, if a mutation occurs at the point (2, 2), given that this mutation has a rel
 \chapter{Conclusion}
 
 \newpage
+
 \bibliography{thesis}
 \bibliographystyle{apalike}
 

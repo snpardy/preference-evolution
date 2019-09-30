@@ -1,7 +1,5 @@
 from algorithm.parameters import params
 from fitness.evaluation import evaluate_fitness
-from stats.stats import stats, get_stats
-from utilities.stats import trackers
 from operators.initialisation import initialisation
 from operators.mutation import mutate
 
@@ -15,12 +13,16 @@ def search_loop(initial_resident):
     """
 
     resident = initial_resident
+    time_series = [resident]
     # Traditional GE
     for generation in range(1, (params['GENERATIONS']+1)):
 
-        resident = step(resident)
+        resident, invasion = step(resident)
+        if invasion:
+            time_series.append(resident)
 
-    return resident
+
+    return time_series
 
 
 def search_loop_from_state():
@@ -52,6 +54,6 @@ def step(resident):
     resident.fitness, mutant.fitness = evaluate_fitness(resident, mutant)
 
     if mutant.fitness > resident.fitness:
-        resident = mutant
+        return mutant, True
 
-    return resident
+    return resident, False
