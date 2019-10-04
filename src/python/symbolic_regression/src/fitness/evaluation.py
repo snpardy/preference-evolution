@@ -47,19 +47,17 @@ def evaluate_fitness(resident, mutant):
     return fitness_function(resident_function, mutant_function, sample_game, mutant_share, assortativity)
 
 
-
-
 def _non_symmetric_game():
-    MAX_PAYOFF = params["MAX_PAYOFF"]
-    row_payoffs = np.reshape((MAX_PAYOFF * np.random.random(4)), (-1, 2))
-    col_payoffs = np.reshape((MAX_PAYOFF * np.random.random(4)), (-1, 2))
+    max_payoff = params["MAX_PAYOFF"]
+    row_payoffs = np.reshape((max_payoff * np.random.random(4)), (-1, 2))
+    col_payoffs = np.reshape((max_payoff * np.random.random(4)), (-1, 2))
 
     return Game(row_payoffs, col_payoffs)
 
 
 def _symmetric_game():
-    MAX_PAYOFF = params["MAX_PAYOFF"]
-    row_payoffs = np.reshape((MAX_PAYOFF * np.random.random(4)), (-1, 2))
+    max_payoff = params["MAX_PAYOFF"]
+    row_payoffs = np.reshape((max_payoff * np.random.random(4)), (-1, 2))
     col_payoffs = np.reshape(np.transpose(row_payoffs), (-1, 2))
 
     return Game(row_payoffs, col_payoffs)

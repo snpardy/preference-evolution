@@ -26,6 +26,13 @@ def function_builder(string: str):
             x = eval(string)
             res = x * my_payoff + (1-x) * opponent_payoff
             return res
+
+    elif params["GRAMMAR"] == "assortative_known":
+        def function(my_payoff, opponent_payoff):
+            r = params["ASSORTATIVITY"]
+            res = eval(string)
+            return res
+
     else:
         raise ValueError("'GRAMMAR' param must be 'utility', 'linear', "
                          "or 'convex_combination'.")

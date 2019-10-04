@@ -1,0 +1,13 @@
+{
+  "GRAMMAR" : "grammar",
+  "GENERATIONS" : 100000,
+  "MUTATION" : "mutation_function",
+  "MAX_PAYOFF" : max_payoff,
+  "GAME_PAYOFFS" : "symmetric",
+  "FITNESS_FUNCTION" : "average",
+  "MUTANT_SHARE" : 0.001,
+  "ASSORTATIVITY" : __r__,
+  "TOURNAMENT_ROUNDS" : 200,
+  "OUTPUTFILE" : "output_file",
+  "SAVESTEP" : 3
+}

@@ -94,7 +94,19 @@
 
 \chapter{Literature Review}
 
-\chapter{Research Methods}
+\chapter{Limitations of Theory \& The Experimental Framework}
+
+The research discussed in the previous chapters suffers from several limitations that affect the usefulness of the conclusions drawn. 
+Chiefly, it is static; the conclusions drawn from the work focus on evolutionarily stable strategies as a solution concept.
+These conclusions may be meaningful however do not tell us anything about how likely these strategies are to evolve or what circumstances may lead to them evolving.
+Further, the work is slightly abstract in that in places it does not detail specific attributes of the model it is working with in favour of broader `catch-all' definitions,
+this has made the process of creating a software-based replicas of the models difficult at times.
+
+The experimental framework that we have created as part of `this' research seeks to recreate these models as dynamically-evolving in attempt to recover the static results of existing work.
+
+
+
+
 \chapter{The Model}
 \section{To Be Young and Fit}
 Fitness in our source material, \citet{alger_homo_2013},is stringent: for a population state to be considered \textit{unstable} the resident must achieve a payoff strictly less than that achieved by the mutant.
@@ -107,7 +119,7 @@ $\Pi(r, m, \epsilon) = (1-\epsilon)\pi(r,r) + \epsilon\pi(r,m)$
 \section{The Games We will Play}
 
 A key part of any game-theoretic model that attempts to represent the process preference formation, is the kinds of games that are played.
-For the most part, our source material (\citet{alger_homo_2013}, \citet{newton_preferences_2017}) is largely agnostic about the games that are played in the models the work describes.
+For the most part, our source material (\citet{alger_generalization_2012}, \citet{alger_homo_2013}, \citet{newton_preferences_2017}) is largely agnostic about the games that are played in the models the work describes.
 This work assumes only that the games are symmetric and two player. 
 With this minimum assumption in mind, and given that we are interested in how cooperative preferences can develop we begin with a model in which the players are matched to play a single type of non-cooperative game.
 It is quickly apparent that a fitness measure that is determined by the players' expected payoff in only one game does not yield generally meaningful results.
@@ -151,7 +163,7 @@ the expected payoff of the mutant will not differ from that of the resident beca
 Hence, the fitnesses are equal, and no invasion occurs. Running large scale simulations using this model results in `utility surfaces' like figure \todo{prisoner's dillema run}.
 
 \todo{is this to speculative/waffley?}
-Intuitively, these non-meaningful results fit with out analogy of the utility surface representing the real-world preferences of some agent.\
+Intuitively, these non-meaningful results fit with out analogy of the utility surface in some way representing the real-world preferences of some agent.\
 In reality, agents face many more kinds of situations than just one instance of a prisoner's dilemma,
 and so to generate a preference surface that is potentially recognisable as one of a real-world agent it will need to be resilient to many different situations.
 

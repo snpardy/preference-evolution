@@ -28,7 +28,7 @@ def average(resident_function, mutant_function, sample_game, mutant_share, assor
             curr_r_r_payoff += game.expected_payoff(eq)[0]
 
         curr_r_r_payoff /= len(r_r_eqs)
-        curr_r_r_payoff *= (assortativity+mutant_share*(1-assortativity))
+        curr_r_r_payoff *= (assortativity + (1-mutant_share)*(1-assortativity))
 
         curr_r_m_payoff = 0
         curr_m_r_payoff = 0
@@ -48,7 +48,7 @@ def average(resident_function, mutant_function, sample_game, mutant_share, assor
             curr_m_m_payoff += game.expected_payoff(eq)[1]
 
         curr_m_m_payoff /= len(m_m_eqs)
-        curr_m_m_payoff *= (assortativity + mutant_share*(1-assortativity))
+        curr_m_m_payoff *= (assortativity + (mutant_share)*(1-assortativity))
 
         resident_fitness += (curr_r_r_payoff + curr_r_m_payoff)
         mutant_fitness += (curr_m_m_payoff + curr_m_r_payoff)
