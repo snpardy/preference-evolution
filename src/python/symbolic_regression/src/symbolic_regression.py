@@ -20,18 +20,14 @@ def main():
     """
     Run evolution.
     """
+   
+    if "INITIAL" in params and params["INITIAL"] == "selfless":
+            g = [49809, 79659, 6091, 80039, 45779, 29889, 42762, 70970, 65154, 78405, 63170, 16630, 40867, 53183, 95355]
+            resident = Individual(g, None)    
+    else:
+        resident = i.generate_PI_ind_tree(10)
 
-    # g = [49809, 98196, 37506, 96120, 58970, 23792, 44382, 78151, 2878, 66791, 15145, 10122, 80492, 3740, 78176, 57331, 31222, 61313, 41779]
-    # selfless = Individual(g, None)
-
-
-    resident = i.generate_PI_ind_tree(10)
-
-    # resident = selfish
-
-    print("Initial: " + resident.phenotype)
     time_series = search_loop(resident)
-    print("Evolved: " + time_series[-1].phenotype)
 
 if __name__ == "__main__":
 
@@ -46,8 +42,6 @@ if __name__ == "__main__":
 
     for k, v in given_params.items():
         params[k] = v
-
-    print("GENERATIONS: " + str(params["GENERATIONS"]))
 
     params["MUTATION"] = eval(params["MUTATION"])
     path = path + params["GRAMMAR"] + bnf

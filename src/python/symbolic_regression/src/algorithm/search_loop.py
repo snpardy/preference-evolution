@@ -4,6 +4,10 @@ from operators.initialisation import initialisation
 from operators.mutation import mutate
 from utilities.io import save
 
+
+atol = params['TOLERANCE']
+
+
 def search_loop(initial_resident):
     """
     This is a standard search process for an evolutionary algorithm. Loop over
@@ -39,7 +43,7 @@ def step(resident):
 
     resident.fitness, mutant.fitness = evaluate_fitness(resident, mutant)
 
-    if mutant.fitness > resident.fitness:
+    if mutant.fitness > resident.fitness and abs(mutant.fitness - resident.fitness) > atol:
         return mutant, True
 
     return resident, False

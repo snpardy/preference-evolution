@@ -94,29 +94,51 @@
 
 \chapter{Literature Review}
 
-\chapter{Limitations of Theory \& The Experimental Framework}
+\chapter[Theory vs. Practice]{Limitations of Theory \& The Experimental Framework}
 
 The research discussed in the previous chapters suffers from several limitations that affect the usefulness of the conclusions drawn. 
-Chiefly, it is static; the conclusions drawn from the work focus on evolutionarily stable strategies as a solution concept.
+Chiefly, it is static; the conclusions focus on evolutionary stable strategies as a solution concept.
 These conclusions may be meaningful however do not tell us anything about how likely these strategies are to evolve or what circumstances may lead to them evolving.
 Further, the work is slightly abstract in that in places it does not detail specific attributes of the model it is working with in favour of broader `catch-all' definitions,
-this has made the process of creating a software-based replicas of the models difficult at times.
+this has made the process of creating software-based replicas of the models difficult at times.
+The experimental framework that we have created as part of \textit{this} research seeks to recreate these models as dynamically-evolving in attempt to recover the results achieved in existing, static work.
 
-The experimental framework that we have created as part of `this' research seeks to recreate these models as dynamically-evolving in attempt to recover the static results of existing work.
+\section{Limitations of Theory}
+\np The primary source of theoretical work that this research has been on based is that of Alger \& Weibull (\citet{alger_generalization_2012}, \citet{alger_homo_2013}).
+This work finds that under certain assumptions a utility function that is centred around a linear relationship between the two players' payoffs results in evolutionarily stable play.
+This utility function is given in equation \ref{linearESSEquation}, in which \textit{x} and \textit{y} are types in the population and $\alpha$ is equal to the \textit{index of assortativity}.
+\begin{equation}
+	\label{linearESSEquation}
+	\Pi_x(x, y, r) = \pi(x,y) + \alpha\pi(y,x)
+\end{equation}
+
+\noindent To achieve this, the authors assume that all types have a utility function of same form as \ref{linearESSEquation} where $\alpha \in (-1, 1)$ \citep[p. ~47]{alger_generalization_2012}.
+This assumption severely limits the search space of the evolutionary process. The experimental framework that we have created in support of our research does not maintain this assumption.
+
+\np A further assumption made in this work is that while players do not have information about their opponent's preferences,
+the players converge to "mutually compatible" strategies and, in effect, play a Nash equilibrium with perfect information \citep[p. ~46]{alger_generalization_2012}.
+It is unclear how controversial this assumption is. 
+As discussed in previous chapters, it does not make sense to assume that players would have knowledge about their opponent's preferences 
+but it may be acceptable to assume that when engaging in repeated interactions players converge to Nash equilibrium play relatively quickly.
+However, it is possible that this assumption impacts the evolutionarily process substantially. Our experimental framework relies on this assumption also.
+
+\np > Symmetric Games - this may affect which mutations lead to invasions in our experimental model.
+
+\np > Average Fitness - less stringent than `exhaustive' > r must win in all eq in all games 
+
+\np > Static (vs. dynamic)
 
 
-
-
-\chapter{The Model}
-\section{To Be Young and Fit}
+\section{The Experimental Framework}
+\subsection{To Be Young and Fit}
 Fitness in our source material, \citet{alger_homo_2013},is stringent: for a population state to be considered \textit{unstable} the resident must achieve a payoff strictly less than that achieved by the mutant.
 In practice, in our simulations, to calculate fitness we pit two utility surfaces (the resident and mutant) against one another and calculate the expected payoffs for each.
 This is done with some population structure, $\epsilon$ in mind. So the expected payoff of the resident is given by:
-\begin{center}
-$\Pi(r, m, \epsilon) = (1-\epsilon)\pi(r,r) + \epsilon\pi(r,m)$
-\end{center}
+\begin{equation}
+\Pi(r, m, \epsilon) = (1-\epsilon)\pi(r,r) + \epsilon\pi(r,m)
+\end{equation}
 
-\section{The Games We will Play}
+\subsection{The Games We will Play}
 
 A key part of any game-theoretic model that attempts to represent the process preference formation, is the kinds of games that are played.
 For the most part, our source material (\citet{alger_generalization_2012}, \citet{alger_homo_2013}, \citet{newton_preferences_2017}) is largely agnostic about the games that are played in the models the work describes.
@@ -124,6 +146,11 @@ This work assumes only that the games are symmetric and two player.
 With this minimum assumption in mind, and given that we are interested in how cooperative preferences can develop we begin with a model in which the players are matched to play a single type of non-cooperative game.
 It is quickly apparent that a fitness measure that is determined by the players' expected payoff in only one game does not yield generally meaningful results.
 For example, using a prisoner's dilemma type we can write down a game with the payoff structure detailed in figure \ref{prisoners_payoff_matrices}.
+
+\np When running simulations in which each type's fitness is determined by their expected payoff when playing the above game,
+it becomes clear that only mutations that occur near to the payoff points ever lead to invasions. 
+The payoff points are the four potential outcomes (in terms of payoffs for each player) of the game: (3,3), (0,4), (4, 0) \& (1, 1).
+Plotted in figure \ref{prisoners_payoff_plot}.
 
 \begin{figure}
 	\centering
@@ -137,12 +164,6 @@ For example, using a prisoner's dilemma type we can write down a game with the p
 	 \caption{Payoff matrices detailing a prisoner's dilemma game.}
 	 \label{prisoners_payoff_matrices}
 \end{figure}\mbox{}\\
-
-\np When running simulations in which each type's fitness is determined by their expected payoff when playing the above game,
-it becomes clear that only mutations that occur near to the payoff points ever lead to invasions. 
-The payoff points are the four potential outcomes (in terms of payoffs for each player) of the game: (3,3), (0,4), (4, 0) \& (1, 1).
-Plotted in figure \ref{prisoners_payoff_plot}.
-
 
 \begin{figure}
 	\centering

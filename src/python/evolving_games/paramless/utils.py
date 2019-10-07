@@ -119,9 +119,9 @@ def append_matrix_to_csv(file_name: str, matrix):
 
 def csv_to_time_series_array(file_name: str):
     out_arr = []
-    with open(file_name, 'r') as f:
+    with open(file_name, 'r') as file:
         curr_matrix = []
-        for line in f:
+        for line in file:
             if (line == "<break/>\n") or (line == "<break/>"):
                  # reached the end of a matrix
                 out_arr.append(np.array(curr_matrix))

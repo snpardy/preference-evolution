@@ -8,6 +8,9 @@ machine_name = hostname[0]
 
 """Algorithm parameters"""
 params = {
+
+    'TOLERANCE': 1e-6,
+
     # Set default step and search loop functions
     'SEARCH_LOOP': 'search_loop',
     'STEP': 'step',

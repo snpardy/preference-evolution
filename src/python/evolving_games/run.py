@@ -33,8 +33,11 @@ if __name__ == "__main__":
 
     # Setting initzenial utility surface
     if initial_shape == "restart_run":
-      path_to_csv = params["path_to_csv"]
-      raise ValueError("Functionality incomplete")
+        path_to_csv = params["pathToCSV"]
+        initial_grid = utils.csv_to_time_series_array(path_to_csv)[0]
+        x = np.arange(0, payoff_size, step, dtype=float)
+        y = np.arange(0, payoff_size, step, dtype=float)
+        initial = p.UtilitySurface(x, y, initial_grid, step)
     elif hasattr(p.UtilitySurface, initial_shape):
         initial = getattr(p.UtilitySurface, initial_shape)(payoff_size, step)
     else:
@@ -52,7 +55,7 @@ if __name__ == "__main__":
                                  seed=seed, time_series_data=True, save_as_we_go=True,
                                  file_name=output_file_name,
                                  mutation_epsilon=mutation_epsilon, radius=radius,
-                                 population_epsilon=population_epsilon,  # assortativity,
+                                 population_epsilon=population_epsilon,  assortativity=assortativity,
                                  payoff_game=None,
                                  lower_bound=0,
                                  upper_bound=5)

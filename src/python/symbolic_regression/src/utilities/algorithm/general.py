@@ -24,7 +24,7 @@ def function_builder(string: str):
     elif params["GRAMMAR"] == "convex_combination":
         def function(my_payoff, opponent_payoff):
             x = eval(string)
-            res = x * my_payoff + (1-x) * opponent_payoff
+            res = my_payoff + x * opponent_payoff
             return res
 
     elif params["GRAMMAR"] == "assortative_known":

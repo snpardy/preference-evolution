@@ -13,13 +13,19 @@ from paramless import utils
 
 if __name__ == '__main__':
 
-    path_to_csv_dir = 'C:\\Users\\snpar\\Honours\\preference-evolution\\data\\small_share' \
-                       '\\non-symmetric\\long_run\\csv_files\\'
-    average_path = 'C:\\Users\\snpar\\Honours\\preference-evolution\\data\\small_share' \
-                       '\\non-symmetric\\long_run\\average_surface.csv'
-    average_surface = utils.average_surface(path_to_csv_dir)
+    path_to_csv_dir = 'C:\\Users\\snpar\\Honours\\preference-evolution\\data\\last_try' \
+                       '\\csv_files\\initial_selfless\\r_0.0\\'
+    average_path = 'C:\\Users\\snpar\\Honours\\preference-evolution\\data\\last_try' \
+                       '\\csv_files\\initial_random\\r_0.0\\average_surface.csv'
 
-    utils.append_matrix_to_csv(average_path, average_surface)
+    # If you need to create the average surface:
+    # average_surface = utils.average_surface(path_to_csv_dir)
+    # utils.append_matrix_to_csv(average_path, average_surface)
+
+    # If you have the average surface:
+    average_surface = utils.csv_to_time_series_array(average_path)[0]
+
+
 
     payoff_size = 5
     x = np.arange(0, 5, 0.1)
@@ -29,8 +35,8 @@ if __name__ == '__main__':
     # Line graph of cross-section of surface
     opp_pay = 40
     print(opp_pay)
-    # col = average_surface[-1][:, opp_pay]
-    col = np.mean(average_surface, axis=1)
+    col = average_surface[:, opp_pay]
+    # col = np.mean(average_surface, axis=1)
     print(col)
     
     
