@@ -16,7 +16,7 @@
 \newcommand{\note}[1]{\textcolor{red}{[NOTE: #1]}\PackageWarning{NOTE:}{#1!}}
 \newcommand*{\np}{\par\noindent\newline}
 
-\title{Agent Based Modelling of the Formation of Social Preferences}
+\title{Agent Based Models of the Formation of Social Preferences}
 \author{S Pardy}
 \begin{document}
 \begin{titlepage}
@@ -39,7 +39,7 @@
 	
 	\HRule\\[0.4cm]
 	
-	{\huge\bfseries Agent Based Modelling of the Formation of Social Preferences}\\[0.4cm]
+	{\huge\bfseries Agent Based Models of the Formation of Social Preferences}\\[0.4cm]
 	
 	\HRule\\[1.5cm]
 	
@@ -81,10 +81,10 @@
 \end{titlepage}
 % \hypersetup{colorlinks, citecolor=black, filecolor=black, linkcolor=black urlcolor=black}
 
-\newpage
-\chapter*{Declaration}
-\chapter*{Abstract}
-\chapter*{Acknowledgment}
+% \newpage
+% \chapter*{Declaration}
+% \chapter*{Abstract}
+% \chapter*{Acknowledgment}
 
 \tableofcontents
 \newpage
@@ -94,14 +94,14 @@
 
 \chapter{Literature Review}
 
-\chapter[Theory vs. Practice]{Limitations of Theory \& The Experimental Framework}
+\chapter[Theoretical \& Experimental Context]{Limitations of Theory \& The Experimental Framework}
 
-The research discussed in the previous chapters suffers from several limitations that affect the usefulness of the conclusions drawn. 
+The research discussed in the previous chapters suffers from several limitations that affect the generality of the conclusions drawn. 
 Chiefly, it is static; the conclusions focus on evolutionary stable strategies as a solution concept.
 These conclusions may be meaningful however do not tell us anything about how likely these strategies are to evolve or what circumstances may lead to them evolving.
 Further, the work is slightly abstract in that in places it does not detail specific attributes of the model it is working with in favour of broader `catch-all' definitions,
 this has made the process of creating software-based replicas of the models difficult at times.
-The experimental framework that we have created as part of \textit{this} research seeks to recreate these models as dynamically-evolving in attempt to recover the results achieved in existing, static work.
+The experimental framework that we have created as part of \textit{this} research seeks to recreate these models as dynamically-evolving before attempting to recover the results achieved in existing, static work.
 
 \section{Limitations of Theory}
 \np The primary source of theoretical work that this research has been on based is that of Alger \& Weibull (\citet{alger_generalization_2012}, \citet{alger_homo_2013}).
@@ -122,28 +122,69 @@ As discussed in previous chapters, it does not make sense to assume that players
 but it may be acceptable to assume that when engaging in repeated interactions players converge to Nash equilibrium play relatively quickly.
 However, it is possible that this assumption impacts the evolutionarily process substantially. Our experimental framework relies on this assumption also.
 
-\np > Symmetric Games - this may affect which mutations lead to invasions in our experimental model.
+\np Commonly in the literature it is assumed that the agents will be matched to play symmetric, two-player games.
+This is true also of \citet{alger_generalization_2012}.
+In general, a \textit{symmetric} two-player game entails that an agent is indifferent (in terms of payoffs) as to which of the players she takes the roles of in the interaction.
+This assumption makes easier our job of implementing a fitness-comparison mechanism.
+As fitness is linked to the respective payoff achieved by each agent, the fact that the net payoff on offer to each player is equal simplifies the eventual fitness comparison.
+However, we will see later that this assumption may have contributed to some bias in the sampling.
 
-\np > Average Fitness - less stringent than `exhaustive' > r must win in all eq in all games 
+\np A final assumption to note is that the fitness used in the model in \citet{alger_generalization_2012} is that of \textit{average} fitness.
+This measure is less stringent than measures used elsewhere (notably in \citet{alger_homo_2013}). 
+An oft used fitness measure requires that for an invasion to occur, a mutant must achieve a higher payoff in all equilibria of all games the two types play when they're matched.
 
-\np > Static (vs. dynamic)
+\np Of course, these assumptions are all made within the context of a model that is static.
+The conclusions drawn in the work referenced above tend to be of the form \textit{should} a utility function of the form \textit{x} evolve it will result in evolutionary stable play given the assumptions.
+The experimental framework we create intends to investigate these conclusions in a dynamically evolving environment.
+
 
 
 \section{The Experimental Framework}
-\subsection{To Be Young and Fit}
-Fitness in our source material, \citet{alger_homo_2013},is stringent: for a population state to be considered \textit{unstable} the resident must achieve a payoff strictly less than that achieved by the mutant.
+A large part of the work undertaken in support of this research involved the creation of an experimental framework that could be used to attempt to recover the results of \citet{alger_generalization_2012} in a dynamically evolving environment.
+At a high level this experimental framework is simple, however when digging into the detail, complications arise.
+Fundamentally, the framework is made up of a representation of a utility function, 
+a means by which instances of this representation can be mutated and a means by which the fitness of two different utility functions can be compared.
+With these building blocks we can construct the main loop of the experiments that are undertaken.
+We define some utility function that represents our initial resident agent, the resident is then mutated (creating the mutant). 
+The fitnesses of both resident and mutant are then computed and compared. 
+If the mutant achieves a higher payoff an invasion occurs: the original resident is discarded and the mutant takes over as the new resident.
+This process is repeated for a given number of generations.
+In the following, we discuss the implementation detail of each of these fundamental parts of the framework, beginning with fitness.
+
+
+\paragraph{Fitness}
+\np Decisions we make about how we measure fitness and what difference in fitness is enough to trigger an invasion can have significant impact on the dynamics of the system.
+This is an area in which Alger \& Weibull give us limited but essentially sufficient guidance.
+Fitness is measured as the \textit{personal payoff} earned by each type when both players act in accordance with their own preferences.
+For an individual $\theta$ in a population state $(\theta, \theta', \epsilon,\sigma)$,
+where $\theta'$ is the mutant, $\epsilon$ is the mutant share of the population and $\sigma$ is the \textit{index of assortativity}, the expected fitness for one interaction is given by \ref{expectedPayoff}.
+Where $f(x, y)$ is the expected payoff earned by $x$ when facing $y$ in a given iteration.
+
+\begin{equation}
+	\label{expectedPayoff}
+	\Pi(\theta, \theta', \epsilon, \sigma) = (\sigma +(1-\epsilon)(1-\sigma))f(\theta, \theta) + \epsilon(1-\sigma)f(\theta, \theta')
+\end{equation}
+
+\np The notion of evolutionary stability is defined as follows: for a state to be considered stable, the residents must achieve, \textit{on average}, a fitness at least as high as that achieved by the mutants in a population that contains both resident and mutant types.
+Using \ref{expectedPayoff}, this relation is given by \ref{ESSweakInequality}.
+\begin{equation}
+	\label{ESSweakInequality}
+	F(\theta, \theta', \epsilon, \sigma) \geq F(\theta', \theta, \epsilon, \sigma)
+\end{equation}
+In other words, if inequality \ref{ESSweakInequality} does not hold, an invasion occurs.
+
+Fitness in our source material, \citet{alger_generalization_2012}, is : for a population state to be considered \textit{unstable} the resident must achieve a payoff strictly less than that achieved by the mutant.
 In practice, in our simulations, to calculate fitness we pit two utility surfaces (the resident and mutant) against one another and calculate the expected payoffs for each.
 This is done with some population structure, $\epsilon$ in mind. So the expected payoff of the resident is given by:
 \begin{equation}
 \Pi(r, m, \epsilon) = (1-\epsilon)\pi(r,r) + \epsilon\pi(r,m)
 \end{equation}
 
-\subsection{The Games We will Play}
-
-A key part of any game-theoretic model that attempts to represent the process preference formation, is the kinds of games that are played.
+\paragraph{Games}
+\np A key part of any game-theoretic model that attempts to represent the process of preference formation, is the kinds of games that are played.
 For the most part, our source material (\citet{alger_generalization_2012}, \citet{alger_homo_2013}, \citet{newton_preferences_2017}) is largely agnostic about the games that are played in the models the work describes.
 This work assumes only that the games are symmetric and two player. 
-With this minimum assumption in mind, and given that we are interested in how cooperative preferences can develop we begin with a model in which the players are matched to play a single type of non-cooperative game.
+With this minimal assumption in mind, and given that we are interested in how cooperative preferences can develop we begin with a model in which the players are matched to play a single type of non-cooperative game.
 It is quickly apparent that a fitness measure that is determined by the players' expected payoff in only one game does not yield generally meaningful results.
 For example, using a prisoner's dilemma type we can write down a game with the payoff structure detailed in figure \ref{prisoners_payoff_matrices}.
 
@@ -183,17 +224,33 @@ So, if a mutation occurs at the point (2, 2), given that this mutation has a rel
 the expected payoff of the mutant will not differ from that of the resident because the mutation does not touch any of the payoff points.
 Hence, the fitnesses are equal, and no invasion occurs. Running large scale simulations using this model results in `utility surfaces' like figure \todo{prisoner's dillema run}.
 
-\todo{is this to speculative/waffley?}
-Intuitively, these non-meaningful results fit with out analogy of the utility surface in some way representing the real-world preferences of some agent.\
-In reality, agents face many more kinds of situations than just one instance of a prisoner's dilemma,
-and so to generate a preference surface that is potentially recognisable as one of a real-world agent it will need to be resilient to many different situations.
+
 
 
 \chapter{Results \& Discussion}
 
+> Games matter:
+		
+> Must sample many different kinds of games.
+
+> JTB result is strongly dependent on the assumption of symmetric games.
+
+\noindent> Phenotypic mutation takes ages.
+
+\noindent> Successful symbolic regression results are strongly dependent on un-biased (or maybe `biased in the right way') grammars.
+
+
+\section{Phenotypic Mutation}
+
+
 \chapter{Conclusion}
 
-\newpage
+
+\todo{is this to speculative/waffley?}
+Intuitively, the non-meaningful results achieve when sampling only one kind of game fit with our analogy of the utility function in some way representing the real-world preferences of some agent.\
+In reality, agents face many more kinds of situations than just one instance of a prisoner's dilemma,
+and so to generate a utility function that is potentially recognisable as one of a real-world agent the function will need to be resilient to many different situations.
+
 
 \bibliography{thesis}
 \bibliographystyle{apalike}
