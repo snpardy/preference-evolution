@@ -92,6 +92,7 @@
 
 \tableofcontents
 \newpage
+\listoffigures
 \chapter{Introduction}
 \section{Preamble}
 \section{Motivation \& Objectives}
@@ -114,7 +115,7 @@ This work finds that under certain assumptions a utility function that is centre
 This utility function is given in equation \ref{linearESSEquation}, in which \textit{x} and \textit{y} are types in the population and $\alpha$ is equal to the \textit{index of assortativity}.
 \begin{equation}
 	\label{linearESSEquation}
-	u_\alpha(x, y, ) = \Pi(x,y) + \alpha\Pi(y,x)
+	u_\alpha(x, y) = \Pi(x,y) + \alpha\Pi(y,x)
 \end{equation}
 
 \noindent To achieve this, the authors assume that all types have a utility function of the same form as \ref{linearESSEquation} where $\alpha \in (-1, 1)$ \citep[p. ~47]{alger_generalization_2012}.
@@ -144,11 +145,11 @@ An oft used fitness measure requires that for an invasion to occur, a mutant mus
 \np Of course, these assumptions are all made within the context of a model that is static.
 The conclusions drawn in the work referenced above tend to be of the form \textit{should} a utility function of the form \textit{x} evolve it will result in evolutionary stable play given the assumptions.
 The experimental framework we create intends to investigate these conclusions and assumptions in a dynamically evolving environment.
-\todo{emphasise how big an asusmption static is}
+\todo{emphasise how big an assumption static is}
 
 
 
-\section{The Experimental Framework}
+\section{The Experimental Framework}\label{experimentalFramework}
 A large part of the work undertaken in support of this research involved the creation of an experimental framework that could be used to attempt to recover the results of \citet{alger_generalization_2012} in a dynamically evolving environment.
 At a high level this experimental framework is simple, however when digging into the detail, complications arise.
 Fundamentally, the framework is made up of a representation of a utility function, 
@@ -233,8 +234,8 @@ With this assumption in mind, \ref{symmetricGame} shows the payoff structure of 
 For example, using a prisoner's dilemma type we can write down a game with the payoff structure detailed in figure \ref{symmetricGame} with payoffs $c > a > d > b$.
 Next, we investigate how preferences form when individuals play many different symmetric games in one interaction.
 Now, the payoffs $a$ through $d$ are determined as follows:
-\begin{center}
-	
+
+\begin{center}\label{a_through_d}	
 $a \sim U(0,\phi) \qquad a \in I$
 
 $b \sim U(0,\phi) \qquad b \in I$
@@ -266,33 +267,6 @@ Both of these representations will be discussed in detail in the following chapt
 
 \chapter{Results \& Discussion}\label{results_discussion}
 
-\paragraph{Games matter}
-		
-> Must sample many different kinds of games.
-\np When running simulations in which each type's fitness is determined by their expected payoff when playing the above game,
-it becomes clear that only mutations that occur near to the payoff points ever lead to invasions. 
-The payoff points are the four potential outcomes (in terms of payoffs for each player) of the game: (3,3), (0,4), (4, 0) \& (1, 1).
-Plotted in figure \ref{prisoners_payoff_plot}.
-\begin{figure}
-	\centering
-	\includegraphics[scale=0.75]{resources/prisoners_dilemma_payoffs.png}
-	\caption{The payoff points in a prisoner's dilemma game.}
-	\label{prisoners_payoff_plot}
-\end{figure}
-
-\np The fact that limited invasions occur in this scenario makes sense when several facts about the model are considered:
-\begin{enumerate}[label=(\alph*)]
-	\item mutations can occur anywhere within the space and are small.
-	\item the fitness of the agents (resident and mutant) is equal in areas of the surface not affected by the mutation.
-	\item for a mutant to invade, they must achieve a fitness \textit{greater} than that achieved by the resident - as opposed to greater than or equal to.	
-\end{enumerate} 
-\np
-So, if a mutation occurs at the point (2, 2), given that this mutation has a relatively small radius, 
-the expected payoff of the mutant will not differ from that of the resident because the mutation does not touch any of the payoff points.
-Hence, the fitnesses are equal, and no invasion occurs. Running large scale simulations using this model results in `utility surfaces' like figure \todo{prisoner's dillema run}.
-
-> JTB result is strongly dependent on the assumption of symmetric games.
-
 \noindent> Phenotypic mutation takes ages.
 
 \noindent> Successful symbolic regression results are strongly dependent on un-biased (or maybe `biased in the right way') grammars.
@@ -311,7 +285,6 @@ Figure \ref{selfishUtilitySurface} is an example of a purely selfish utility sur
 	\caption{An example of a purely selfish type represented as a `utility surface'.}
 	\label{selfishUtilitySurface}
 \end{figure}
-
 
 \np This method has two immediate limitations. 
 The first is that the matrix is only defined for a certain payoff range and so a value, $\phi$ must be provided that represents the maximum \textit{payoff} achievable by either individual.
@@ -339,17 +312,90 @@ Figure \ref{selfishUtilityGrid} is an example of the grid values of a utility su
 This perturbation takes the shape of a bivariate normal distribution with some random $\sigma$, $\sigma \leq \gamma$, where $\gamma$ is parameter of the model.
 This method ensures that mutations are small.
 It also has the effect of creating \textit{localised} mutations: mutations that only affect a certain area of the surface rather than the shape of the surface overall.
-It turns out that the localised nature of these mutations is important and will be discussed in proceeding sections. Figure 
+It turns out that the localised nature of these mutations is important and will be discussed in proceeding sections.
+Figure \ref{selfishUtilitySurfaceOneMutation} shows our selfish utility surface from \ref{selfishUtilitySurface} after one mutation has been applied.
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.75]{resources/one_mutation.png}
+	\includegraphics[scale=0.7]{resources/one_mutation.png}
 	\caption{The selfish utility surface after one mutation has been applied at the point (3, 3).}
 	\label{selfishUtilitySurfaceOneMutation}
 \end{figure}
 
+\subsection{Games Matter}
+
+One of the things that we learn by subjecting the described phenotype to evolution is that the kinds of games that are used to evaluate the fitness of individuals are important.
+We begin with a model that uses only a single kind of game to evaluate the fitness of individuals.
+Next we move to a conception of fitness that is an aggregation of individuals performance in many different kinds of games.
+We use this conception in the symmetric and asymmetric case.
+
+\paragraph{Single-Game Fitness Measure}
+\np In \ref{experimentalFramework} we discuss an approach in which individual fitness is determined based off  how the types perform in one common kind of non-cooperative game, namely prisoner's dilemma.
+Using the game structure defined in figure \ref{symmetricGame} we can construct a prisoner's dilemma by setting the following payoffs:
+\begin{gather*}
+	a = 3\\
+	b = 0\\
+	c = 4\\
+	d = 1
+\end{gather*}
+
+\np When running simulations in which each type's fitness is determined by their expected payoff when playing the above game,
+it becomes clear that only mutations that occur near to the payoff points ever lead to invasions. 
+The payoff points are the four potential outcomes (in terms of payoffs for each player) of the game: (3,3), (0,4), (4, 0) \& (1, 1).
+Plotted in figure \ref{prisoners_payoff_plot}.
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.5]{resources/prisoners_dilemma_payoffs.png}
+	\caption{The payoff points in a prisoner's dilemma game.}
+	\label{prisoners_payoff_plot}
+\end{figure}
+
+\np The fact that limited invasions occur in this scenario makes sense when several facts about the model are considered:
+\begin{enumerate}[label=(\alph*)]
+	\item mutations can occur anywhere within the space and are small.
+	\item the fitness of the individuals (resident and mutant) is equal in areas of the surface not affected by the mutation.
+	\item for a mutant to invade, they must achieve a fitness \textit{greater} than that achieved by the resident - as opposed to greater than or equal to.	
+\end{enumerate} 
+\np
+So, if a mutation occurs at the point (2, 2), given that this mutation has a relatively small radius, 
+the expected payoff of the mutant will not differ from that of the resident because the mutation does not touch any of the payoff points.
+Hence, the fitnesses are equal, and no invasion occurs.
+Running large scale simulations using this model results in `utility surfaces' like figure 
+\np \todo{prisoner's dilemma run}.
+\todo{distance/fitness measure of prisoner's dilemma run}
+
+\np So, while our source material tends to equivocate in regard to what kinds of games are played,
+a dynamically evolving system shows that evaluating individual fitnesses using performance in only one kind of game 
+does not generate meaningful results. Next, we focus on a  measure in which fitness is based upon the individual's aggregated performance across many games.
+
+\paragraph{Many-Game Fitness Measure}
+\np We move to a discussion of the results generated by simulations that measure fitness as an average of the payoff earned by individuals across many symmetric games.
+Now, the games that individuals play in determining fitness contain payoffs as described in \ref{a_through_d}, where $a$ through $d$ are independent and identically distributed random variables.
+Leading on from our note in the preceding that single-game fitness leads to an exorbitantly high number of mutations that do not lead to an invasion, analogously, 
+localised mutations and randomly sampled games is computationally very inefficient. So, we first look at a more efficient sampling mechanism before discussing our main result.
+
+\np Sampling many symmetric games creates a payoff-point plot that is symmetric about the line of equality and the line of equality is heavily sampled relative to the rest of the space.
+This is because two of the four payoff points in each sampled game fall on the line of equality.
+If we imagine the payoff-point plot (e.g. figure \ref{prisoners_payoff_plot}) as being a top-down view of one of our utility surfaces,
+then we can randomly place a mutation amongst the randomly sampled payoff-points to visualise the amount of waste that occurs when sampling like this.
+Figure \ref{symmetric_payoff_plot} shows a randomly sampled mutation 
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.7]{resources/scatter_symmetric_mutation.png}
+	\caption{Payoff-points of 40 randomly sampled games.}
+	\label{symmetric_payoff_plot}
+\end{figure}
+
+
+\todo{below list}
+\np > How inefficient is \ref{symmetric_payoff_plot}
+\np > We use a better technique - localised
+\np > Surfaces evolved tend towards favouring "winning" rather than pure-selfishness > fig of average surface.
+\np > While not exactly the prediction, relatively close > fig distance box plot.
+\np > These surfaces perform well against the surface predicted by JTB, but poor against themselves so would be poor resident > fig box plot.
 
 \section{Symbolic Regression}
+> JTB result is strongly (?) dependent on the assumption of symmetric games.
 
 \chapter{Conclusion}
 

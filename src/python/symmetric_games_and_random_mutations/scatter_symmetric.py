@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Create data
-N = 100
+N = 40
 x = np.array([])
 y = np.array([])
 
@@ -20,7 +20,7 @@ mean = (x_mean, y_mean)
 
 data = (mean, (x,y))
 colors = ("green", "pink")
-groups = ("mutation", "payoffs")
+groups = ("Mutation", "Payoff-point")
 areas = (np.pi*200, np.pi*5)
 
 # Create plot
@@ -31,6 +31,12 @@ for data, color, group, area in zip(data, colors, groups, areas):
     x, y = data
     ax.scatter(x, y, s=area, alpha=0.8, c=color, edgecolors='none', label=group)
 
-plt.title('Symmetric Games')
-plt.legend(loc=2)
+plt.title('Payoff-points of Symmetric Games')
+# plt.legend(loc=2)
+lgnd = plt.legend(loc=2, scatterpoints=1, fontsize=10)
+lgnd.legendHandles[0]._sizes = [50]
+lgnd.legendHandles[1]._sizes = [30]
+plt.xlabel("My Payoff")
+plt.ylabel("Opponent Payoff")
+plt.savefig("scatter_symmetric_mutation.png")
 plt.show()
