@@ -99,17 +99,13 @@
 
 \chapter{Literature Review}
 
-\chapter[Theoretical \& Experimental Context]{Limitations of Theory \& The Experimental Framework}
-
+\section{Limitations of Theory}
 The theoretical and analytical work discussed in the previous chapters suffers from several limitations that affect the generality of the conclusions drawn. 
 Chiefly, it is static; the conclusions focus on evolutionary stable strategies as a solution concept.
 These conclusions may be meaningful however do not tell us anything about how likely these strategies are to evolve or what circumstances may lead to them evolving.
 Further, the work is slightly abstract in that in places it does not detail specific attributes of the model it is working with in favour of broader `catch-all' definitions,
 this has made the process of creating simulation-based models of the theory difficult at times.
-The experimental framework that we have created as part of \textit{this} research seeks to recreate these models as dynamically-evolving before attempting to recover the results achieved in existing, static work.
-\todo{Why static v dynamic important? => eq selection, dynamics, diversity}
 
-\section{Limitations of Theory}
 \np The primary source of theoretical work that this research has been on based is that of Alger \& Weibull (\citeyear{alger_generalization_2012}, \citeyear{alger_homo_2013}; henceforth, \textit{AW}).
 This work finds that under certain assumptions a utility function that is centred around a linear relationship between the two players' payoffs results in evolutionarily stable play.
 This utility function is given in equation \ref{linearESSEquation}, in which \textit{x} and \textit{y} are types in the population and $\alpha$ is equal to the \textit{index of assortativity}.
@@ -145,11 +141,16 @@ An oft used fitness measure requires that for an invasion to occur, a mutant mus
 \np Of course, these assumptions are all made within the context of a model that is static.
 The conclusions drawn in the work referenced above tend to be of the form \textit{should} a utility function of the form \textit{x} evolve it will result in evolutionary stable play given the assumptions.
 The experimental framework we create intends to investigate these conclusions and assumptions in a dynamically evolving environment.
+The experimental framework that we have created as part of \textit{this} research seeks to recreate these models as dynamically-evolving before attempting to recover the results achieved in existing, static work.
+
+\todo{Why static v dynamic important? => eq selection, dynamics, diversity}
 \todo{emphasise how big an assumption static is}
 
 
 
-\section{The Experimental Framework}\label{experimentalFramework}
+
+
+\chapter{The Experimental Framework}\label{experimentalFramework}
 A large part of the work undertaken in support of this research involved the creation of an experimental framework that could be used to attempt to recover the results of \citet{alger_generalization_2012} in a dynamically evolving environment.
 At a high level this experimental framework is simple, however when digging into the detail, complications arise.
 Fundamentally, the framework is made up of a representation of a utility function, 
@@ -162,7 +163,7 @@ This process is repeated for a given number of generations.
 In the following, we discuss the implementation detail of each of these fundamental parts of the framework, beginning with fitness.
 
 
-\paragraph{Fitness}
+\section{Fitness}
 \np Decisions we make about how we measure fitness and what difference in fitness is enough to trigger an invasion can have significant impact on the dynamics of the system.
 This is an area in which Alger \& Weibull give us limited but essentially sufficient guidance.
 Fitness is measured as the \textit{personal payoff} earned by each type when both players act in accordance with their own preferences.
@@ -224,7 +225,7 @@ Figure \ref{psuedocodeForf} shows a pseudocode for the function $f$.
 	\label{symmetricGame}
 	\vspace{20px}
 \end{figure}
-\paragraph{Games}
+\section{Games}
 \np A key part of any game-theoretic model that attempts to represent the process of preference formation, is the kinds of games that are played.
 For the most part, the literature (\citet{alger_generalization_2012}, \citet{alger_homo_2013}, \citet{newton_preferences_2017}) is largely agnostic about the games that are played in the models the work describes.
 This work assumes only that the games are symmetric and two player. 
@@ -249,35 +250,36 @@ $d \sim U(0,\phi) \qquad d \in I$
 
 \np \todo{Might say something about asymmetric games here}
 
-\np In Chapter \ref{results_discussion} we discuss results relating to both single- and many-game interactions.
+\np In Chapter \ref{symmetricGames} we discuss results relating to both single- and many-game interactions.
 
 
-\paragraph{Representing \& Mutating Individuals}
+\section{Representing \& Mutating Individuals}
 \np The way that utility function types are mutated is intrinsically tied to way that those types are represented in the framework, so we will here discuss them together.
 Fundamentally, a utility function in this context is a way to convert the outcomes experienced by two individuals into the utility of one of those individuals.
 The individual then acts so as to maximize their utility, and in this way acts like an individual who \textit{prefers} strategy $x$ to strategy $x'$ \textit{iff} $u(x, y) > u(x', y)$.
-The experimental framework we setup maintain two ways in which individuals can be represented.
-The first method involves maintaining a `utility surface' directly. 
+The experimental framework we setup explores the way two methods of representing individuals affects the dynamics of the system.
+The first method involves maintaining the values of a `utility surface' directly. 
+While the second, style of representation involves maintaining a two parameter function $f(x,y)$, where x is the payoff earned by the agent whose utility function $f$ is and y is the payoff earned by their opponent. 
+Both methods will be examined in detail in the following.
+
+
 So, an individual is represented as a matrix of utility values that can be queried by payoff.
 Mutation is performed by making small, localised changes to an area of the surface.
-The second style of representation involves maintaining a two parameter function $f(x,y)$, where x is the payoff earned by the agent whose utility function $f$ is and y is the payoff earned by their opponent. 
-Mutation is performed via symbolic regression leaning heavily on the work of \citet{fenton_ponyge2:_2017}.
-Both of these representations will be discussed in detail in the following chapter.
+The second 
 
 
-\chapter{Results \& Discussion}\label{results_discussion}
-
-\noindent> Phenotypic mutation takes ages.
-
-\noindent> Successful symbolic regression results are strongly dependent on un-biased (or maybe `biased in the right way') grammars.
-
-
-\section{Phenotypic Mutation}
-The first technique of representing utility functions we'll discuss we've called `phenotype mutation'.
+\paragraph{Phenotype Mutation}
+\np The method by which individuals are represented as utility surfaces we've termed `phenotype mutation'.
 This is because in this method individuals are represented directly as a surface in 3 dimensions.
 So the only information maintained about different types is their phenotype and mutation is performed directly on the phenotype.
-Those dimensions being: my payoff, my opponent's payoff, and my utility.
+The three dimensions of the surface (from the individuals point of view) are: my payoff, my opponent's payoff, and my utility.
 Figure \ref{selfishUtilitySurface} is an example of a purely selfish utility surface.
+
+\np This method has two immediate limitations. 
+The first is that the surface is only defined for a certain payoff range and so a value, $\phi$ must be provided that represents the maximum \textit{payoff} achievable by either individual.
+Second, the surface is discretised and so is accurate only up to a certain granularity - a value, $s$ must be provided that is the `step' of the grid.
+The value $s$ should be as small as feasible. 
+Figure \ref{selfishUtilityGrid} is an example of the grid values of a utility surface of an individual that is purely selfish.
 
 \begin{figure}
 	\centering
@@ -285,12 +287,6 @@ Figure \ref{selfishUtilitySurface} is an example of a purely selfish utility sur
 	\caption{An example of a purely selfish type represented as a `utility surface'.}
 	\label{selfishUtilitySurface}
 \end{figure}
-
-\np This method has two immediate limitations. 
-The first is that the matrix is only defined for a certain payoff range and so a value, $\phi$ must be provided that represents the maximum \textit{payoff} achievable by either individual.
-Second, the matrix is discrete and so is accurate only up to a certain granularity - a value, $s$ must be provided that is the `step' of the grid.
-The value $s$ should be as small as is computationally feasible. 
-Figure \ref{selfishUtilityGrid} is an example of the grid values of a utility surface of an individual that is purely selfish.
 
 \begin{figure}
 \[
@@ -308,8 +304,8 @@ Figure \ref{selfishUtilityGrid} is an example of the grid values of a utility su
 \label{selfishUtilityGrid}
 \end{figure}
 
-\np Phenotypic mutation is undertaken by performing a small perturbation to the resident surface in a randomly selected area.
-This perturbation takes the shape of a bivariate normal distribution with some random $\sigma$, $\sigma \leq \gamma$, where $\gamma$ is parameter of the model.
+\np Phenotypic mutation is performed by creating a small perturbation to the resident surface in a randomly selected area.
+We assume this perturbation takes the shape of a bivariate normal distribution with standard deviation $\sigma$, where $\sigma \sim U(0,\gamma)$ and $\gamma$ is a parameter of the model.
 This method ensures that mutations are small.
 It also has the effect of creating \textit{localised} mutations: mutations that only affect a certain area of the surface rather than the shape of the surface overall.
 It turns out that the localised nature of these mutations is important and will be discussed in proceeding sections.
@@ -321,6 +317,51 @@ Figure \ref{selfishUtilitySurfaceOneMutation} shows our selfish utility surface 
 	\caption{The selfish utility surface after one mutation has been applied at the point (3, 3).}
 	\label{selfishUtilitySurfaceOneMutation}
 \end{figure}
+
+\paragraph{Symbolic Regression}
+The second method by which we represent individuals is by maintaining the symbolic expression of a two parameter function.
+This expression (which is the phenotype) is not the only information stored about each individual though.
+An individual also consists of its genome, an array of integers (`codons') that is used to generate the phenotype in conjunction with the grammar.
+This representation uses the work of \citet{fenton_ponyge2:_2017}, the documentation of which has in depth explanations of the representation's inner workings.
+
+\np Briefly, the grammar is a set of rules that govern the kinds of individuals that can be generated.
+To generate a phenotype, the grammar rules are enumerated with the phenotype iteratively constructed.
+Each time a choice is to be made between two or more options, we take the modulo of the current codon by the number of available options, this value is used to select the rule.
+The grammar, in Backus-Naur form \citep{oneill_grammatical_2001}, is a parameter of the model and inherently introduces bias into the simulation.
+The grammar that was used for the majority of our simulations is shown in \ref{grammar}, where $<o>, <e> and <c>$ are rules and the terms separated by $|$ are the possible results of that rule.
+
+\begin{align}\label{grammar}
+	&<o> ::= \qquad <e>+<e>|\\
+	& \qquad \qquad \qquad <e>-<e>| \nonumber \\
+	& \qquad \qquad \qquad <e>*<e>| \nonumber \\ \nonumber \\
+	&<e> ::= \qquad <e>+<e>| \nonumber \\
+	&\qquad \qquad \qquad <e>-<e>| \nonumber \\
+	&\qquad \qquad \qquad <e>*<e>| \nonumber \\
+	&\qquad \qquad \qquad <c><c>.<c><c>| \nonumber \\
+	&\qquad \qquad \qquad r| \nonumber \\
+	&\qquad \qquad \qquad myPayoff| \nonumber \\
+	&\qquad \qquad \qquad opponentPayoff \nonumber \\ \nonumber \\
+	&<c>  ::= \qquad 0 | \quad 1 |\quad 2 |\quad 3 |\quad 4 |\quad 5 |\quad 6 |\quad 7 |\quad 8 |\quad 9 \nonumber
+\end{align}
+
+
+\np Mutation is performed by modifying integers within the genome of individuals.
+When a mutation occurs, the integer of each codon within the genome is randomly altered.
+This way, when the grammar is traversed again to generate the phenotype and the codons are used to select between options, different codons will produce different outcomes.
+
+\np Unlike the phenotype mutation, this method of representing individuals results in utility functions that are continuous and un-bounded in terms of the size of the payoffs that it can interpret.
+However, symbolic regression comes with the significant drawback of the grammar encoding bias into the model.
+It is difficult to overstate the importance the grammar has on the dynamics of the system.
+Another point of difference is that mutations in this case affect the function overall, rather than a specific area of the space.
+So, with symbolic regression, there is no concept of the `locality' of the mutation - mutations affect the whole space.
+
+\todo{is here the place to talk about results of choosing a bad grammar?}
+
+
+\chapter{Symmetric Games}\label{symmetricGames}
+\chapter{Asymmetric Games}\label{asymmetricGames}
+\chapter{Discussion}\label{discussion}
+
 
 \subsection{Games Matter}
 
@@ -360,8 +401,9 @@ Plotted in figure \ref{prisoners_payoff_plot}.
 So, if a mutation occurs at the point (2, 2), given that this mutation has a relatively small radius, 
 the expected payoff of the mutant will not differ from that of the resident because the mutation does not touch any of the payoff points.
 Hence, the fitnesses are equal, and no invasion occurs.
-Running large scale simulations using this model results in `utility surfaces' like figure 
-\np \todo{prisoner's dilemma run}.
+Running simulations using this model results in `utility surfaces' that seem to have a evolved to play the prisoner's dilemma defined above,
+rather than evolving towards a surface that is meaningful in general.
+
 \todo{distance/fitness measure of prisoner's dilemma run}
 
 \np So, while our source material tends to equivocate in regard to what kinds of games are played,
@@ -377,25 +419,73 @@ localised mutations and randomly sampled games is computationally very inefficie
 \np Sampling many symmetric games creates a payoff-point plot that is symmetric about the line of equality and the line of equality is heavily sampled relative to the rest of the space.
 This is because two of the four payoff points in each sampled game fall on the line of equality.
 If we imagine the payoff-point plot (e.g. figure \ref{prisoners_payoff_plot}) as being a top-down view of one of our utility surfaces,
-then we can randomly place a mutation amongst the randomly sampled payoff-points to visualise the amount of waste that occurs when sampling like this.
-Figure \ref{symmetric_payoff_plot} shows a randomly sampled mutation 
+then we can randomly place a mutation amongst the sampled payoff-points to visualise the amount of waste that occurs when sampling like this.
+Figure \ref{symmetric_payoff_plot} shows a randomly sampled mutation plotted amongst payoff-points of 40 randomly sampled games.
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.7]{resources/scatter_symmetric_mutation.png}
 	\caption{Payoff-points of 40 randomly sampled games.}
 	\label{symmetric_payoff_plot}
 \end{figure}
+We can see that of the 160 payoff points in the sample, only one occurred in the area of the mutation.
+The rest of the payoff points will not contribute to a difference in fitness between the resident and mutant and so are a waste of computational resources.
+We develop a more efficient sampling technique.
+In this technique, two of the four payoff points in a symmetric-game still occur along the line of equality,
+but the other two in each game are sampled from close to the mutation.
+The payoffs $a$ through $d$ are sampled from the following, where $\mu$ is the centre of the mutation and $\delta$ is some constant linked to the radius of the mutation.
+\begin{center}\label{local_a_through_d}	
+	$a \sim U(0,\phi) \qquad a \in I$
+	
+	$b \sim \mu \pm U(0,\delta) \qquad b \in I$
+	
+	$c \sim \mu \pm U(0,\delta) \qquad c \in I$
+	
+	$d \sim U(0,\phi) \qquad d \in I$
+\end{center}
+
+
+\noindent Figure \ref{local_symmetric_payoff_plot} is an example of a sample of 40 games in which the payoffs are sampled using this technique.
+It can be seen that payoff-points are now concentrated around the area that the mutation occurs so will contribute to a difference in fitness.
+This technique means that every game will have at least one payoff-point that touches the mutation area.
+This technique introduces no additional bias into the model: it is as if we freely sample payoffs from the whole space and then filter out the ones that do not have an effect on eventual fitness comparison.
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.7]{resources/localised_symmetric_game_mutation.png}
+	\caption{Payoff-points of 40 `locally' randomly sampled games.}
+	\label{local_symmetric_payoff_plot}
+\end{figure}
+
+
+\subsection{Evolution with Symmetric Games}
+
+Using the sampling technique just described, we simulate evolution operating at the level of the phenotype.
+Fitness is a product of the individual's performance in many symmetric games.
+Starting with a randomly generated surface, we run simulations with the following parameters:
+\begin{gather*}
+	\phi = 5\\
+	s = 0.1\\
+	\alpha = 0\\
+\end{gather*}
+
+\noindent When $\alpha = 0$, the function predicted by \citet{alger_generalization_2012} equates to pure selfishness.
+So we are interested in how closely the surface produced by our dynamically evolving system aligns to a surface of pure selfishness.
 
 
 \todo{below list}
-\np > How inefficient is \ref{symmetric_payoff_plot}
-\np > We use a better technique - localised
 \np > Surfaces evolved tend towards favouring "winning" rather than pure-selfishness > fig of average surface.
 \np > While not exactly the prediction, relatively close > fig distance box plot.
 \np > These surfaces perform well against the surface predicted by JTB, but poor against themselves so would be poor resident > fig box plot.
 
+\np The hypothesis is that this divide along the line of equality is a product of sampling only symmetric games.
+In essence, when games are symmetric, each interaction that a resident and mutant engage in occurs across the line of equality.
+Payoff points that are on the line of equality ($[a,a] \& [d,d]$) do not contribute to a difference in fitness, so can be ignored.
+The other two payoff points in a given game are ($[b,c] \& [c,b]$)
+So mutations that lead an individual to be more likely to play the payoff point that 
+
+
 \section{Symbolic Regression}
-> JTB result is strongly (?) dependent on the assumption of symmetric games.
+> JTB result is dependent on the assumption of symmetric games.
 
 \chapter{Conclusion}
 
