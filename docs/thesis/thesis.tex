@@ -310,16 +310,14 @@ This method ensures that mutations are small.
 It also has the effect of creating \textit{localised} mutations: mutations that only affect a certain area of the surface rather than the shape of the surface overall.
 It turns out that the localised nature of these mutations is important and will be discussed in proceeding sections.
 Figure \ref{selfishUtilitySurfaceOneMutation} shows our selfish utility surface from \ref{selfishUtilitySurface} after one mutation has been applied.
-
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.7]{resources/one_mutation.png}
 	\caption{The selfish utility surface after one mutation has been applied at the point (3, 3).}
 	\label{selfishUtilitySurfaceOneMutation}
 \end{figure}
-
 \paragraph{Symbolic Regression}
-The second method by which we represent individuals is by maintaining the symbolic expression of a two parameter function.
+\np The second method by which we represent individuals is by maintaining the symbolic expression of a two parameter function.
 This expression (which is the phenotype) is not the only information stored about each individual though.
 An individual also consists of its genome, an array of integers (`codons') that is used to generate the phenotype in conjunction with the grammar.
 This representation uses the work of \citet{fenton_ponyge2:_2017}, the documentation of which has in depth explanations of the representation's inner workings.
@@ -359,16 +357,150 @@ So, with symbolic regression, there is no concept of the `locality' of the mutat
 
 
 \chapter{Symmetric Games}\label{symmetricGames}
+
+We begin with simulations in which individuals are paired to play symmetric, two player games.
+This model aligns closely with the results of \citet{alger_generalization_2012}.
+So, we are here exploring how the dynamics of a system that adheres to the assumptions made by AW affect the models convergence to the prediction made by AW.
+We also implement the assortative matching of AW to investigate how this affects the individuals that are produced by simulation.
+
+\section{Phenotype Mutation}
+Using the sampling technique just described, we simulate evolution operating at the level of the phenotype.
+Fitness is a product of the individual's performance in many symmetric games.
+Starting with a randomly generated surface, we run simulations with the following parameters:
+\begin{gather*}
+	\phi = 5\\
+	s = 0.1\\
+	\alpha = 0\\
+\end{gather*}
+\noindent When $\alpha = 0$, the function predicted by \citet{alger_generalization_2012} equates to pure selfishness.
+So we are interested in how closely the surface produced by our dynamically evolving system aligns to a surface of pure selfishness.
+Figure \ref{average_r_0_symmetric_evolved} shows an average of the surfaces that resulted from ten simulations with these parameters.
+Just looking at this figure and comparing it to figure \ref{selfishUtilitySurface}, does not indicate a huge amount of similarity.
+This is confirmed measuring the difference in volume between the evolved surfaces and pure selfishness. 
+
+\np The volume between the average surface and the predicted is 19.112 (for context the total volume between the selfish surface and the zero-plane is 62.5).
+This difference tends to increase if we look at the volumes between each individual surface and selfishness respectively, figure \ref{boxplot_volume_difference_symmetric_r_0} displays these measures.
+There tends to be an absolute difference of about a third of the total volume of the selfish surface between the evolved surfaces and the selfish surface.
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.7]{resources/average_r_0_symmetric_evolved.png}
+	\caption{An average of the surfaces evolved by symmetric-game, phenotype mutation when $\alpha = 0$.}
+	\label{average_r_0_symmetric_evolved}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.7]{resources/boxplot_volume_difference_symmetric_r_0.png}
+	\caption{Volume-differences between evolved surfaces and Pure Selfishness; $\alpha = 0$.}
+	\label{boxplot_volume_difference_symmetric_r_0}
+\end{figure}
+
+\np Performing similar analysis on the surfaces evolved when $\alpha \neq 0$ yields similar results.
+The figure \ref{average_r_03_symmetric_evolved} shows the average evolved surface when $\alpha = 0.3$.
+The volume-difference between this surface and the one shown in figure \ref{average_r_0_symmetric_evolved} is so small as to be negligible.
+As before, we can also look at the volume differences between the surfaces produced by the simulation and the AW prediction.
+Figure \ref{boxplot_volume_difference_symmetric_r_03} shows the distribution of these volumes, the volume-difference between the average surface and the AW prediction is 23.282.
+Now that $\alpha$ is greater than zero and AW predicts some level of cooperation between individuals, our evolved surfaces are even more dissimilar to the AW prediction.
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.7]{resources/average_r_03_symmetric_evolved.png}
+	\caption{An average of the surfaces evolved by symmetric-game, phenotype mutation when $\alpha = 0.3$.}
+	\label{average_r_03_symmetric_evolved}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.6]{resources/boxplot_volume_difference_symmetric_r_03.png}
+	\caption{Volume-differences between evolved surfaces AW prediction; $\alpha = 0.3$.}
+	\label{boxplot_volume_difference_symmetric_r_03}
+\end{figure}
+
+
+\np So, our evolved surfaces are not overly similar to the prediction made by AW surface in terms of volume-difference, but how do they fare in terms of fitness?
+Figure \ref{linegraph_fitness_difference_increasing_epsilon} shows the difference in personal fitness earned by the evolved surface against the AW prediction as the proportion of the population  that is the evolved surface increases.
+In this figure, a positive number on the \textit{y-axis} indicates that evolved surface has achieved a higher fitness increase than the AW prediction.
+The downward slope of this figure indicates that when the AW prediction is the resident in a population and our average-evolved surface enters this population,
+the evolved surface achieves a higher personal payoff than the prediction when the proportion of the population that is the evolved type is low.
+As this proportion increases though, the fitness difference moves back in favour of the AW predication, and so our evolved surface will not be able to invade.
+This is in agreement with AW's prediction.
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.7]{resources/linegraph_fitness_difference_increasing_epsilon.png}
+	\caption{Fitness difference between evolved surface and predicted surface; $\alpha = 0$.}
+	\label{linegraph_fitness_difference_increasing_epsilon}
+\end{figure}
+
+\np Phenotype Mutation with symmetric games has not been able to recover the results of \citet{alger_generalization_2012}.
+We did though, converge towards an interesting surface that performed reasonably well in fitness evaluation.
+This well-performing surface allowed us to investigate the evolutionary stability of the AW prediction which we were not able to create a counter-example to. 
+It is possible that this method of mutation has produced surfaces that are on their way to converging on an alternative evolutionary stable function.
+
+\section{Symbolic Regression}
+
+We now turn our attention to our second method of representing individuals.
+We start with a randomly generated genome, and simulate evolution via the technique described.
+In the case of symbolic regression, it is a little more difficult to give a general picture of the kinds of functions that evolved than it is in the phenotypic case.
+Since small mutations in genome can lead to vastly different functions being generated by the grammar, it does not make sense to think of an average function that is generated,
+but we can think about the kinds of functions that are generated.
+
+\np Considering one group of ten simulations, where $\alpha = 0$, six of the evolved functions correspond exactly to pure selfishness, while two more are heavily slanted towards selfishness.
+Finally, two of the resultant functions can be considered noise.
+These results and the corresponding functions are displayed in figure \ref{barchart_fitness_earned_against_target}.
+The dashed, threshold-line in this figure is the fitness earned by Pure Selfishness when playing against itself.
+
+\np It can quickly be seen that functions $f$ and $g$ are poorest performing functions of the group.
+This is explained by the fact that in generating a utility value these functions take into account neither players payoff.
+It should also be noted that for completeness the full, unsimplified, evolved function is shown in the figure when some can be reduced.
+For example, given that $r=\alpha=0$, functions $d$ and $h$ both reduce down to simply $my\_payoff$.
+
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.7]{resources/barchart_fitness_earned_against_target.png}
+	\begin{flalign*}
+		a: r+my\_payoff*12.37-opponent\_payoff&\\
+		b: my\_payoff+70.54&\\
+		c: 47.17*my\_payoff-48.68&\\
+		d: opponent\_payoff*r+my\_payoff+60.34*r*opponent\_payoff*20.72\\
+		e: my\_payoff+r\\
+		f: r*31.38\\
+		g: 34.68+r\\
+		h: my\_payoff+opponent\_payoff*my\_payoff*my\_payoff*opponent\_payoff*r\\
+		i: my\_payoff-97.58\\
+		j: my\_payoff+48.00\\
+	\end{flalign*}
+	\caption{Fitness earned by each evolved function when playing against AW prediction; $\alpha = 0$. In the evolved functions, r is used as a stand in for $\alpha$.}
+	\label{barchart_fitness_earned_against_target}
+\end{figure}
+
+
+
 \chapter{Asymmetric Games}\label{asymmetricGames}
 \chapter{Discussion}\label{discussion}
 
+ > The cause of weird divide in symmetric phenotype
+ > whether evolved surfaces are candidate for ESS.
 
-\subsection{Games Matter}
+
+\paragraph{Phenotype Mutation: In it to win it}
+\np The hypothesis is that this divide along the line of equality is a product of sampling only symmetric games.
+In essence, when games are symmetric, each interaction that a resident and mutant engage in occurs across the line of equality.
+Payoff points that are on the line of equality ($[a,a] \& [d,d]$) do not contribute to a difference in fitness, so can be ignored.
+The other two payoff points in a given game are ($[b,c] \& [c,b]$), arbitrarily, let's assume that $b \geq c$.
+So, since the point containing a and d contribute no difference to fitness, evolution will favour the outcome in which the individuals earns \textit{payoff b}.
+By definition, this is always on the same side of the identity line, so that may explain the shape on the evolved functions.
+
+\section{Games Matter}
+
+\todo{Review this section after results are written to see where (if?) it fits}
 
 One of the things that we learn by subjecting the described phenotype to evolution is that the kinds of games that are used to evaluate the fitness of individuals are important.
 We begin with a model that uses only a single kind of game to evaluate the fitness of individuals.
 Next we move to a conception of fitness that is an aggregation of individuals performance in many different kinds of games.
-We use this conception in the symmetric and asymmetric case.
+We explore this evaluation in the symmetric and asymmetric case in chapters \ref{symmetricGames} and \ref{asymmetricGames} respectively.
 
 \paragraph{Single-Game Fitness Measure}
 \np In \ref{experimentalFramework} we discuss an approach in which individual fitness is determined based off  how the types perform in one common kind of non-cooperative game, namely prisoner's dilemma.
@@ -455,37 +587,6 @@ This technique introduces no additional bias into the model: it is as if we free
 	\caption{Payoff-points of 40 `locally' randomly sampled games.}
 	\label{local_symmetric_payoff_plot}
 \end{figure}
-
-
-\subsection{Evolution with Symmetric Games}
-
-Using the sampling technique just described, we simulate evolution operating at the level of the phenotype.
-Fitness is a product of the individual's performance in many symmetric games.
-Starting with a randomly generated surface, we run simulations with the following parameters:
-\begin{gather*}
-	\phi = 5\\
-	s = 0.1\\
-	\alpha = 0\\
-\end{gather*}
-
-\noindent When $\alpha = 0$, the function predicted by \citet{alger_generalization_2012} equates to pure selfishness.
-So we are interested in how closely the surface produced by our dynamically evolving system aligns to a surface of pure selfishness.
-
-
-\todo{below list}
-\np > Surfaces evolved tend towards favouring "winning" rather than pure-selfishness > fig of average surface.
-\np > While not exactly the prediction, relatively close > fig distance box plot.
-\np > These surfaces perform well against the surface predicted by JTB, but poor against themselves so would be poor resident > fig box plot.
-
-\np The hypothesis is that this divide along the line of equality is a product of sampling only symmetric games.
-In essence, when games are symmetric, each interaction that a resident and mutant engage in occurs across the line of equality.
-Payoff points that are on the line of equality ($[a,a] \& [d,d]$) do not contribute to a difference in fitness, so can be ignored.
-The other two payoff points in a given game are ($[b,c] \& [c,b]$)
-So mutations that lead an individual to be more likely to play the payoff point that 
-
-
-\section{Symbolic Regression}
-> JTB result is dependent on the assumption of symmetric games.
 
 \chapter{Conclusion}
 
