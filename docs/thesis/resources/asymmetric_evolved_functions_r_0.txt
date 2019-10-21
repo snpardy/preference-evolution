@@ -1,0 +1,23 @@
+a: my_payoff-59.61\\
+ b: my_payoff-77.15\\
+ c: r+my_payoff\\
+ d: my_payoff-r\\
+ e: 82.42-opponent_payoff*r-r-r-opponent_payoff+r+opponent_payoff*my_payoff\\
+ f: my_payoff-r\\
+ g: 97.63-98.13-r+98.63+r+58.67*my_payoff\\
+ h: my_payoff-r*opponent_payoff+r-89.00*r+my_payoff\\
+i: my_payoff*opponent_payoff*23.26*opponent_payoff*68.08*r+my_payoff+my_payoff*r*r*25.17\\
+j: my_payoff-r*r\\
+
+
+--------------------------------------------------------------------------------------------------
+a: f(x, y) = & x - 59.61&\\
+b: f(x, y) = & x - 77.15&\\
+c: f(x, y) = & x + \alpha &\\
+d: f(x, y) = & x - \alpha &\\
+e: f(x, y) = & xy - \alpha y - \alpha  - y + 82.42&\\
+f: f(x, y) = & x - \alpha &\\
+g: f(x, y) = & 98.13 + 58.67x&\\
+h: f(x, y) = & 2x - \alpha y + 90\alpha &\\
+i: f(x, y) = & 1583.5408\alpha xy^2+x+25.17\alpha ^2x&\\
+j: f(x, y) = & x-\alpha ^2&\\
