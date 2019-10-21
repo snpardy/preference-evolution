@@ -97,9 +97,9 @@
 \section{Preamble}
 \section{Motivation \& Objectives}
 
-\chapter{Literature Review}
+\chapter{Literature Review}\label{lit_review}
 
-\section{Limitations of Theory}
+\section{Limitations of Theory}\label{limits_of_theory}
 The theoretical and analytical work discussed in the previous chapters suffers from several limitations that affect the generality of the conclusions drawn. 
 Chiefly, it is static; the conclusions focus on evolutionary stable strategies as a solution concept.
 These conclusions may be meaningful however do not tell us anything about how likely these strategies are to evolve or what circumstances may lead to them evolving.
@@ -108,14 +108,15 @@ this has made the process of creating simulation-based models of the theory diff
 
 \np The primary source of theoretical work that this research has been on based is that of Alger \& Weibull (\citeyear{alger_generalization_2012}, \citeyear{alger_homo_2013}; henceforth, \textit{AW}).
 This work finds that under certain assumptions a utility function that is centred around a linear relationship between the two players' payoffs results in evolutionarily stable play.
-This utility function is given in equation \ref{linearESSEquation}, in which \textit{x} and \textit{y} are types in the population and $\alpha$ is equal to the \textit{index of assortativity}.
+This utility function is given in equation \ref{linearESSEquation} in which \textit{x} and \textit{y} are types in the population and $\rho$ is the weight that an the indiviudual attaches to their opponent's payoff (the \textit{index of morality}).
+AW predicts that when $\rho$ is equal to $\alpha$, the \textit{index of assortativity}, this utility function will result in ESS play and any mutant that enters the population will be unable to remove it as the resident.
 \begin{equation}
 	\label{linearESSEquation}
-	u_\alpha(x, y) = \Pi(x,y) + \alpha\Pi(y,x)
+	u(x, y) = \Pi(x,y) + \rho\Pi(y,x)
 \end{equation}
 
-\noindent To achieve this, the authors assume that all types have a utility function of the same form as \ref{linearESSEquation} where $\alpha \in (-1, 1)$ \citep[p. ~47]{alger_generalization_2012}.
-With this assumption, the model, in essence, only allows one number ($\alpha$) to freely evolve.
+\noindent To achieve this, the authors assume that all types have a utility function of the same form as \ref{linearESSEquation} where $\rho \in (-1, 1)$ \citep[p. ~47]{alger_generalization_2012}.
+With this assumption, the model, in essence, only allows one number ($\rho$) to freely evolve.
 This assumption severely limits the search space of the evolutionary process. 
 The experimental framework that we have created relaxes this assumption.
 
@@ -151,38 +152,41 @@ The experimental framework that we have created as part of \textit{this} researc
 
 
 \chapter{The Experimental Framework}\label{experimentalFramework}
-A large part of the work undertaken in support of this research involved the creation of an experimental framework that could be used to attempt to recover the results of \citet{alger_generalization_2012} in a dynamically evolving environment.
+A large part of the work in this research has involved the creation of an experimental framework that could be used to test the results of \citet{alger_generalization_2012} in a fully dynamic environment.
 At a high level this experimental framework is simple, however when digging into the detail, complications arise.
 Fundamentally, the framework is made up of a representation of a utility function, 
-a means by which instances of this representation can be mutated and a means by which the fitness of two different utility functions can be compared.
-With these building blocks we can construct the main loop of the experiments that are undertaken.
-We define some utility function that represents our initial resident agent, the resident is then mutated (creating the mutant). 
+a means by which instances of this representation can be mutated, and a means by which the fitness of two different utility functions can be compared.
+With these building blocks we can construct the main loop of the experiments.
+
+\np We define some utility function that represents our initial resident agent, the resident is then mutated (creating the mutant). 
 The fitnesses of both resident and mutant are then computed and compared. 
 If the mutant achieves a higher payoff an invasion occurs: the original resident is discarded and the mutant takes over as the new resident.
+This algorithm can be interpreted as an implementation of \textit{adaptive dynamics} \citep{waxman_20_2005}.
 This process is repeated for a given number of generations.
-In the following, we discuss the implementation detail of each of these fundamental parts of the framework, beginning with fitness.
+In the following, we discuss the implementation detail of each of these foundational parts of the framework, beginning with fitness.
 
 
 \section{Fitness}
 \np Decisions we make about how we measure fitness and what difference in fitness is enough to trigger an invasion can have significant impact on the dynamics of the system.
 This is an area in which Alger \& Weibull give us limited but essentially sufficient guidance.
 Fitness is measured as the \textit{personal payoff} earned by each type when both players act in accordance with their own preferences.
-For an individual $\theta$ in a population state $(\theta, \theta', \epsilon,\sigma)$,
-where $\theta'$ is the mutant, $\epsilon$ is the mutant share of the population and $\sigma$ is the \textit{index of assortativity}, the expected fitness gain of the resident and mutant after one interaction is given by equations \ref{FexpectedPayoff} \& \ref{GexpectedPayoff} respectively.
+For an individual $\theta$ in a population state $(\theta, \theta', \epsilon,\alpha)$,
+where $\theta'$ is the mutant, $\epsilon$ is the mutant share of the population and $\alpha$ is the \textit{index of assortativity}, the expected fitness gain of the resident and mutant after one interaction is given by equations \ref{FexpectedPayoff} \& \ref{GexpectedPayoff} respectively.
 Where $f(x, y)$ is the expected payoff earned by $x$ when facing $y$ in a given interaction.
 \newline
+\np \todo{discuss these functions without alpha (i.e. r = 0), then discuss with alpha}
 \begin{gather}
 	\label{FexpectedPayoff}
-	F_{\epsilon, \sigma}(\theta, \theta') = (\sigma +(1-\epsilon)(1-\sigma))f(\theta, \theta) + \epsilon(1-\sigma)f(\theta, \theta')\\
+	F_{\epsilon, \alpha}(\theta, \theta') = (\alpha +(1-\epsilon)(1-\alpha))f(\theta, \theta) + \epsilon(1-\alpha)f(\theta, \theta')\\
 	\label{GexpectedPayoff}
-	G_{\epsilon, \sigma}(\theta', \theta) = (\sigma +\epsilon(1-\sigma))f(\theta', \theta') + (1-\epsilon)(1-\sigma)f(\theta', \theta)
+	G_{\epsilon, \alpha}(\theta', \theta) = (\alpha +\epsilon(1-\alpha))f(\theta', \theta') + (1-\epsilon)(1-\alpha)f(\theta', \theta)
 \end{gather}
 
 \np The notion of evolutionary stability is defined as follows: for a state to be considered stable, the residents must achieve, \textit{on average}, a fitness at least as high as that achieved by the mutants in a population that contains both resident and mutant types.
 Using functions \ref{FexpectedPayoff} and \ref{GexpectedPayoff}, this relation is given by \ref{ESSweakInequality}.
 \begin{equation}
 	\label{ESSweakInequality}
-	F_{\epsilon, \sigma}(\theta, \theta') \geq G_{\epsilon, \sigma}(\theta', \theta)
+	F_{\epsilon, \alpha}(\theta, \theta') \geq G_{\epsilon, \alpha}(\theta', \theta)
 \end{equation}
 \citet[~p. 44]{alger_generalization_2012}
 \np So, if inequality \ref{ESSweakInequality} does not hold, an invasion occurs.
@@ -221,20 +225,20 @@ Figure \ref{psuedocodeForf} shows a pseudocode for the function $f$.
 		Action 1 & a, a & b, c\\\hline
 		Action 2 & c, b & d, d \\\hline
 	\end{tabular}
-	\caption{Payoff matrix detailing the payoff structure of a symmetric game. Where Player A earns the payoff on the left of the cell, and Player B the payoff on the right, and ${a, b, c, d} \in R$.}
+	\caption{Payoff matrix detailing the payoff structure of a symmetric game. Where Player A earns the payoff on the left of the cell, and Player B the payoff on the right, and $\{a, b, c, d\} \in R$.}
 	\label{symmetricGame}
 	\vspace{20px}
 \end{figure}
 \section{Games}
 \np A key part of any game-theoretic model that attempts to represent the process of preference formation, is the kinds of games that are played.
-For the most part, the literature (\citet{alger_generalization_2012}, \citet{alger_homo_2013}, \citet{newton_preferences_2017}) is largely agnostic about the games that are played in the models the work describes.
-This work assumes only that the games are symmetric and two player. 
+For the most part, the literature (\citeauthor{alger_generalization_2012} (\citeyear{alger_generalization_2012}, \citeyear{alger_homo_2013}), \citet{newton_preferences_2017}) is largely agnostic about the games that are played in the models the work describes.
+This literature assumes only that the games are symmetric and two player. 
 With this assumption in mind, \ref{symmetricGame} shows the payoff structure of a symmetric game.
 
 \np Given that we are interested in how cooperative preferences can develop, we begin with a model in which individuals are matched to play a single type of non-cooperative game.
 For example, using a prisoner's dilemma type we can write down a game with the payoff structure detailed in figure \ref{symmetricGame} with payoffs $c > a > d > b$.
 Next, we investigate how preferences form when individuals play many different symmetric games in one interaction.
-Now, the payoffs $a$ through $d$ are determined as follows:
+Now, the payoffs $a, b, c$ and $d$ are determined as follows:
 
 \begin{center}\label{a_through_d}	
 $a \sim U(0,\phi) \qquad a \in I$
@@ -247,13 +251,44 @@ $d \sim U(0,\phi) \qquad d \in I$
 \end{center}
 
 \np In other words, $a, b, c, d$ are independent and identically distributed uniform random variables from $0$ to some maximum $\phi$.
+We also consider the case of asymmetric games. The payoff structure of these games is shown in figure \ref{asymmetricGame}, where the payoffs are distributed as follows.
+\begin{center}\label{a_through_d}	
+	$a \sim U(0,\phi) \qquad a \in I$
+	
+	$b \sim U(0,\phi) \qquad b \in I$
+	
+	$c \sim U(0,\phi) \qquad c \in I$
+	
+	$d \sim U(0,\phi) \qquad d \in I$
 
-\np \todo{Might say something about asymmetric games here}
+	$e \sim U(0,\phi) \qquad a \in I$
+	
+	$f \sim U(0,\phi) \qquad b \in I$
+	
+	$g \sim U(0,\phi) \qquad c \in I$
+	
+	$h \sim U(0,\phi) \qquad d \in I$
+\end{center}
 
-\np In Chapter \ref{symmetricGames} we discuss results relating to both single- and many-game interactions.
+\begin{figure}[H]
+	\vspace{30px}
+	\centering
+	\begin{tabular}{|l||*{5}{c|}}\hline
+		\backslashbox{Player A}{Player B}
+		&\makebox[7em]{Action 1}&\makebox[7em]{Action 2}\\\hline\hline
+		Action 1 & a, e & b, f\\\hline
+		Action 2 & c, g & d, h \\\hline
+	\end{tabular}
+	\caption{Payoff matrix detailing the payoff structure of an asymmetric game. Where Player A earns the payoff on the left of the cell, and Player B the payoff on the right, and $\{a, b, c, d, e, f, g, h\} \in R$.}
+	\label{asymmetricGame}
+	\vspace{20px}
+\end{figure}
+
+\np Results relating to symmetric games are presented in chapter \ref{symmetricGames}
+while results of simulations with asymmetric games are presented later, in chapter \ref{asymmetricGames}.
 
 
-\section{Representing \& Mutating Individuals}
+\section{Representing \& Mutating Individuals}\label{representing_mutating}
 \np The way that utility function types are mutated is intrinsically tied to way that those types are represented in the framework, so we will here discuss them together.
 Fundamentally, a utility function in this context is a way to convert the outcomes experienced by two individuals into the utility of one of those individuals.
 The individual then acts so as to maximize their utility, and in this way acts like an individual who \textit{prefers} strategy $x$ to strategy $x'$ \textit{iff} $u(x, y) > u(x', y)$.
@@ -262,21 +297,15 @@ The first method involves maintaining the values of a `utility surface' directly
 While the second, style of representation involves maintaining a two parameter function $f(x,y)$, where x is the payoff earned by the agent whose utility function $f$ is and y is the payoff earned by their opponent. 
 Both methods will be examined in detail in the following.
 
-
-So, an individual is represented as a matrix of utility values that can be queried by payoff.
-Mutation is performed by making small, localised changes to an area of the surface.
-The second 
-
-
-\paragraph{Phenotype Mutation}
-\np The method by which individuals are represented as utility surfaces we've termed `phenotype mutation'.
+\paragraph{Phenotype Representation}
+\np The method by which individuals are represented as utility surfaces we've termed `Phenotype Representation'.
 This is because in this method individuals are represented directly as a surface in 3 dimensions.
 So the only information maintained about different types is their phenotype and mutation is performed directly on the phenotype.
 The three dimensions of the surface (from the individuals point of view) are: my payoff, my opponent's payoff, and my utility.
 Figure \ref{selfishUtilitySurface} is an example of a purely selfish utility surface.
 
 \np This method has two immediate limitations. 
-The first is that the surface is only defined for a certain payoff range and so a value, $\phi$ must be provided that represents the maximum \textit{payoff} achievable by either individual.
+The first is that the surface is only defined for a certain payoff range and so a value, $\phi$ must be provided that represents the maximum payoff achievable by either individual.
 Second, the surface is discretised and so is accurate only up to a certain granularity - a value, $s$ must be provided that is the `step' of the grid.
 The value $s$ should be as small as feasible. 
 Figure \ref{selfishUtilityGrid} is an example of the grid values of a utility surface of an individual that is purely selfish.
@@ -316,44 +345,99 @@ Figure \ref{selfishUtilitySurfaceOneMutation} shows our selfish utility surface 
 	\caption{The selfish utility surface after one mutation has been applied at the point (3, 3).}
 	\label{selfishUtilitySurfaceOneMutation}
 \end{figure}
-\paragraph{Symbolic Regression}
+\paragraph{Symbolic Representation}
 \np The second method by which we represent individuals is by maintaining the symbolic expression of a two parameter function.
 This expression (which is the phenotype) is not the only information stored about each individual though.
 An individual also consists of its genome, an array of integers (`codons') that is used to generate the phenotype in conjunction with the grammar.
-This representation uses the work of \citet{fenton_ponyge2:_2017}, the documentation of which has in depth explanations of the representation's inner workings.
+This representation makes use of the software package of \citet{fenton_ponyge2:_2017}, the documentation of which has in depth explanations of the representation's inner workings.
 
 \np Briefly, the grammar is a set of rules that govern the kinds of individuals that can be generated.
 To generate a phenotype, the grammar rules are enumerated with the phenotype iteratively constructed.
 Each time a choice is to be made between two or more options, we take the modulo of the current codon by the number of available options, this value is used to select the rule.
 The grammar, in Backus-Naur form \citep{oneill_grammatical_2001}, is a parameter of the model and inherently introduces bias into the simulation.
 The grammar that was used for the majority of our simulations is shown in \ref{grammar}, where $<o>, <e> and <c>$ are rules and the terms separated by $|$ are the possible results of that rule.
-
-\begin{align}\label{grammar}
-	&<o> ::= \qquad <e>+<e>|\\
-	& \qquad \qquad \qquad <e>-<e>| \nonumber \\
-	& \qquad \qquad \qquad <e>*<e>| \nonumber \\ \nonumber \\
-	&<e> ::= \qquad <e>+<e>| \nonumber \\
-	&\qquad \qquad \qquad <e>-<e>| \nonumber \\
-	&\qquad \qquad \qquad <e>*<e>| \nonumber \\
-	&\qquad \qquad \qquad <c><c>.<c><c>| \nonumber \\
-	&\qquad \qquad \qquad r| \nonumber \\
-	&\qquad \qquad \qquad myPayoff| \nonumber \\
-	&\qquad \qquad \qquad opponentPayoff \nonumber \\ \nonumber \\
-	&<c>  ::= \qquad 0 | \quad 1 |\quad 2 |\quad 3 |\quad 4 |\quad 5 |\quad 6 |\quad 7 |\quad 8 |\quad 9 \nonumber
-\end{align}
+In the grammar, $r$ is used as a stand in the the index of assortativity, $\alpha$.
+After initial experimentation, it became clear that adding the index of assortativity as a terminal within the grammar
+tended to led to much more meaningful results than if simulations were left to arrive at this value independently.
+\begin{figure}[]
+	\centering
+	\begin{align*}
+		&<o> ::= \qquad <e>+<e>|\\
+		& \qquad \qquad \qquad <e>-<e>| \nonumber \\
+		& \qquad \qquad \qquad <e>*<e>| \nonumber \\ \nonumber \\
+		&<e> ::= \qquad <e>+<e>| \nonumber \\
+		&\qquad \qquad \qquad <e>-<e>| \nonumber \\
+		&\qquad \qquad \qquad <e>*<e>| \nonumber \\
+		&\qquad \qquad \qquad <c><c>.<c><c>| \nonumber \\
+		&\qquad \qquad \qquad r| \nonumber \\
+		&\qquad \qquad \qquad myPayoff| \nonumber \\
+		&\qquad \qquad \qquad opponentPayoff \nonumber \\ \nonumber \\
+		&<c>  ::= \qquad 0 | \quad 1 |\quad 2 |\quad 3 |\quad 4 |\quad 5 |\quad 6 |\quad 7 |\quad 8 |\quad 9 \nonumber
+	\end{align*}
+\caption{The grammar in BNF form, used to govern the generation of individuals in Symbolic Representation. Where $r$ is a stand in for the index of assortativity, $\alpha$}
+\label{grammar}
+\end{figure}
 
 
 \np Mutation is performed by modifying integers within the genome of individuals.
 When a mutation occurs, the integer of each codon within the genome is randomly altered.
 This way, when the grammar is traversed again to generate the phenotype and the codons are used to select between options, different codons will produce different outcomes.
 
-\np Unlike the phenotype mutation, this method of representing individuals results in utility functions that are continuous and un-bounded in terms of the size of the payoffs that it can interpret.
-However, symbolic regression comes with the significant drawback of the grammar encoding bias into the model.
+\np Unlike the Phenotype Representation, this method of representing individuals results in utility functions that are continuous and un-bounded in terms of the size of the payoffs that it can interpret.
+However, Symbolic Representation comes with the significant drawback of the grammar encoding bias into the model.
 It is difficult to overstate the importance the grammar has on the dynamics of the system.
 Another point of difference is that mutations in this case affect the function overall, rather than a specific area of the space.
-So, with symbolic regression, there is no concept of the `locality' of the mutation - mutations affect the whole space.
+So, with Symbolic Representation, there is no concept of the `locality' of the mutation - mutations affect the whole space.
 
 \todo{is here the place to talk about results of choosing a bad grammar?}
+
+
+\section{Measuring Success}\label{success}
+It is difficult to analyse the results of the two different methods we're using in the same way.
+So, for each of the two representations we will look at two different measures to assess the results.
+One, is some measure of similarity between the phenotypes of the evolved individuals and the phenotype of the prediction made by \citet{alger_generalization_2012}.
+The second is a comparison of the behaviour of the evolved individuals against that of the predicted function.
+
+\np In the case of Phenotype Representation, given the way mutation operates and since we are confined by the $\phi$ parameter, 
+the individuals produced by the simulation exist approximately within the confines of a $(\phi \times \phi \times \phi)$ cube.
+So, we can compare the individuals based on the volume of the space between the two surfaces (evolved and predicted).
+This is not a comparison of total volume of the surfaces.
+Rather, it is a sum of the point-by-point absolute difference between the two surfaces.
+In the proceeding, this measure will be referred to as the `volume-difference'.
+
+\np This volume-difference is not helpful when analysing the results of Symbolic Representation.
+This is because an evolved function can be shifted along the z-axis (the utility-axis) by the addition (subtraction) of some constant.
+This constant changes the utility-values produced by the function and so changes the potential volume-difference but does not alter the outcomes that the individual prefers.
+This is illustrated in the following:
+
+	\begin{alignat*}{2}
+	u & > u_i \\
+	u + c & > u_i +c
+	\end{alignat*}
+
+Where $u$ and $u_i$ are utility values produced by an individual's utility function and c is some constant.
+However, since in the symbolic case we have the expression of the function, we can analyse this function directly to compare its similarity with the AW prediction.
+
+\np Finally, in both cases we can look at the fitness of the evolved individuals.
+By comparing the average payoff earned by the evolved individuals when playing against the AW prediction, with that earned the AW prediction playing against itself, we can get a measure of the similarity of behaviour.
+If our evolved indiviuduals are similar to the prediction, we would expect them to prefer similar outcomes and hence achieve an average payoff when playing against the prediction, similar to what the prediction achieves playing against itself.
+In this context average payoff (and by extent fitness) is not intended to be an indicator of the reproductive success of an individual but rather a measure of the similarity of preferences.
+
+\section{Putting it all together}
+
+Along with the wider context presented in Chapter \ref{lit_review}, now have the key elements of the framework that will be used to perform experiments.
+These include an understanding of the fitness measure and the kinds of games that will be played in performing this measure.
+As well as the details of the different methods of representing individuals we will explore.
+Finally, from \ref{success}, we have understanding of some of the methods that will be used in analysing results.
+Before we begin presenting and discussing these results, we lay out how the rest of the thesis is organised.
+
+\np We begin in the next chapter, Chapter \ref{symmetricGames}, with an exploration of the results generated by running simulations with symmetric games.
+Firstly, in section \ref{symmetricGames_pheno} we detail the outcomes of the Phenotype Representation simulations.
+Before continuing with a presentation of the results of the Symbolic Representation simulations in \ref{symmetricGames_symb}.
+
+\np In Chapter \ref{asymmetricGames} we move beyond the scope of the \citeauthor{alger_generalization_2012} work by exploring asymmetric games.
+We again begin with the results of the Phenotype Representation, with the results of Symbolic Representation presented in the proceeding section.
+The key insights of these results are then discussed in Chapter \ref{discussion}.
 
 
 \chapter{Symmetric Games}\label{symmetricGames}
@@ -363,8 +447,8 @@ This model aligns closely with the results of \citet{alger_generalization_2012}.
 So, we are here exploring how the dynamics of a system that adheres to the assumptions made by AW affect the models convergence to the prediction made by AW.
 We also implement the assortative matching of AW to investigate how this affects the individuals that are produced by simulation.
 
-\section{Phenotype Mutation}
-Using the sampling technique just described, we simulate evolution operating at the level of the phenotype.
+\section{Phenotype Representation}\label{symmetricGames_pheno}
+Using the technique just described in section \ref{representing_mutating}, we simulate evolution operating at the level of the phenotype.
 Fitness is a product of the individual's performance in many symmetric games.
 Starting with a randomly generated surface, we run simulations with the following parameters:
 \begin{gather*}
@@ -375,86 +459,96 @@ Starting with a randomly generated surface, we run simulations with the followin
 \noindent When $\alpha = 0$, the function predicted by \citet{alger_generalization_2012} equates to pure selfishness.
 So we are interested in how closely the surface produced by our dynamically evolving system aligns to a surface of pure selfishness.
 Figure \ref{average_r_0_symmetric_evolved} shows an average of the surfaces that resulted from ten simulations with these parameters.
-Just looking at this figure and comparing it to figure \ref{selfishUtilitySurface}, does not indicate a huge amount of similarity.
+Looking at this figure and comparing it to figure \ref{selfishUtilitySurface}, it is not obvious that there is a huge amount of similarity between the two.
 This is confirmed measuring the difference in volume between the evolved surfaces and pure selfishness. 
 
-\np The volume between the average surface and the predicted is 19.112 (for context the total volume between the selfish surface and the zero-plane is 62.5).
-This difference tends to increase if we look at the volumes between each individual surface and selfishness respectively, figure \ref{boxplot_volume_difference_symmetric_r_0} displays these measures.
-There tends to be an absolute difference of about a third of the total volume of the selfish surface between the evolved surfaces and the selfish surface.
+\np The volume-difference between the average surface and the predicted is 19.112 (for context the total volume between the selfish surface and the zero-plane is 62.5).
+This difference tends to increase if we look at the volume-difference between each of 10 surfaces individually and selfishness.
+Figure \ref{boxplot_volume_difference_symmetric} displays these measures.
+There tends to be a volume-difference of about a third of the total volume of the selfish surface between the evolved surfaces and the selfish surface.
 
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.7]{resources/average_r_0_symmetric_evolved.png}
-	\caption{An average of the surfaces evolved by symmetric-game, phenotype mutation when $\alpha = 0$.}
+	\caption{An average of the surfaces evolved by symmetric-game, Phenotype Representation when $\alpha = 0$.}
 	\label{average_r_0_symmetric_evolved}
-\end{figure}
-
-\begin{figure}
-	\centering
-	\includegraphics[scale=0.7]{resources/boxplot_volume_difference_symmetric_r_0.png}
-	\caption{Volume-differences between evolved surfaces and Pure Selfishness; $\alpha = 0$.}
-	\label{boxplot_volume_difference_symmetric_r_0}
 \end{figure}
 
 \np Performing similar analysis on the surfaces evolved when $\alpha \neq 0$ yields similar results.
 The figure \ref{average_r_03_symmetric_evolved} shows the average evolved surface when $\alpha = 0.3$.
-The volume-difference between this surface and the one shown in figure \ref{average_r_0_symmetric_evolved} is so small as to be negligible.
-As before, we can also look at the volume differences between the surfaces produced by the simulation and the AW prediction.
-Figure \ref{boxplot_volume_difference_symmetric_r_03} shows the distribution of these volumes, the volume-difference between the average surface and the AW prediction is 23.282.
+The volume-difference between this surface and the evolved surface when $\alpha = 0$ - shown in figure \ref{average_r_0_symmetric_evolved} - is so small as to be negligible.
+This is notable the AW prediction differs significantly depending on $\alpha$.
+As before, we can also look at the volume-differences between the surfaces produced by the simulation and the AW prediction.
+Figure \ref{boxplot_volume_difference_symmetric} shows the distribution of these volumes, the volume-difference between the average surface and the AW prediction is 23.282.
 Now that $\alpha$ is greater than zero and AW predicts some level of cooperation between individuals, our evolved surfaces are even more dissimilar to the AW prediction.
 
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.7]{resources/average_r_03_symmetric_evolved.png}
-	\caption{An average of the surfaces evolved by symmetric-game, phenotype mutation when $\alpha = 0.3$.}
+	\caption{An average of the surfaces evolved by symmetric-game, Phenotype Representation when $\alpha = 0.3$.}
 	\label{average_r_03_symmetric_evolved}
 \end{figure}
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.6]{resources/boxplot_volume_difference_symmetric_r_03.png}
-	\caption{Volume-differences between evolved surfaces AW prediction; $\alpha = 0.3$.}
-	\label{boxplot_volume_difference_symmetric_r_03}
+	\includegraphics[scale=0.6]{resources/distance_boxplot_r_00_03.png}
+	\caption{Volume-differences between each of the evolved surfaces and the AW prediction. Calculated for $\alpha = 0$ and $\alpha = 0.3$.}
+	\label{boxplot_volume_difference_symmetric}
 \end{figure}
 
 
 \np So, our evolved surfaces are not overly similar to the prediction made by AW surface in terms of volume-difference, but how do they fare in terms of fitness?
+Figure \ref{phenotype_barchart_fitness_earned_against_target_r_00_03} shows the fitnesses earned by the average evolved surface when playing against the AW predicted surface.
+Rather than being a measure of reproductive success, the fitness here is intended to highlight the difference in \textit{behaviour} between the evolved and predicted surfaces.
+If the evolved surfaces were qualitatively similar to the AW prediction, we would expect the fitness earned by the evolved surface playing against the predicted surface to approach that earned by the predicted surface playing against itself.
+But is does not occur.
+In both instances, the fitness earned by the evolved surface differs from the expected fitness.
+
+\np It is interesting though, that the evolved surfaces seem to out-perform the predicted surface.
+So even though the evolved surfaces are different from the AW prediction, perhaps our simulations have arrived at something that can invade the surfaces entailed by this prediction?
 Figure \ref{linegraph_fitness_difference_increasing_epsilon} shows the difference in personal fitness earned by the evolved surface against the AW prediction as the proportion of the population  that is the evolved surface increases.
 In this figure, a positive number on the \textit{y-axis} indicates that evolved surface has achieved a higher fitness increase than the AW prediction.
-The downward slope of this figure indicates that when the AW prediction is the resident in a population and our average-evolved surface enters this population,
+The positive `fitness difference' values to the left this figure indicate that when the AW prediction is the resident in a population and our average-evolved surface enters this population,
 the evolved surface achieves a higher personal payoff than the prediction when the proportion of the population that is the evolved type is low.
 As this proportion increases though, the fitness difference moves back in favour of the AW predication, and so our evolved surface will not be able to invade.
 This is in agreement with AW's prediction.
-
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.6]{resources/phenotype_barchart_fitness_earned_against_target_r_00_03.png}
+	\caption{Fitness earned by average evolved surface against the predicted surface, compared with the expected fitness; i.e. the fitness earned by the predicted surface playing against itself. Calculated for $\alpha = 0$ and $\alpha = 0.3$.}
+	\label{phenotype_barchart_fitness_earned_against_target_r_00_03}
+\end{figure}
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.7]{resources/linegraph_fitness_difference_increasing_epsilon.png}
-	\caption{Fitness difference between evolved surface and predicted surface; $\alpha = 0$.}
+	\caption{Fitness difference between evolved surface and predicted surface; $\alpha = 0$.
+	When $\epsilon$ is small, the evolved surface achieves a greater fitness than the predicted surface, but as $\epsilon$ grows the predicted surface achieves a greater fitness.
+	This indicates that no invasion will occur.}
 	\label{linegraph_fitness_difference_increasing_epsilon}
 \end{figure}
-
-\np Phenotype Mutation with symmetric games has not been able to recover the results of \citet{alger_generalization_2012}.
+\np Phenotype Representation with symmetric games has not been able to recover the results of \citet{alger_generalization_2012}.
 We did though, converge towards an interesting surface that performed reasonably well in fitness evaluation.
 This well-performing surface allowed us to investigate the evolutionary stability of the AW prediction which we were not able to create a counter-example to. 
 It is possible that this method of mutation has produced surfaces that are on their way to converging on an alternative evolutionary stable function.
 
-\section{Symbolic Regression}
+
+\section{Symbolic Representation}\label{symmetricGames_symb}
 
 We now turn our attention to our second method of representing individuals.
 We start with a randomly generated genome, and simulate evolution via the technique described.
-In the case of symbolic regression, it is a little more difficult to give a general picture of the kinds of functions that evolved than it is in the phenotypic case.
-Since small mutations in genome can lead to vastly different functions being generated by the grammar, it does not make sense to think of an average function that is generated,
+In the case of Symbolic Representation, it is a little more difficult to give a general picture of the kinds of functions that evolved than it is in the phenotypic case.
+Since small mutations in genome can lead to vastly different utility values being generated by the function (e.g. a $+$ becomes a $\times$), it does not make sense to think of an average function that is generated,
 but we can think about the kinds of functions that are generated.
 
-\np Considering one group of ten simulations, where $\alpha = 0$, six of the evolved functions correspond exactly to pure selfishness, while two more are heavily slanted towards selfishness.
+\np Considering one group of ten simulations, where $\alpha = 0$, seven of the evolved functions correspond exactly to pure selfishness,
+while one contains reference to the payoff earned by the opponent, the utility is heavily slanted towards selfishness.
 Finally, two of the resultant functions can be considered noise.
 These results and the corresponding functions are displayed in figure \ref{barchart_fitness_earned_against_target_r_00}.
 The dashed, threshold-line in this figure is the fitness earned by Pure Selfishness when playing against itself.
 
 \np It can quickly be seen that functions $f$ and $g$ are poorest performing functions of the group.
 This is makes sense when the functions themselves are considered: in generating a utility value neither function takes into account the player's payoffs.
-It should also be noted that for completeness the full, unsimplified, evolved function is shown in the figure when some can be reduced.
-For example, given that $r=\alpha=0$, functions $d$ and $h$ both reduce down to simply $my\_payoff$.
+For example, given that $\alpha=0$, functions $d$ and $h$ both reduce down to pure selfishness.
 Another point to note is that functions $b$ and $i$, for example, result in exactly the same behaviour because the slopes of the resultant surfaces are equal.
 The utility value generated by a particular function has no meaning if compared to the value generated by another individual.
 Utility only carries weight when it is compared to another utility value of the same individual. 
@@ -463,78 +557,91 @@ Utility only carries weight when it is compared to another utility value of the 
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.7]{resources/ylim_barchart_fitness_earned_against_target_r_00.png}
-	{\tiny
-	\begin{flalign*}
-		a: r+my\_payoff*12.37-opponent\_payoff&\\
-		b: my\_payoff+70.54&\\
-		c: 47.17*my\_payoff-48.68&\\
-		d: opponent\_payoff*r+my\_payoff+60.34*r*opponent\_payoff*20.72\\
-		e: my\_payoff+r\\
-		f: r*31.38\\
-		g: 34.68+r\\
-		h: my\_payoff+opponent\_payoff*my\_payoff*my\_payoff*opponent\_payoff*r\\
-		i: my\_payoff-97.58\\
-		j: my\_payoff+48.00\\
-	\end{flalign*}
-	}%
-	\caption{Fitness earned by each evolved function when playing against AW prediction; $\alpha = 0$. In the evolved functions, r is used as a stand in for $\alpha$.}
+	\begin{alignat*}{2}
+		a: f(x, y) = & 12.37x - y + \alpha &\\
+		b: f(x, y) = & x + 70.54&\\
+		c: f(x, y) = & 47.17x - 46.68&\\
+		d: f(x, y) = & x + 1251.2448\alpha y&\\
+		e: f(x, y) = & x + \alpha &\\
+		f: f(x, y) = & 31.38\alpha &\\
+		g: f(x, y) = & 34.68\alpha &\\
+		h: f(x, y) = & x + x^2y^2\alpha &\\
+		i: f(x, y) = & x - 97.58&\\
+		j: f(x, y) = & x + 48&\\
+	\end{alignat*}
+	\caption{Fitness earned by each evolved function when playing against AW prediction alongside the corresponding functions; where $x$ is the payoff earned by the owner of utility function, y is the payoff earned by their opponent and $\alpha = 0$.}
 	\label{barchart_fitness_earned_against_target_r_00}
 \end{figure}
 
-\np With no assortativity in the matching process, symbolic regression seems to converge towards the selfishness predicted by AW,
+\np With no assortativity in the matching process, Symbolic Representation seems to converge towards the selfishness predicted by AW,
 but we'll see now that things are a little more complicated when assortativity is introduced.
 
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.7]{resources/ylim_barchart_fitness_earned_against_target_r_06.png}
-	{\tiny
-		\begin{flalign*}
-			a: r*opponent\_payoff+my\_payoff*05.89*r-my\_payoff*r+opponent\_payoff-opponent\_payoff\\
-			b: r*opponent\_payoff-r+my\_payoff\\
-			c: 03.02+46.57*54.25*78.80*my\_payoff\\
-			d: my\_payoff+my\_payoff+opponent\_payoff\\
-			e: r+r+r+r+r*opponent\_payoff+my\_payoff*r*r-r+opponent\_payoff+\\my\_payoff*my\_payoff*my\_payoff+my\_payoff*81.45+opponent\_payoff*\\42.48-r\\
-			f: 11.03+my\_payoff\\
-			g: opponent\_payoff-r*r+33.14-my\_payoff+26.75*opponent\_payoff*opponent\_payoff+13.71+83.53+\\opponent\_payoff-my\_payoff*my\_payoff*r-opponent\_payoff*02.65+my\_payoff+my\_payoff*\\56.95*my\_payoff+r-my\_payoff+my\_payoff-my\_payoff-my\_payoff+r+r*opponent\_payoff*r\\
-			h: r+opponent\_payoff+r+01.11+my\_payoff*r*r*78.35*my\_payoff-r+r*74.62*opponent\_payoff\\
-			i: my\_payoff-my\_payoff+opponent\_payoff+r-21.64+my\_payoff*r*my\_payoff\\
-			j: opponent\_payoff+my\_payoff+my\_payoff+my\_payoff+opponent\_payoff\\
-		\end{flalign*}
-	}%
-	\caption{Fitness earned by each evolved function when playing against AW prediction; $\alpha = 0.6$. In the evolved functions, r is used as a stand in for $\alpha$.}
+	\begin{alignat*}{2}
+		a: f(x, y) = & 2.9339x + \alpha y&\\
+		b: f(x, y) = & x + \alpha y -\alpha &\\
+		c: f(x, y) = & 199082.093x + 3.02&\\
+		d: f(x, y) = & 2x + y&\\
+		e: f(x, y) = & x^3 + (\alpha^2 + 81.45)x + (\alpha+42.48)y + 2\alpha &\\
+		f: f(x, y) = & 11.03x&\\
+		g: f(x, y) = & (\alpha + 56.95)x^2 - 2x + 26.75y^2  + (\alpha^2 - 0.65)y  - \alpha^2 + \alpha + 130.38&\\
+		h: f(x, y) = & 78.35(\alpha^2)(x^2) + (1 +74.62\alpha )y + \alpha + 1.11&\\
+		i: f(x, y) = & \alpha (x^2) + y + \alpha + 21.64&\\
+		j: f(x, y) = & 3x + 2y&\\
+	\end{alignat*}
+	\caption{Fitness earned by each evolved function when playing against AW prediction alongside the corresponding function; where $x$ is the payoff earned by the owner of utility function, y is the payoff earned by their opponent and $\alpha = 0.6$.}
 	\label{barchart_fitness_earned_against_target_r06}
 \end{figure}
 
-\np Figure \ref{barchart_fitness_earned_against_target_r06} shows that while the simulations have not converged to functions that completely align with the AW prediction,
-the behaviour of the individuals in fitness interactions is relatively similar.
-Where the simulations has been unable to produce a function that exactly matches the AW prediction, the individuals have trended towards approximations.
+\np We now run the same simulations, again beginning with a randomly generated genome, with $\alpha = 0.6$.
+The evolved functions and the fitness achieved by each function when playing against the AW prediction is shown in figure \ref{barchart_fitness_earned_against_target_r06}.
+\np The figure shows that while the simulations have not converged to functions that completely align with the AW prediction,
+the behaviour of the individuals in fitness interactions can be relatively similar.
+Now that there is some assortativity in the matching process, the functions produced become more unwieldy and complex.in, the simplified evolved functions are displayed the motivation for this is to highlight the fact that now that there is some assortativity in the matching process, the functions produced become more unwieldy and complex.
+However, simplifying the functions can show that they're more similar to the AW predication than they first appear.
+It seems that where the simulation has been unable to produce a function that exactly matches the AW prediction, the individuals have tended towards approximations.
 Function $j$ is a good example of this.
 When $\alpha = 0.6$, the AW function predicts that an individual who values their opponent's payoff with 0.6 the weight that they value their own will result in ESS play.
-We can simplify function $j$ to the below:
-{\small
-\begin{flalign*}
-	f(my\_payoff, opponent\_payoff) = 2\times opponent\_payoff+3 \times my\_payoff
-\end{flalign*}
-}%
-\noindent Since we are only interested in the weights associated with each player's payoff, the above is equivalent to:
-{\small
-\begin{flalign*}
-	f(my\_payoff, opponent\_payoff) = \frac{2}{3}\times opponent\_payoff+ my\_payoff
-\end{flalign*}
-}%
+Since we are interested in the ratio of the weight attributed to each players payoff, we can rewrite function $j$ as:
+\begin{equation*}
+	f(x, y) = x + \frac{2}{3} y
+\end{equation*}
+
 
 \noindent Which is a quite close approximation of the AW prediction.
-This difficulty in converging to the exact AW prediction that arises when $\alpha \neq 0$, could be because the function we're attempting to evolve in this case is more complicated than finding an equivalent to pure selfishness.
+The same can be said of $d$, which associates a weight of $0.5$ to the opponent's payoff, again a relatively good approximation of the $0.6$ that was predicted by AW.
+
+\np This difficulty in converging to the exact AW prediction that arises when $\alpha \neq 0$, could be because the function we're attempting to evolve in this case is more complicated than finding an equivalent to pure selfishness.
 There are just more ways to arrive at an equivalent of selfishness than there are at an equivalent of \ref{linearESSEquation}, and so we see the simulations more easily converge in the case when $\alpha = 0$.
 
+
+\np Having now presented results relating to symmetric games and analysed there similarity to the AW prediction we now move beyond the scope of this work.
+The next chapter focusses on results of simulations in which individuals are matched to play asymmetric games.
+This juxtaposition of results generated by symmetric and asymmetric games will allow us to explore how symmetry has affected the dynamics how our system.
+Further, we will be able to investigate how heavily the results of \citeauthor{alger_generalization_2012} rely on their assumption of symmetry.
+
 \chapter{Asymmetric Games}\label{asymmetricGames}
+We now turn our attention to simulations in which individuals are paired to play asymmetric, two player games.
+Because of this, the simulations discussed in this chapter align less closely with \citet{alger_generalization_2012} than those in the preceding chapter.
+However, we maintain our implementation of assortative matching to investigate how this affects the individuals that are produced by simulation.
+As before, we begin with the results of the Phenotype Representation before moving on to the Symbolic Representation.
+
+\section{Phenotype Representation}\label{asymmetricGames_pheno}
+
+
+
+\section{Symbolic Representation}\label{asymmetricGames_symb}
+
 
 \chapter{Discussion}\label{discussion}
 
  > The cause of weird divide in symmetric phenotype
  > whether evolved surfaces are candidate for ESS.
+ > axioms of preferences.
 
-\paragraph{Phenotype Mutation: In it to win it}
+\paragraph{Phenotype Representation: In it to win it}
 \np The hypothesis is that this divide along the line of equality is a product of sampling only symmetric games.
 In essence, when games are symmetric, each interaction that a resident and mutant engage in occurs across the line of equality.
 Payoff points that are on the line of equality ($[a,a] \& [d,d]$) do not contribute to a difference in fitness, so can be ignored.

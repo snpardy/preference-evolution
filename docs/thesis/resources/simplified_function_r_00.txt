@@ -1,0 +1,23 @@
+a: & r+my\_payoff*12.37-opponent\_payoff&\\
+b: & my\_payoff+70.54&\\
+c: & 47.17*my\_payoff-48.68&\\
+d: & opponent\_payoff*r+my\_payoff+60.34*r*opponent\_payoff*20.72\\
+e: & my\_payoff+r\\
+f: & r*31.38\\
+g: & 34.68+r\\
+h: & my\_payoff+opponent\_payoff*my\_payoff*my\_payoff*opponent\_payoff*r\\
+i: & my\_payoff-97.58\\
+j: & my\_payoff+48.00\\
+
+-------------------------------------------------------------------------------
+
+a: f(x, y) = & 12.37x - y + \alpha &\\
+b: f(x, y) = & x + 70.54&\\
+c: f(x, y) = & 47.17x - 46.68&\\
+d: f(x, y) = & x + 1251.2448\alpha y&\\
+e: f(x, y) = & x + \alpha &\\
+f: f(x, y) = & 31.38\alpha &\\
+g: f(x, y) = & 34.68\alpha &\\
+h: f(x, y) = & x + x^2y^2\alpha &\\
+i: f(x, y) = & x - 97.58&\\
+j: f(x, y) = & x + 48&\\

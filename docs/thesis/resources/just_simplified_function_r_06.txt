@@ -1,0 +1,45 @@
+a: & r*opponent\_payoff+my\_payoff*05.89*r-my\_payoff*r+opponent\_payoff-opponent\_payoff\\
+f(x, y) = r * y+x*0.5.89*r-x*r+y-y
+        = ry+5.89rx-rx
+        = ry + 4.89rx
+        = 2.9339x + 0.6y
+
+b: & r*opponent\_payoff-r+my\_payoff\\
+f(x, y) = ry-r+x
+        = x + 0.6y -0.6
+
+c: & 03.02+46.57*54.25*78.80*my\_payoff\\
+f(x, y) = 199082.093x + 3.02
+
+d: & my\_payoff+my\_payoff+opponent\_payoff\\
+f(x, y) = x + x + y
+        = 2x + y
+
+e: & r+r+r+r+r*opponent\_payoff+my\_payoff*r*r-r+opponent\_payoff+ my\_payoff*my\_payoff*my\_payoff+my\_payoff*81.45+opponent\_payoff*& 42.48-r\\
+f(x, y) = 2r+ry+x(r^2) + y + (x^3) +81.45x + 42.48y
+        = ry +42.48y | (r^2)x +81.45x + (x^3) + 2r
+        = (r+42.48)y + (r^2 + 81.45)x + x^3 +2r
+        = x^3 + 81.813x + 43.08y + 1.2
+
+f: & 11.03+my\_payoff\\
+f(x, y) = 11.03x
+
+g: & opponent\_payoff-r*r+33.14-my\_payoff+26.75*opponent\_payoff*opponent\_payoff+13.71+83.53+ opponent\_payoff-my\_payoff*my\_payoff*r-opponent\_payoff*02.65+my\_payoff+
+                                                                                my\_payoff* 56.95*my\_payoff+r-my\_payoff+my\_payoff-my\_payoff-my\_payoff+r+r*opponent\_payoff*r\\
+f(x, y) = y - (r^2) + 33.14 - x + 26.75(y^2 ) + 13.71 + 83.53 + y - (x^2)r - 2.65y + x + 56.95(x^2) -x + x - x - x + r + (r^2)y
+        = (-x +x-x+x-x-x) + (y +y -2.65y+(r^2)y) + ((x^2)r + 56.95(x^2)) + (-(r^2)+r) + (33.14 + 13.71 + 83.53) + 26.75(y^2 )
+
+        = (r + 56.95)x^2 - 2x + + 26.75y^2  + (r^2 - 0.65)y  - r^2 + r + 130.38
+
+h: & r+opponent\_payoff+r+01.11+my\_payoff*r*r*78.35*my\_payoff-r+r*74.62*opponent\_payoff\\
+f(x, y) = r + y + r + 1.11 +(r^2)78.35(x^2) - r + r*74.62y
+        = r + y + 1.11 + 78.35(r^2)(x^2)+r74.62y
+        = 78.35(r^2)(x^2) + (1 +74.62r)y + r + 1.11
+
+i: & my\_payoff-my\_payoff+opponent\_payoff+r-21.64+my\_payoff*r*my\_payoff\\
+f(x, y) = x - x + y + r-21.64 + rx^2
+        = r(x^2) + y + r + 21.64
+
+j: & opponent\_payoff+my\_payoff+my\_payoff+my\_payoff+opponent\_payoff\\
+f(x, y) = y + x + x + x + y
+        = 3x + 2y
