@@ -27,16 +27,9 @@
 	\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for horizontal lines, change thickness here
 	
 	\center % Centre everything on the page
-	
-	%------------------------------------------------
-	%	Headings
-	%------------------------------------------------
-	
+
 	\textsc{\LARGE Monash University}\\[1.5cm]	
-	\textsc{\Large Bachelor of Science (Honours)}\\[0.5cm] % Major heading such as course name
-	
-	\textsc{\large Computational Science}\\[0.5cm] % Minor heading such as course title
-	
+
 	%------------------------------------------------
 	%	Title
 	%------------------------------------------------
@@ -48,8 +41,18 @@
 	\HRule\\[1.5cm]
 	
 	%------------------------------------------------
+	%	Headings
+	%------------------------------------------------
+	
+	% \textsc{\Large This thesis is presented in partial fulfillment of the requirements for the degree of Bachelor of Science (Honours) at Monash University}\\[0.5cm] % Major heading such as course name
+	
+	\textsc{\large This thesis is presented in partial fulfillment of the requirements for the degree of Bachelor of Science (Honours) at Monash University}\\[0.5cm] % Minor heading such as course title
+	
+	%------------------------------------------------
 	%	Author(s)
 	%------------------------------------------------
+	\vfill
+	\vfill
 	
 	\begin{minipage}{0.4\textwidth}
 		\begin{flushleft}
@@ -62,15 +65,13 @@
 	\begin{minipage}{0.4\textwidth}
 		\begin{flushright}
 			\large 
-			\textit{Student ID}\\
-		25940783   
+			\textit{Supervisor}\\
+			Dr. Julian \textsc{Garcia}   
 		\end{flushright}
 	\end{minipage}
-	\vfill
-	\vfill
-	{\large
-	\textit{Supervisor}\\
-	Dr. Julian \textsc{Garcia}}
+	% {\large
+	% \textit{Supervisor}\\
+	% Dr. Julian \textsc{Garcia}}
 	
 	%------------------------------------------------
 	%	Date
@@ -86,7 +87,19 @@
 % \hypersetup{colorlinks, citecolor=black, filecolor=black, linkcolor=black urlcolor=black}
 
 % \newpage
-% \chapter*{Declaration}
+\chapter*{Declaration}
+\np I declare that this thesis is my own work and has not been submitted in any form for another degree or diploma at any university or other institute of tertiary education. Information derived from the work of others has been acknowledged.\\\\\\\\
+
+
+
+\noindent Signed by ………………\\\\\\
+
+
+
+
+\noindent Name \quad	Samuel Pardy\\\\
+\noindent Date \quad \today
+
 % \chapter*{Abstract}
 % \chapter*{Acknowledgment}
 
@@ -159,6 +172,20 @@ So, the next area of interest is:
 \end{itemize}
 
 \section{Thesis Structure}
+In summary, this introductory chapter has given a overview of the broader research area and the case for its importance.
+We have also presented a high-level summary of the existing areas of study that are relevant to our research questions.
+Finally, the research questions themselves are outlined.
+The remainder of the thesis is organised as follows:
+
+\begin{itemize}
+	\item[$-$] Chapter \ref{lit_review} gives a detailed picture of the relevant theoretical tools that are required to understand the research space. 
+		As well as presenting and critically evaluating the current state-of-the-art of the literature on the formation of social preferences.
+	\item[$-$] Chapter \ref{experimentalFramework} outlines the experimental framework that has been created in order to carry out this research.
+	\item [$-$] Chapter \ref{symmetricGames} presents results of experiments that closely align with assumptions made in the literature.
+	\item [$-$] Chapter \ref{asymmetricGames} present the results of experiments that extend beyond the scope of existing theoretical work.
+	\item [$-$] Finally, chapter \ref{discussion} contains a discussion of the results along with concluding comments regarding possible extension and further work.
+\end{itemize}
+
 
 \chapter{Literature Review}\label{lit_review}
 Before we can dive in to investigations of how social preferences are formed we must lay the groundwork.
@@ -851,7 +878,7 @@ Before continuing with a presentation of the results of the Symbolic Representat
 
 \np In Chapter \ref{asymmetricGames} we move beyond the scope of the \citeauthor{alger_generalization_2012} work by exploring asymmetric games.
 We again begin with the results of the Phenotype Representation, with the results of Symbolic Representation presented in the proceeding section.
-The key insights of these results are then discussed in Chapter \ref{discussion}.
+The key insights of these results are then discussed in Chapter \ref{conclusions_and_discussion}.
 
 
 \chapter{Symmetric Games}\label{symmetricGames}
@@ -861,22 +888,109 @@ This model aligns closely with the results of \citet{alger_generalization_2012}.
 So, we are here exploring how the dynamics of a system that adheres to the assumptions made by AW affect the models convergence to the prediction made by AW.
 We also implement the assortative matching of AW to investigate how this affects the individuals that are produced by simulation.
 
-\section{Phenotype Representation}\label{symmetricGames_pheno}
-Using the technique just described in section \ref{representing_mutating}, we simulate evolution operating at the level of the phenotype.
-Fitness is a product of the individual's performance in many symmetric games.
-Starting with a randomly generated surface, we run simulations with the following parameters:
+\section{Sampling Games \& The Phenotype Representation}
+
+One of the things that we learn by subjecting the described Phenotype Representation to evolution is that the kinds of games that are used to evaluate the fitness of individuals are important.
+We begin with a model that uses only a single kind of game to evaluate the fitness of individuals.
+Next we move to a conception of fitness that is an aggregation of individuals performance in many different kinds of games.
+
+\paragraph{Single-Game Fitness Measure}
+\np In \ref{experimentalFramework} we discuss an approach in which individual fitness is determined based off how the types perform in one common kind of non-cooperative game, namely prisoner's dilemma.
+Using the game structure defined in figure \ref{symmetricGame} we can construct a prisoner's dilemma by setting the following payoffs:
 \begin{gather*}
-	\phi = 5\\
-	s = 0.1\\
-	\alpha = 0\\
+	a = 3\\
+	b = 0\\
+	c = 4\\
+	d = 1
 \end{gather*}
-\noindent When $\alpha = 0$, the function predicted by \citet{alger_generalization_2012} equates to pure selfishness.
+
+\np When running simulations in which each type's fitness is determined by their expected payoff when playing the above game,
+it becomes clear that only mutations that occur near to the payoff points ever lead to invasions.
+The payoff points are the four potential outcomes (in terms of payoffs for each player) of the game: (3,3), (0,4), (4, 0) \& (1, 1).
+Plotted in figure \ref{prisoners_payoff_plot}.
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.5]{resources/prisoners_dilemma_payoffs.png}
+	\caption{The payoff points in a prisoner's dilemma game.}
+	\label{prisoners_payoff_plot}
+\end{figure}
+
+\np No figure showing plots of the surfaces evolved using this sampling method is presented here because the simulations 
+produced surfaces that had either not been modified by a single successful invasion or had been subject to only a few successful invasions close to the payoff points.
+\todo{is it ok to just say that and not show a figure?}
+The fact that limited invasions occur in this scenario makes sense when several facts about the model are considered:
+\begin{enumerate}[label=(\alph*)]
+	\item mutations can occur anywhere within the space and are small.
+	\item the fitness of the individuals (resident and mutant) is equal in areas of the surface not affected by the mutation.
+	\item for a mutant to invade, they must achieve a fitness \textit{greater} than that achieved by the resident - as opposed to greater than or equal to.	
+\end{enumerate} 
+
+\np So, if a mutation occurs at the point (2, 2), given that this mutation has a relatively small radius, 
+the expected payoff of the mutant will not differ from that of the resident because the mutation does not touch any of the payoff points.
+Hence, the fitnesses are equal, and no invasion occurs. 
+So, while our source material tends to equivocate in regard to the kinds of games are played, 
+a dynamically evolving system shows that evaluating individual fitnesses using performance in only one kind of game does not generate meaningful results.
+Next, we focus on a  measure in which fitness is based upon the individual's aggregated performance across many games.
+
+\paragraph{Many-Game Fitness Measure}
+\np We move to a discussion of the results generated by simulations that measure fitness as an average of the payoff earned by individuals across many symmetric games.
+Now, the games that individuals play in determining fitness contain payoffs as described in \ref{a_through_d}, where $a, b, c$ and $d$ are independent and identically distributed random variables.
+Leading on from our note in the preceding that single-game fitness leads to an exorbitantly high number of mutations that do not lead to an invasion, analogously, 
+localised mutations and randomly sampled games is computationally very inefficient. So, we first look at a more efficient sampling mechanism before discussing our main result.
+
+\np Sampling many symmetric games creates a payoff-point plot that is symmetric about the identity line of the payoff space and the identity line is heavily sampled relative to the rest of the space.
+This is because two of the four payoff points in each sampled game fall on the line of equality.
+If we imagine the payoff-point plot (e.g. figure \ref{prisoners_payoff_plot}) as being a top-down view of one of our utility surfaces,
+then we can randomly place a mutation amongst the sampled payoff-points to visualise the amount of waste that occurs when sampling like this.
+Figure \ref{symmetric_payoff_plot} shows a randomly sampled mutation plotted amongst payoff-points of 40 randomly sampled games.
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.7]{resources/scatter_symmetric_mutation.png}
+	\caption{Payoff-points of 40 randomly sampled games.}
+	\label{symmetric_payoff_plot}
+\end{figure}
+We can see that of the 160 payoff points in the sample, only one occurred in the area of the mutation.
+The rest of the payoff points will not contribute to a difference in fitness between the resident and mutant and so are a waste of computational resources.
+We develop a more efficient sampling technique.
+In this technique, two of the four payoff points in a symmetric-game still occur along the line of equality,
+but the other two in each game are sampled from close to the mutation.
+The payoffs $a, b, c$ and $d$ are sampled from the following, where $\mu$ is the centre of the mutation and $\delta$ is some constant linked to the radius of the mutation:
+\begin{alignat*}{2}\label{local_a_through_d}	
+	a \sim & U(0,\phi) \qquad & a \in I\\
+	b \sim & \mu \pm U(0,\delta) \qquad & b \in I\\
+	c \sim & \mu \pm U(0,\delta) \qquad & c \in I\\
+	d \sim & U(0,\phi) \qquad & d \in I
+\end{alignat*}
+
+\noindent Figure \ref{local_symmetric_payoff_plot} is an example of a sample of 40 games in which the payoffs are sampled using this technique.
+It can be seen that payoff-points are now concentrated around the area that the mutation occurs so will contribute to a difference in fitness.
+This technique means that every game will have at least one payoff-point that touches the mutation area.
+This technique introduces no additional bias into the model: it is as if we freely sample payoffs from the whole space and then filter out the ones that do not have an effect on eventual fitness comparison.
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.7]{resources/localised_symmetric_game_mutation.png}
+	\caption{Payoff-points of 40 `locally' randomly sampled games.}
+	\label{local_symmetric_payoff_plot}
+\end{figure}
+
+\np This technique greatly increased the efficiency of sampling symmetric games.
+In the following section, when we discuss the results of large scale simulations of evolving utility functions using the Phenotype Representation, this is the technique used to sample games.
+
+\section{Phenotype Representation}\label{symmetricGames_pheno}
+We begin with a randomly generated surface and allow evolutionary forces to shape this surface over the course of the simulation.
+Fitness is a determined by the individual's performance in many symmetric games.
+Starting with a randomly generated surface, we run simulations with the following parameters: $\phi = 5$; $s = 0.1$.
+Our results are the product of ten such simulations run at each of two levels of assortativity.
+We examine the average surface produced as well as the individual surfaces.
+
+\np When $\alpha = 0$, the function predicted by \citet{alger_generalization_2012} equates to pure selfishness.
 So we are interested in how closely the surface produced by our dynamically evolving system aligns to a surface of pure selfishness.
 Figure \ref{average_r_0_symmetric_evolved} shows an average of the surfaces that resulted from ten simulations with these parameters.
 Looking at this figure and comparing it to figure \ref{selfishUtilitySurface}, it is not obvious that there is a huge amount of similarity between the two.
 This is confirmed measuring the difference in volume between the evolved surfaces and pure selfishness. 
 
-\np The volume-difference between the average surface and the predicted is 19.112 (for context the total volume between the selfish surface and the zero-plane is 62.5).
+\np The volume-difference (recall section \ref{success}) between the average surface and the predicted is 19.112 (for context the total volume between the selfish surface and the zero-plane is 62.5).
 This difference tends to increase if we look at the volume-difference between each of 10 surfaces individually and selfishness.
 Figure \ref{boxplot_volume_difference_symmetric} displays these measures.
 There tends to be a volume-difference of about a third of the total volume of the selfish surface between the evolved surfaces and the selfish surface.
@@ -950,9 +1064,11 @@ It is possible that this method of mutation has produced surfaces that are on th
 
 We now turn our attention to our second method of representing individuals.
 We start with a randomly generated genome, and simulate evolution via the technique described in section \ref{representing_mutating}.
+Our results are the product of ten such simulations run at each of two levels of assortativity.
 In the case of Symbolic Representation, it is a little more difficult to give a general picture of the kinds of functions that evolved than it is in the phenotypic case.
 Since small mutations in genome can lead to vastly different utility values being generated by the function (e.g. a $+$ becomes a $\times$), it does not make sense to think of an average function that is generated,
 but we can think about the kinds of functions that are generated.
+We examine the fitnesses of the evolved functions as well as the functions themselves.
 
 \np Considering one group of ten simulations, where $\alpha = 0$, seven of the evolved functions correspond exactly to pure selfishness,
 while one contains reference to the payoff earned by the opponent, the utility is heavily slanted towards selfishness.
@@ -1039,28 +1155,33 @@ Further, we will be able to investigate how heavily the results of \citeauthor{a
 
 \chapter{Asymmetric Games}\label{asymmetricGames}
 We now turn our attention to simulations in which individuals are paired to play asymmetric, two player games.
+At times in the following we still make comparisons to the result of \citet{alger_generalization_2012}, however this is simply as a point of reference.
+The \citeauthor{alger_generalization_2012} paper draws no conclusions regarding evolutionary stability when asymmetric games are played.
+In fact, all the literature considered in this piece so far has been prefaced on the assumption that the games played are symmetric.
+The results discussed in the proceeding move beyond the scope of this literature. 
 Because of this, the simulations discussed in this chapter align less closely with \citet{alger_generalization_2012} than those in the preceding chapter.
 However, we maintain our implementation of assortative matching to investigate how this affects the individuals that are produced by simulation.
 As before, we begin with the results of the Phenotype Representation before moving on to the Symbolic Representation.
 
 
 \section{Phenotype Representation}\label{asymmetricGames_pheno}
-Using the same technique as used in symmetric case, section \ref{symmetricGames_pheno}, we simulate evolution operating at the level of the phenotype.
-Now, fitness is a product of the individual's performance in many asymmetric games.
-Starting with a randomly generated surface, we run simulations with the following parameters:
+Using the same technique as used in the symmetric case, section \ref{symmetricGames_pheno}, we simulate evolution operating at the level of the phenotype.
+We again begin with a randomly generated surface and allow evolutionary forces to shape this surface over the course of the simulation.
+However, now fitness is a product of the individual's performance in many asymmetric games.
+Starting with a randomly generated surface, we run simulations with the following parameters: $\phi = 5$; $s = 0.1$.
+Our results are the product of ten such simulations run at each of two levels of assortativity.
+We examine the average surface produced as well as the individual surfaces.
 
-\begin{gather*}
-	\phi = 5\\
-	s = 0.1\\
-	\alpha = 0\\
-\end{gather*}
-
-When $\alpha = 0$, we would expect the evolved surfaces to converge towards pure-selfishness.
+\np With $\alpha = 0$, we take the results of ten simulations and average the surface that is generated, this surface is shown in figure \ref{average_r_0_asymmetric_evolved}.
+Given $alpha$ is zero, in the symmetric case we would expect the evolved surfaces to converge towards pure-selfishness.
 Just looking at figure \ref{average_r_0_asymmetric_evolved} we can see that it seems to be somewhat similar pure-selfishness.
-This observation is confirmed by the volume-difference, which for the average evolved surface (against selfishness) is 11.9657, so an improvement on the symmetric case's 19.112.
+This observation is confirmed by the volume-difference, which between the average evolved surface and pure-selfishness is 11.9657, so closer than the symmetric case's 19.112.
+
+\np When we introduce assortativity into the matching process, in the symmetric case we would expect some level of cooperation to arise.
+With $\alpha = 0.4$, we again take the results of ten simulations and average the generated surface; shown in figure \ref{average_r_04_asymmetric_evolved}.
 Despite have some level of assortativity in the matching, $\alpha = 0.4$, figure \ref{average_r_04_asymmetric_evolved} too shows a surface that resembles pure-selfishness.
-This average evolved surface does not fair well when compared against the AW prediction, with a volume-difference of 29.3766.
-Surprisingly though, this surface - evolved with $\alpha = 0.4$ - is a close approximation of pure-selfishness.
+This average evolved surface does not appear to be similar to the AW prediction, with a volume-difference of 29.3766.
+However, this surface - evolved with $\alpha = 0.4$ - is a close approximation of pure-selfishness.
 The average evolved surface when $\alpha = 0.4$ has a volume-difference of 13.9255 with pure-selfishness.
 
 \begin{figure}
@@ -1079,7 +1200,8 @@ The average evolved surface when $\alpha = 0.4$ has a volume-difference of 13.92
 
 \np The volume-differences calculated for each evolved surface individually are shown in figure \ref{asymmetric_distance_boxplot_r_00_04}.
 The distribution of volume-differences for the surfaces generated when $\alpha = 0$ indicate that this kind of simulation has produced surfaces that are consistently shifting towards pure-selfishness.
-What is interesting though is that the AW prediction does not seem to hold when games are asymmetric assortativity is introduced into the matching process.
+This occurs regardless of whether or not there is assortativity in the matching process. 
+So it seems that the AW prediction does not hold when games are asymmetric.
 
 
 \begin{figure}
@@ -1149,55 +1271,54 @@ Functions $a$ and $b$ have though landed on an approximation of the AW predictio
 \end{figure}
 
 
-\chapter{Discussion}\label{discussion}
+\chapter{Conclusions, Discussion \& Future Work}\label{conclusions_and_discussion}
 
-Having presented the results of the simulations we now discuss the interesting conclusions that can be drawn and 
-\todo{finish intro one section done.}
+Having presented the results of out experiments we now examine the conclusions that can be drawn and conduct a discussion regarding the implications of these conclusions and possible future work.
+Oxymoronically, we begin with the conclusions and conclude with the discussion.
+
+\section{Conclusions}\label{conclusions}
+
+In summary, the results presented in the preceding two chapters can be taken as evidence for two (broad) key conclusions: Games matter, and mutations matter.
+The details of both of these aspects (games and mutations) are almost entirely absent from the theoretical framework used as a reference point for this research.
+But, it turns out that both have a large influence on the dynamics of the system and the kinds of individuals that are produced by evolution.
 
 
-\section{Symbolic Representation: A Path to Selfishness}
-The results presented regarding the simulations run with the Symbolic Representation in both Chapters \ref{symmetricGames} and \ref{asymmetricGames} 
-When $\alpha = 0$, sixteen out the twenty simulations (combining symmetric and asymmetric runs) produced functions that were equivalent to pure selfishness.
-This aligns with the AW prediction. 
-
-
-\section{Phenotype Representation: In It To Win It}\label{win_it}
-\np Perhaps the most puzzling result presented in the preceding two chapters is the output of simulations using Phenotype Representation and sampling symmetric games.
+\subsection[Games Matter]{Games Matter: Phenotype Representation is In It To Win It}\label{win_it}
+Perhaps the most puzzling result presented in the preceding two chapters is the output of simulations using Phenotype Representation and sampling symmetric games.
 These results, detailed in section \ref{symmetricGames_pheno}, show that this kind of simulation produces individuals
- that derive higher utility when their payoffs are greater than their opponent's.
+that derive higher utility when their payoffs are greater than their opponent's.
 Individuals with this utility function are indifferent as to how much greater their payoff is, or indeed the size of their payoff at all: as long as it is greater than that achieved by their opponent.
 This result cannot be attributed solely to the effect of sampling symmetric games, because these results are not mirrored in the functions generated by the Symbolic Representation simulations (section \ref{symmetricGames_symb}).
 Nor can we say that the Phenotype Representation accounts for these results: sampling asymmetric games produces surfaces that are more aligned with our expectations of pure selfishness.
-The hypothesis is that this divide along the identity line is a product of sampling only symmetric games in conjunction with the localised mutations of the Phenotype Representation.
+What we can say though is that the kind of mutations that are performed when using the Phenotype Representation enable the payoff-structure of symmetric games to guide the evolving surfaces towards this result.
+But inherently, it is the payoff structure of symmetric games that drives the novel shape of the evolved surfaces rather than the mutations.
 
-\np In essence, when games are symmetric, each interaction that a resident and mutant engage in occurs across the identity line in the payoff point space.
-There are two payoff points exactly on the line, $[a,a]$ and $[d,d]$.
-And the other two point occur (symmetrically) on either side of the line, $[b,c]$ and $[c,b]$.
+\np In essence, when games are symmetric, each interaction that individuals engage in occurs across the identity line in the payoff point space.
+There are two payoff points exactly on the line, $[a,a]$ and $[d,d]$, while the other two points occur (symmetrically) on either side of the line, $[b,c]$ and $[c,b]$.
 Arbitrarily, let's say that $b \geq c$.
 Since the payoff earned by each player is equal, payoff points that are on the line of equality ($[a,a] \& [d,d]$) do not contribute to a difference in fitness, so can be ignored.
 The other two payoff points in a given game are where the difference in fitness between the individuals is determined.
-Since the points $[a,a]$ and $[d,d]$ do not contribute to a difference in fitness, no matter how large a payoff can be earned evolution will be indifferent towards preferences that lead to these outcomes.
+Since the points $[a,a]$ and $[d,d]$ do not contribute to a difference in fitness, no matter how large a payoff can be earned by playing a strategy that leads to these outcomes occurring, evolution will be indifferent towards preferences that favour these outcomes.
 Instead, evolution will favour only preferences that lead the individual to earn \textit{payoff b}.
 By definition, this payoff point is always on the same side of the identity line, i.e. the side of the line in which the payoff earned by the individual is greater than that earned by their opponent.
 So mutations that lead to the individual preferring outcomes that are situated on this side of the identity line will be more reproductively successful.
 
 \np The other factor at play here is the kind of mutations that are performed with the Phenotype Representation detailed in section \ref{representing_mutating}.
-As mentioned in the initial discussion, these mutation are \textit{local}.
-They do not affect the structure of the utility function or overall change to way that the function deals with the payoffs generally.
+As mentioned in the initial discussion (section \ref{experimentalFramework}), these mutations are \textit{local}.
+They do not affect the structure of the utility function or make an overall change to way that the function deals with the payoffs generally.
 Rather, if a mutation occurs at the point $(i, j)$ in the utility space only preferences regarding outcomes that are close to this point will be altered.
 In other words, preferences about the event in which the individual earns a payoff close to $i$ and their opponent earns a payoff close to $j$.
 If the point $(i, j)$ is on the same side of the identity line as payoff b, and the mutation that occurs at this point makes this outcome more preferable to the individual, then likely this mutation will be accepted.
-The converse is true if the mutation is makes this outcome less preferable to the individual, or if the point $(i, j)$ occurs on the opposite side of the identity line.
+The converse is true if the mutation makes this outcome less preferable to the individual, or if the point $(i, j)$ occurs on the opposite side of the identity line.
 
 \np This analysis of payoff structures is relatively straight-forward.
 We are accustomed to thinking about evolution as favouring individuals who are \textit{better} somehow than their opponents. 
 But this kind of mutation coupled with symmetric games has produced a kind of \textit{minimal-betterness} that requires individuals achieve only-just more than their counter-parts.
 As their opponents achieve more, the individual must also achieve a little more and as the opponent achieves less, the individual is able to achieve less also.
-It seems that we may have developed a utility function has over-adapted to the simulation rather than a function that will be generally evolutionarily successful.
+It seems that we may have developed a utility function has over-adapted to the structure of the games that are being played in determining its fitness.
 Having said that, this would be a utility function that has over-adapted to the assumptions made in \citet{alger_generalization_2012}.
 
-
-\section{Evolutionary Stability: An Alternate Destination}
+\subsection[Mutations Matter]{Mutations Matter: An Alternate Evolutionary Stable Destination}
 Staying with the symmetric-game Phenotype Representation, an additional interesting point regarding the results of these simulations is that they seem to be qualitatively different to the AW prediction.
 Where the results of the Symbolic Representation and the asymmetric games sampling seem to approach the AW prediction with varying degrees of success, surfaces generated by symmetric-game Phenotype Representation are converging towards something different.
 It is possible that the state that the surfaces are converging towards is an alternative candidate for evolutionary stability.
@@ -1221,122 +1342,21 @@ we may be able to take this as evidence that our evolved surface will be difficu
 The second is that the change in which function is successful in the fitness comparison happens when the share of population is close to 0.5,
 and so there is potentially a mixed type ESS state that is a population consisting of some share of both of these two utility functions.
 
-\todo{check this}
+\section{Discussion and Further Work}
+
+\subsection{Symbolic Representation: A Path to Selfishness}
+The results presented regarding the simulations run with the Symbolic Representation in both Chapters \ref{symmetricGames} and \ref{asymmetricGames} 
+When $\alpha = 0$, sixteen out the twenty simulations (combining symmetric and asymmetric runs) produced functions that were equivalent to pure selfishness.
+This aligns with the AW prediction. 
+
+\subsection{Travels with Randomness}
+> randomness of asymmetric games allows us to explore more?a
 
 
-\section{Travels with Randomness}
- > randomness of asymmetric games allows us to explore more?a
+\subsection{Axioms of Preferences}
 
+> axioms of preferences.
 
-\section{Axioms of Preferences}
-
- > axioms of preferences.
-
-
-
-
-\section{Games Matter}
-
-\todo{Review this section after results are written to see where (if?) it fits}
-
-One of the things that we learn by subjecting the described phenotype to evolution is that the kinds of games that are used to evaluate the fitness of individuals are important.
-We begin with a model that uses only a single kind of game to evaluate the fitness of individuals.
-Next we move to a conception of fitness that is an aggregation of individuals performance in many different kinds of games.
-We explore this evaluation in the symmetric and asymmetric case in chapters \ref{symmetricGames} and \ref{asymmetricGames} respectively.
-
-\paragraph{Single-Game Fitness Measure}
-\np In \ref{experimentalFramework} we discuss an approach in which individual fitness is determined based off  how the types perform in one common kind of non-cooperative game, namely prisoner's dilemma.
-Using the game structure defined in figure \ref{symmetricGame} we can construct a prisoner's dilemma by setting the following payoffs:
-\begin{gather*}
-	a = 3\\
-	b = 0\\
-	c = 4\\
-	d = 1
-\end{gather*}
-
-\np When running simulations in which each type's fitness is determined by their expected payoff when playing the above game,
-it becomes clear that only mutations that occur near to the payoff points ever lead to invasions. 
-The payoff points are the four potential outcomes (in terms of payoffs for each player) of the game: (3,3), (0,4), (4, 0) \& (1, 1).
-Plotted in figure \ref{prisoners_payoff_plot}.
-\begin{figure}
-	\centering
-	\includegraphics[scale=0.5]{resources/prisoners_dilemma_payoffs.png}
-	\caption{The payoff points in a prisoner's dilemma game.}
-	\label{prisoners_payoff_plot}
-\end{figure}
-
-\np The fact that limited invasions occur in this scenario makes sense when several facts about the model are considered:
-\begin{enumerate}[label=(\alph*)]
-	\item mutations can occur anywhere within the space and are small.
-	\item the fitness of the individuals (resident and mutant) is equal in areas of the surface not affected by the mutation.
-	\item for a mutant to invade, they must achieve a fitness \textit{greater} than that achieved by the resident - as opposed to greater than or equal to.	
-\end{enumerate} 
-\np
-So, if a mutation occurs at the point (2, 2), given that this mutation has a relatively small radius, 
-the expected payoff of the mutant will not differ from that of the resident because the mutation does not touch any of the payoff points.
-Hence, the fitnesses are equal, and no invasion occurs.
-Running simulations using this model results in `utility surfaces' that seem to have a evolved to play the prisoner's dilemma defined above,
-rather than evolving towards a surface that is meaningful in general.
-
-\todo{distance/fitness measure of prisoner's dilemma run}
-
-\np So, while our source material tends to equivocate in regard to what kinds of games are played,
-a dynamically evolving system shows that evaluating individual fitnesses using performance in only one kind of game 
-does not generate meaningful results. Next, we focus on a  measure in which fitness is based upon the individual's aggregated performance across many games.
-
-\paragraph{Many-Game Fitness Measure}
-\np We move to a discussion of the results generated by simulations that measure fitness as an average of the payoff earned by individuals across many symmetric games.
-Now, the games that individuals play in determining fitness contain payoffs as described in \ref{a_through_d}, where $a$ through $d$ are independent and identically distributed random variables.
-Leading on from our note in the preceding that single-game fitness leads to an exorbitantly high number of mutations that do not lead to an invasion, analogously, 
-localised mutations and randomly sampled games is computationally very inefficient. So, we first look at a more efficient sampling mechanism before discussing our main result.
-
-\np Sampling many symmetric games creates a payoff-point plot that is symmetric about the line of equality and the line of equality is heavily sampled relative to the rest of the space.
-This is because two of the four payoff points in each sampled game fall on the line of equality.
-If we imagine the payoff-point plot (e.g. figure \ref{prisoners_payoff_plot}) as being a top-down view of one of our utility surfaces,
-then we can randomly place a mutation amongst the sampled payoff-points to visualise the amount of waste that occurs when sampling like this.
-Figure \ref{symmetric_payoff_plot} shows a randomly sampled mutation plotted amongst payoff-points of 40 randomly sampled games.
-\begin{figure}
-	\centering
-	\includegraphics[scale=0.7]{resources/scatter_symmetric_mutation.png}
-	\caption{Payoff-points of 40 randomly sampled games.}
-	\label{symmetric_payoff_plot}
-\end{figure}
-We can see that of the 160 payoff points in the sample, only one occurred in the area of the mutation.
-The rest of the payoff points will not contribute to a difference in fitness between the resident and mutant and so are a waste of computational resources.
-We develop a more efficient sampling technique.
-In this technique, two of the four payoff points in a symmetric-game still occur along the line of equality,
-but the other two in each game are sampled from close to the mutation.
-The payoffs $a$ through $d$ are sampled from the following, where $\mu$ is the centre of the mutation and $\delta$ is some constant linked to the radius of the mutation.
-\begin{center}\label{local_a_through_d}	
-	$a \sim U(0,\phi) \qquad a \in I$
-	
-	$b \sim \mu \pm U(0,\delta) \qquad b \in I$
-	
-	$c \sim \mu \pm U(0,\delta) \qquad c \in I$
-	
-	$d \sim U(0,\phi) \qquad d \in I$
-\end{center}
-
-
-\noindent Figure \ref{local_symmetric_payoff_plot} is an example of a sample of 40 games in which the payoffs are sampled using this technique.
-It can be seen that payoff-points are now concentrated around the area that the mutation occurs so will contribute to a difference in fitness.
-This technique means that every game will have at least one payoff-point that touches the mutation area.
-This technique introduces no additional bias into the model: it is as if we freely sample payoffs from the whole space and then filter out the ones that do not have an effect on eventual fitness comparison.
-
-\begin{figure}
-	\centering
-	\includegraphics[scale=0.7]{resources/localised_symmetric_game_mutation.png}
-	\caption{Payoff-points of 40 `locally' randomly sampled games.}
-	\label{local_symmetric_payoff_plot}
-\end{figure}
-
-\chapter{Conclusion}
-
-
-\todo{is this to speculative/waffley?}
-Intuitively, the non-meaningful results achieve when sampling only one kind of game fit with our analogy of the utility function in some way representing the real-world preferences of some agent.\
-In reality, agents face many more kinds of situations than just one instance of a prisoner's dilemma,
-and so to generate a utility function that is potentially recognisable as one of a real-world agent the function will need to be resilient to many different situations.
 
 \bibliography{thesis}
 \bibliographystyle{apalike}
