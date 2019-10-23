@@ -94,10 +94,422 @@
 \newpage
 \listoffigures
 \chapter{Introduction}
-\section{Preamble}
-\section{Motivation \& Objectives}
+\section{Overview}\label{overview}
+Why do people cooperate to the level that we do? Paying taxes; following the road rules; these are situations in which it would be beneficial for an individual to act un-cooperatively.
+To cooperate is to give something up, pay some cost, in order to help another, the reasons why people cooperate to the extent that they do are still unknown. 
+Cooperation is still referenced as one of the big open questions of science \citep{pennisi_how_2005}.
+
+\np Understanding the origins and mechanisms of cooperation is not only of intellectual value.
+Answering these questions will allow us to build systems that implement or engender cooperative behaviour. 
+The increasing role of machines in our society renders human-machine interaction more and more important, to enhance these interactions, better human-machine cooperation is required -
+ to build machines that cooperate, we must first understand cooperation \citep{hoc_human_2000}.
+Further, some of the biggest problems facing humanity (climate change, over-population) require cooperative solutions - 
+if we know the mechanisms that lead to cooperation we will be able to design better public policy that encourages people to cooperate in support of solutions.
+
+\np The research presented in this piece contributes to the explanation of cooperation by exploring questions related to \textit{Evolutionary Game Theory}.
+This is done with a particular focus on the the formation of social preferences that result in cooperative action amongst agents.
+This is an interdisciplinary research area, spanning biology, economics, philosophy and computer science.
+
+\np To understand the modelling of social preference formation, we first need a grounding in the wider research context of social interaction and game theory, evolutionary game theory and preferences; as well as agent based modelling and evolutionary computing. 
+With the foundation laid, we can move on to a discussion of the questions the research intends to answer.
+
+\section{Research Context}
+\subsection{What is modelling social interactions?}\label{modelling_social_interactions}
+Strategic interactions occur when agents interact in a way such that the outcome of the interaction for one, is dependent not only on their decisions but on the decisions of the agent(s) that they are interacting with.
+There is no shortage of examples of interactions that can be characterized in this way from playing chess;
+to investing in the stock market; to choosing which route to take on your daily commute; to political parties campaigning during an election.
+
+\np To give an example, when you are playing chess whether your move is a good one or not depends on the subsequent moves your opponent makes. 
+So, you take this into account - your move depends on what you think you opponent is going to do.
+However, your opponent knows this also, so, their move depends on what they think you're going to do.
+So, really your move depends on what you think your opponent thinks you're going to do.
+There is no limit to how deep this recursion can be followed, so we need some formal way to model these interactions - this is where Game Theory becomes important.
+
+\np Classic game theory assumes that individuals are motivated solely by self-interest but it is difficult to explain all the actions people take with this assumption is in place.
+To help us reason about subjective motivations we use preferences.
+Preferences give us a formal way to think about individuals' subjective motivations.
+Preferences allow us to analyse an individual as behaving rationally even as they are pursuing outcomes that do not align with maximising their own material payoff.
+Individuals can have preferences about anything, but we are interested in \textit{social} preferences: when individuals have preferences about the outcomes experienced by others.
+Prior work has shown that preferences can be represented numerically by a utility function.
+The literature surrounding game theory, preferences and utility is discussed in depth in section \ref{game_theoretic_background}.
+
+\subsection{Formation of Preferences}
+
+\subsection{Dynamically Environments for Preference Formation}
+
+
+\section{Questions \& Objectives}\label{questions}
+Existing literature is dominated by work that contains analysis performed on static models of preference formation.
+In these models agents are matched to play a game with the intent to draw conclusions about the evolutionary stability of certain outcomes - one such example is \citet{alger_generalization_2012}. 
+In \citet{alger_generalization_2012} the authors perform a static analysis to conclude that a specific relationship between population structure and cooperation is an evolutionary stable strategy.
+The analysis undertaken in \citet{alger_generalization_2012} makes no mention of how likely it is that this outcome is reached when preferences are evolved in a dynamic environment.
+So, that motivates the first question that this research investigates:
+\np\textbf{How does the formation of social preferences in a dynamically evolving system compare to the static analysis of the current literature?}
+\begin{itemize}
+\item In a dynamic environment, how likely is it that the static results of the existing literature are recovered, if at all? 
+\item With the linearity imposed by current work in mind, what shaped utility functions do the simulations produce?
+\end{itemize}
+Another consideration, is that within the computational model we can represent utility functions in different ways.
+As such the way that agents' preferences are changed can take several forms.
+So, the next area of interest is:
+\np\textbf{How do the social preferences formed by different methods of representation compare to one another?}
+\begin{itemize}
+\item Does one method produce results that are more closely align with results of static analysis?	
+\item How similar are the levels of cooperation that tend to result from each type of preference formation?
+\end{itemize}
+
+\section{Thesis Structure}
 
 \chapter{Literature Review}\label{lit_review}
+Before we can dive in to investigations of how social preferences are formed we must lay the groundwork.
+That groundwork takes the form of gaining an understanding of what a social preference is in this context as well as the tools used to reason about them.
+The aim of this chapter is to to first equip ourselves with the relevant tools from game theory and economics needed to understand the problem space.
+Before exploring literature concerned with theories of the formation of social preferences and agent based models as applied to the formation of social preferences. 
+This area of research is rich, with a wealth of published work in existence, as such only a portion will be covered here.
+
+\np The chapter begins with a detailing of the fundamentals of game theory in section \ref{game_theoretic_background}.
+We then explore how this area can be enhanced with computational modelling in section \ref{agent}.
+Finally, in sections \ref{state_of_the_art} and \ref{limits_of_theory} we discuss the current state of the rt in this area as well as the limitations of this literature.
+
+\section{Game Theoretic Background}\label{game_theoretic_background}
+% This sections begins with an explanation of the basics of game theory including strategies and Nash equilibria in sections \ref{games} and \ref{strategies_nash}.
+% In section \ref{with_preferences} we introduce preferences to our game-theoretic tool kit which necessitates a discussion of games of incomplete information in section \ref{bayesian_games}.
+% Before moving onto to think about computational 
+\subsection{Games}\label{games}
+In order to think about and investigate the situations in which agents might act cooperatively, we need to be able to
+model the interactions themselves. These `strategic' interactions can be characterized as any interaction in which the
+payoff of one player is dependent not just on their own action but on the action of one or more other players involved \citep{angner_course_2012}. Game Theory is the study of such social interactions. More formally, according to
+\citet{osborne_course_1994} a game includes:
+\begin{itemize}
+	\item the finite set, N, of players;
+	\item for each player, i $\in$ N, a set $A_i$, of actions available to that
+	player $N_i$;
+	\item and, for each player, i $\in$ N, the set $P_i$ of pay-offs associated
+	with the available actions.
+\end{itemize}
+An important game in the investigation of cooperation is the Prisoner's Dilemma. 
+
+\paragraph{The Prisoner's Dilemma}
+In the Prisoner's Dilemma, two criminals are being interrogated
+separately the intent being that they turn on one another - if they both
+remain silent, they will each receive a small jail sentence but if one
+stays silent and the other talks, then the one who talks will be released while
+the other will receive a large jail sentence. However, if they both
+talk, blaming each other, then they will both receive a medium jail sentence.
+Since the jail sentence each player receives depends on the other player's
+action, this is a game. The payoff matrix can be written as follows:
+\begin{center}
+   \begin{tabular}{|l||*{5}{c|}}\hline
+	\label{prisoner_payoff}
+	\backslashbox{Prisoner A}{Prisoner B}
+	&\makebox[7em]{Remain Silent}&\makebox[7em]{Talk}\\\hline\hline
+	Remain Silent & -1, -1 & -5, 0\\\hline
+	Talk & 0, -5 & -3, -3 \\\hline
+	\end{tabular}
+\end{center}\mbox{}\\
+In the table above, prisoner A (the row player) chooses between the rows and
+receives the payoff on the left hand side of the cell while prisoner B (the
+column player) chooses between the columns and receives the pay off listed on
+the right hand side of the cell.
+
+\np The prisoner's dilemma has become so important because there are many real world situations that can be analysed as instances of the prisoner's dilemma. Influential game theorist Robert Axelrod holds that examples of the Prisoner's Dilemma can be seen in the military decisions of the cold war United States and Soviet Union as well as in their respective decisions regarding defence budgets \citep{axelrod_effective_1980}. 
+Axelrod analyses the Prisoner's Dilemma as capturing the "tension between  individual rationality ... and group rationality" \cite[p. 4]{axelrod_effective_1980}. This is captured in the payoff structure by incentivising both sides to be selfish while also awarding high payoff to both sides when they cooperate.
+
+\np In order to reason about the actions that players will take game theoretic
+analysis makes several of assumptions about players:
+\begin{enumerate}
+    \item They target some objective, material pay-off (e.g. the prisoner wants
+    to minimize jail time).
+    \item Their decisions in pursuit of this pay-off are rational.
+    \item They reason in a way that takes into account their beliefs about
+    their opponent's action (e.g. prisoner A knows B will also try to minimise
+    jail time). 
+\end{enumerate}
+\cite{osborne_course_1994}
+\np The third assumption here is key - players do not just select the action
+that is associated with the maximum potential payoff, they select actions to
+maximise their payoff relative to what their opponent will do. So, players do
+not select just one action to take, rather they play a \textit{strategy} that
+determines their action under all possible circumstances.
+
+\subsection{Strategies \& Nash Equilibrium}\label{strategies_nash}a
+When we talk about how agents play these games, we talk about `strategies'.
+A strategy is a complete plan of how to play the game that includes actions under each possible circumstance \citep{angner_course_2012}.
+A strategy is not a single move, rather, it's an exhaustive delineation of how a player will act in any given situation in the game. 
+A strategy can be said to be either \textit{pure} or \textit{mixed}.
+A pure strategy is a deterministic plan of action for the entire game.
+Conversely, a player implementing a \textit{mixed} strategy will play a combination of the pure strategies, each with some probability
+If there are more than two pure strategies available to the player, this probability could be zero for some strategies.
+The set of all pure strategies that are played with non-zero probability is known as the \textit{support} \citep[~p. 102]{shoham_multiagent_2008}
+So, in the Prisoner's Dilemma there are two pure strategies available to each player: Stay Silent or Talk, alternatively, Cooperate or Defect.
+An individual playing a mixed strategy would play each of these two strategies with some probability.
+
+\np The next step in the analysis is to attempt to predict what strategies players will play when encountering one
+another in a game; the way that this is done is by finding \textit{Nash Equilibria} \citep{nash_equilibrium_1950}.
+If, when two players are engaged in a game, neither player can improve their payoff by changing their strategy while their opponent's strategy remains the
+same the players are said to be playing a Nash Equilibrium \citep{angner_course_2012}.
+Given our assumption about players acting rationally, by extension, it can be concluded that, when games are repeated, play will end up in a state
+of Nash Equilibria \citep{kalai_rational_1993}. 
+One of the most influential papers in game theoretic literature is \citet{nash_equilibrium_1950}, in which John
+Nash concludes that, when mixed strategies are permitted, any game with a finite strategy set will have at least one
+equilibrium point. So, when we're analysing the various games in pursuit of cooperation, we can be sure that at
+least one equilibrium exists.
+
+\np There are several algorithms that we can use to find the equilibria in a game.
+The algorithm that we use in this research is the \textit{support enumeration method (SEM)}.
+This algorithm is computationally expensive as it involves enumerating all possible supports and calculating (by solving a set of linear equations)
+whether an equilibrium can exist with the given support.
+A product of this enumeration though is that the algorithm is complete: it will return all equilbria that exist in a game.
+In our experiments, we lean heavily on the work of \citet{knight_nashpy_2017}.
+To learn more about the SEM see \citet[~p. 103]{shoham_multiagent_2008}.
+
+\np The Prisoner's Dilemma, outlined in \ref{prisoner_payoff}, has only one Nash Equilibrium: both talk. 
+This is because if prisoner A remains silent, prisoner B will achieve the highest payoff by talking. 
+But if prisoner B is to talk, A would be better served by changing her response to talk also. 
+When both players decide to talk, neither can improve their payoff by changing to remain silent. 
+This is of course a little counter intuitive, we would hope that our players both remain silent to help one another out (and achieve the highest overall payoff) but this is not
+how rational, self-interested players would act. 
+When \textit{preferences} are introduced, we can see the potential for a different outcome.
+
+\subsection{With Preferences}\label{with_preferences}
+Despite the assumption that agents act to maximise self interest, in reality,
+it is difficult to explain all the decisions that people make if their actions are analysed as being motivated only by their own material payoff. 
+To include more complex motivations we can introduce preferences. 
+
+In this context, a preference is a relation between two things \citep{angner_course_2012}; for example, Jane \textit{prefers} cycling to walking. 
+Of course, preferences such as this are subjective - Jill might prefer walking to cycling - but since our agents are rational, they must also be rational about their preferences. 
+When this is the case, preferences are transitive and this allows us to order all alternatives from most preferred to least. 
+This is trivial when an example is given - If Jane prefers cycling to walking, and she prefers walking to horse riding then we can give a preferences ordering of cycling, walking, horse riding.
+It is possible to represent this ordering numerically with a `utility function'.
+Given a possible outcome, a utility function returns a value - the utility associated with that outcome.
+Given some individual $i$, some utility function $u$ and outcomes $a$ and $b$, 
+if $u_i(a) > u_i(b)$, and $i$ acts so as to maximise their utility, then $i$ acts like an individual who \textit{prefers} outcome $a$ to outcome $b$.
+Preferences and utility functions are integral to this area of research as they allow us to bridge the gap between subjectivity and rationality; 
+a rational agent can have subjective preferences that may go against their objective self interest but still rationally pursue the outcomes that they most prefer.
+
+For example, buying and consuming a can of soft drink is something that must be motivated by subjective utility rather than material payoff. 
+Not only does this \textit{cost} money it is also bad for your health. 
+In fact, it is difficult to think of any material, objective payoff at all associated with purchasing soft drink. 
+So, even though buying and consuming it is a net loss in terms of payoff, people buy and consume soft drink all the time. 
+This must be because people derive some positive \textit{utility} from it, rather than objective payoff.
+
+\np A preference is considered `social' when a player's utility function is dependent on the outcome experienced by their opponent's. 
+A social preference may assign a positive weight to the opponent's outcome, or a negative weight (an altruistic vs envious preference) \cite{angner_course_2012}.
+
+\np Given a two-player game (made up of pay-offs) and the utility functions of the players, we can write down a \textit{distinct} game based on the utility each player derives from the pay-offs achieved in each potential result state in the original game. 
+Looking at the Prisoner's Dilemma again, let's assume our players still care about their own payoff, while also caring about their opponent's payoff half as much, their utility function could be:
+\begin{center}
+\(U = P_i + .5 \times P_o\) 
+\end{center}
+Where $P_i$ is my payoff and $P_o$ is my opponent's payoff.
+This simple modification entirely changes the payoff structure of the Prisoner's Dilemma. 
+The \textit{utility} based payoff matrix now looks like:
+\begin{center}
+	\begin{tabular}{|l||*{5}{c|}}\hline
+	 \label{utility_prisoner}
+	 \backslashbox{Prisoner A}{Prisoner B}
+	 &\makebox[7em]{Remain Silent}&\makebox[7em]{Talk}\\\hline\hline
+	 Remain Silent & -1.5, -1.5 & -5, -2.5\\\hline
+	 Talk & -2.5, -5 & -4.5, -4.5 \\\hline
+	 \end{tabular}
+ \end{center}\mbox{}\\
+\np Suddenly, cooperating (remaining silent) looks much more attractive, and is
+also a Nash Equilibrium. But, it is a little complicated. In games in which the
+agents only care about pay-offs it is reasonable to assume that player A knows
+the pay-off that her opponent, player B, will achieve in each of the possible
+outcome states, and she takes this into account when deciding how to act. In
+other words, she knows about \textit{the game} she is playing. However, when
+preferences are introduced and the game has been transformed to reflect this,
+it is not reasonable to assume that player A knows the \textit{utility} that B
+will derive from each given outcome. Player A cannot possibly know about B's
+inner feelings and desires. So, how then, does A reason about B's action when
+making her decision? 
+These games are known as games of incomplete information, or Bayesian Games.
+
+\subsection{Bayesian Games}\label{bayesian_games}
+Bayesian games are games in which the players do not have complete information about their opponents, but instead have beliefs about them.
+Bayesian games can be understood by introducing the concept of \textit{types} \citep[~p. 167]{shoham_multiagent_2008}. 
+
+\np Faced with the same scenario, players of different types will receive different payoffs, and so will act differently to one another. 
+Crucially, players do not know the type of their opponent and so must reason about their opponent's action with this uncertainty in mind. 
+This is done via players having \textit{beliefs} about the likelihood of facing the different possible types. 
+A commonly used example to illustrate these concepts is that of a soccer goalkeeper facing a striker. 
+The goalkeeper doesn't know whether the striker is left or right footed (ala their type) but has beliefs about how likely it is that
+she is facing a left or right footed striker (say a 50-50 chance), based on these beliefs, the goal keeper can act in a way so as to maximise her \textit{expected} payoff. 
+A crucial assumption in support of this analysis is the common-prior assumption; this assumption states that the players
+don't just have beliefs about the type of player they're facing, but also beliefs about that player's beliefs, and so on
+along an infinite hierarchy of beliefs. This is a strong assumption, but it is one that is widely made in the literature
+surrounding Bayesian games \citep[~p. 164]{shoham_multiagent_2008}. 
+
+\np The solution concept for Bayesian games, Bayesian Nash Equilibrium, 
+is similar to that of standard Nash Equilibria with the additional complexity of players attempting to maximise their expected payoff given their believes about the types that they're facing, and that the best response set must provide a strategy for all possible types \citep{shoham_multiagent_2008}. 
+Given the assumptions needed to support this solution concept, it is possible that it has limited applicability in practical scenarios. 
+An alternative described in \citet{kalai_rational_1993} holds that in the presence of incomplete information, 
+when individuals have correct beliefs about the strategies of other players and games are repeated infinitely, 
+play will end up in the same state as if complete information was present. 
+This suggests it is possible, under certain circumstances, to analyse Bayesian games as though players had complete information.
+
+
+\subsection{Evolutionary Game Theory}\label{evo_games}
+Modelling the \textit{formation} of preferences is the purview of evolutionary game theory. 
+Evolutionary game theory is the result of the combination of traditional game theory and theories of biological evolution to explore the changing of behaviour over time \citep{tanimoto_fundamentals_2015}. 
+The key concepts of evolutionary game theory include the key concepts of evolutionary biology: fitness, mutation, selection. 
+When dealing with the formation of preferences, a player's action is motivated by their preference but their \textit{fitness} is related to their objective payoff. 
+For example, many people have a strong preference to stay on the couch rather than going for a run. 
+In general, there is very little material payoff that can be gained from staying on the couch whereas exercising has significant long term health benefits. 
+So, when someone chooses to stay and lie on the couch rather than exercise it can, in most cases, be seen as an example of action being motivated by subjective utility rather than material payoff.
+
+\np Taking a step back, the standard static evolutionary game theory model outlined in \citet{weibull_introduction_1992}
+assumes a large population of agents all playing the same strategy (called residents). These agents match and play
+pairwise games to achieve some payoff, this payoff is linked to the agent's evolutionary fitness. At some point, a group
+of "mutants" enters the population. These mutants all play the same strategy - this strategy being different to that
+employed by the resident. It is assumed that mutation occurs at such a rate that only one mutant is present in the
+population at a time. So now, the population contains some mixture of residents and mutants, and the expected fitness of
+each group is determined by their expected payoff given new population structure; "biological intuition" suggests that
+the mutants will invade the population if their expected fitness is greater than that of the residents \citep[~p. 9]{weibull_introduction_1992}.
+
+\np Analogous to the Nash Equilibrium solution concept in pure game theory, is the idea of evolutionary stable
+strategies (ESS) in evolutionary game theory \citep{smith_logic_1973}. A strategy is said to be evolutionary stable if it achieves a higher
+payoff (fitness) than that which is achieved by every mutant strategy when the population share of the mutant strategy
+is small \citep{weibull_introduction_1992}. That is, strategy $s$ achieves a higher payoff when playing against itself
+and against some mutant strategy $m$ than $m$ does playing in the same environment \citep{shoham_multiagent_2008}. 
+\citet{weibull_introduction_1992} also notes that the concept of evolutionary stable strategies is more stringent than Nash equilibrium: if a strategy is evolutionary stable it is also a Nash equilibrium response to itself
+as well as fulfilling the other requirements that ESS imposes.
+
+\todo{algebra of assortative matching}
+
+\section{Computer Modelling \& Game Theory}\label{agent}
+Much of the existing literature surrounding evolutionary game theory is concerned with performing static analysis of
+evolutionary models \citep{alger_homo_2013,hetzer_evolutionary_2013,newton_preferences_2017}. and, while performing
+computer simulations of evolutionary game theory processes is not an entirely novel area, there remains are a large
+array of unexplored territory. A basic and useful technique in this area is \textit{genetic programming (GP)}. Not
+limited to evolutionary game theory, GP abstracts the search and optimization processes of evolution to apply them to a
+wide range of hard to solve problems. When used as an optimization technique, GP improves the population of potential
+solutions generation by generation by stochastically transforming these solutions and assessing there fitness
+\citep{poli_field_2008}. The fitness functions referenced in \citet{poli_field_2008} are varied and problem specific, in
+our context a fitness function will be based somehow on the payoff that a player achieves. In discussing GP as applied
+to game theory, Robert Axelrod described the technique as a "highly effective" method for exploring strategies \cite[p.
+~23]{axelrod_effective_1980}. 
+
+\np Another important technique in this area is agent based modelling (ABM). ABM is a family of computational modelling
+that attempts to draw macro-level conclusions about systems or environments by modelling actions of individual agents.
+ABM is an important modelling technique, not least because rather than describing a system as a whole it describes the
+actions that individual agents can take. In this way, ABMs are "less simplified" than other forms of modelling and allow
+us to observe potentially more complicated dynamics \cite[p. ~25]{railsback_agent-based_2011}. Of course, the central
+tenet of the ABM is the agent. Wide spread agreement about what precisely an agent is does not exist, however there are
+several key characteristics that are largely universal \citep{heppenstall_introduction_2012}. These are: 
+\begin{itemize}
+	\item Autonomy: agents act independently, without influence from some central controller.
+	\item Heterogeneity: diversity can exist within the population of agents. Loose `types' of agents can exist but
+	these groups are formed over time and can be considered amalgamations of similar autonomous agents.
+	\item Active: agents contribute to the environment around them; they apply independent influence on the simulation.
+\end{itemize}
+\citep{heppenstall_introduction_2012}
+
+\np Another key aspect of ABM is the set of rules that govern the environment. Each object defined within the model
+(whether active or inactive) has rules that define their behaviour and interaction with other objects. Rules can be be
+derived from published literature, data analysis or even just stated as assumptions about the model
+\citep{heppenstall_introduction_2012}. For example, agents of the kind discussed towards the end of section \ref{games}
+would all act in accordance with a rule to maximise utility. 
+
+\np Work at the nexus of computational modelling and game theory has been undertaken in \citet{garcia_no_2018}. This
+paper finds that computer simulations agrees with game theoretic analysis of repeated prisoner's dilemmas. Namely, that
+no strategy can be entirely stable because for every equilibria certain sequences of mutants can destabilise them by
+performing \textit{as well as} (not better than) the equilibrium strategy. With the system having `drifted' away from
+the equilibrium point, the new resident strategy is now susceptible to invasion \citep{garcia_no_2018}. To arrive at
+this result \citet{garcia_no_2018} perform simulations by employing genetic programming techniques akin to those
+described at the beginning of this section. The set of strategies is represented as a population of finite state
+automata, with mutations in the form of slight modifications to these automata.
+
+\np Another example of existing work at this intersection is that undertaken in \citet{powers_modelling_2018}. Powers,
+Ekárt and Lewis discuss the combination of agent based modelling and evolutionary game theory and characterize a
+distinction between the two as being one of \textit{content based models} and \textit{value based models}. Standard
+agent based modelling, the authors claim, captures the content of each agents strategy which determines their behaviour.
+This can be considered the \textit{agent function}, as it maps from environmental stimuli to action \citep[~p.
+69]{powers_modelling_2018}. In comparison, evolutionary game theory does not capture the behaviour of individual agents
+but rather the strategies are considered as types with different levels of prevalence within a population. The
+\textit{value} of these strategies is captured by some fitness functions that depend on the strategies and the
+population structure. There is a sharp trade-off between the two kinds according to \citet{powers_modelling_2018}: ABM
+does not capture the value of the actions that are carried out and it is difficult to know the value without executing
+and observing the system; while EGT omits detail about the carrying out of strategies instead focusing on their overall
+expected value. With this difference in mind, it can be seen that, while neither system can replace the other, attacking
+the same problem with both kinds of model could be fruitful \citep{powers_modelling_2018}. This approach has
+been successful, notably in \citep{axelrod_effective_1980}. It is claimed that the use of ABM can expand upon the results of existing EGT \citep[~p.71]{powers_modelling_2018}.
+
+\section{The State-Of-The-Art}\label{state_of_the_art}
+With the research framework laid out in an introductory way, we can now move to a discussion of more cutting edge
+literature in the area. Of course, formation of social preferences is broad and active research area that is impossible
+to cover completely here. 
+We instead focus on only a narrow portion of interest within the overall space.
+
+\np One significant contribution in the existing literature is \citet{alger_generalization_2012}, in which the authors conclude
+that when agents' preferences are their own private information, a particular utility function is an evolutionary stable
+strategy; this is done within the context of model that hinges on some interesting assumptions. 
+The first thing to note is that rather than engaging in strategy evolution which is prevalent in the literature, \citet{alger_generalization_2012} focus
+on the evolution of preferences. 
+The encounters that drive this preference evolution are not between uniformly matched individuals, rather the matching process is assortative with the \textit{index of assortativity,} $\alpha \in [0, 1]$,
+noted as a key parameter in the analysis. 
+When the index of assortativity is zero then the matching process is equivalent to uniformly random, but when it's greater than zero the matching process is biased towards individuals
+matching with other of the same type. 
+
+Second, even though the preferences of the agents are their own private information,
+ \citeauthor{alger_generalization_2012} use a justification similar to that described in \citet{kalai_rational_1993} 
+ to justify their assumption that games can be analysed as if complete information was available to the players.
+
+Another point of interest from the model is that \citeauthor{alger_generalization_2012} place calculate fitness as an average of payoffs achieved by the players engaging in an interaction.
+This differs from other work by these authors in which to be considered evolutionary stable a resident must achieve a strictly higher payoff than all potential mutants in \textit{all equilibria} \citep[~p.
+2274]{alger_homo_2013}. 
+Similarly, a strategy is evolutionary unstable if there exists some mutant against which the
+strategy achieves strictly less payoff in all equilibria \citep[~p. 2275]{alger_homo_2013}.
+
+\np The utility functions that \citet{alger_generalization_2012} are interested in are a weighted linear combination of the expected payoffs of both players, they look like the following, in which $x$ and $y$ are types and $u_k(x, y)$ is \textit{x's} utility when playing against \textit{y}:
+\begin{equation}
+	\label{linearESSEquation}
+	u(x, y) = \Pi(x,y) + \rho\Pi(y,x)
+\end{equation}
+for some $\rho \in [-1, 1]$, the agents "degree of morality" \citep[~p 2274.]{alger_homo_2013}. The degree of morality can
+be thought of as how much the individual `wants to do the right thing' - a degree of morality of $0$ corresponds to pure
+selfishness, while a degree of $1$ corresponds to pure morality. 
+
+\citet{alger_generalization_2012} concludes that in a model where all utility functions are of the form of equation \ref{linearESSEquation}, the function with $\rho = \alpha$, the index of assortativity, is evolutionarily stable.
+
+This finding is similar to that of \citet{alger_homo_2013}, that finds that when all utility function are of the form of equation \ref{2013linearESS}, the function with $\rho = \alpha$, the index of assortativity, is evolutionarily stable.
+\begin{center}
+	\label{2013linearESS}
+	$u_k(x, y) = (1 - \rho) \times \Pi(x, y) + \rho \times \Pi(x, x)$
+\end{center}
+
+An interesting observation that can be made of function \ref{2013linearESS} is that the term that represents the opponent player's payoff -- that is, the term $\pi(x,x)$ -- treats the
+opponent as if they were the same type as the player who's utility function it is regardless of the player's belief or opponent's actual type. This implies that an individual with a 'purely moral' utility function will act in such a way as to maximise their opponent's payoff, assuming that their opponent is of the same type as them and acts in the same way. The authors explain this structure as a representation of Kant's categorical imperative to act only in a way such that ones will might become universal law \citep{kant_groundwork_1775}.
+
+\np Of the utility function shape overall, the paper holds that it is as though an individual with this utility function is
+ "torn between selfishness and morality" \citep[~p. 2276]{alger_homo_2013}, 
+ however the imposition of linearity on this split between the two seems restrictive. 
+ 
+Considering either of the two models just discussed, when an individuals are in an environment in which they are highly likely
+to meet with other individuals of the same type, they will act in a more `moral' way, taking into consideration the
+payoff that their opponent's achieve. A significant accomplishment of these results is that they can reconcile existing
+literature that suggests high levels of cooperation amongst kin, and low levels of cooperation in anonymous market games \citep[See ][~p. 2296]{alger_homo_2013}. 
+It should be noted though that it has previously been concluded that kinship-based cooperation is not enough to explain the level of cooperation seen in humans \citep{van_veelen_why_2006}. 
+
+\np Interesting work has been undertaken exploring the result achieved by \citet{alger_homo_2013}, one example of this
+is \citet{newton_preferences_2017}. Newton holds that the assumption in \citet{alger_homo_2013} that the assortativity
+of matching is exogenous and type independent is "very strong" \citep{newton_preferences_2017}. Newton discusses an area
+of literature that is interested in the cultural or biological determination of assortativity in which the
+so called index of assortativity is subject to evolution. When the evolution of assortativity is considered, Newton
+claims, the result of \citet{alger_homo_2013} no longer holds. While Newton concedes that if the rate of mutation of
+assortativity was much slower than that of preference the result may hold, he claims that situations in which this is
+the case are "difficult to conceive" \citep{newton_preferences_2017}.
+
+\np Returning to the discussion of the synthesis of game theory and computer modelling, \citet{peysakhovich_prosocial_2017} employed agent based models and deep reinforcement learning to draw conclusions about the performance of artificial agents with social preference in Stag Hunt games.
+\citet{peysakhovich_prosocial_2017} focuses on practical considerations surrounding the formation "pro-social" preferences in agents.
+This is done so by introducing agents with preferences that are already prosocial and observing the effect this has on the wider population.
+The paper concludes that introducing prosocial agents into a population of other reactive learning agents increases 
+(a) the individual agent's long-term payoff and 
+(b) the likelihood that the group converges to cooperative outcomes. 
+The Deep reinforcement learning method used in \citet{peysakhovich_prosocial_2017} has the learner treat other agents as part of the static environment and optimises its own payoff. The authors also discuss other work in the field in which agents are aware that others are also learning and that their behaviour can influence their opponent's future behaviour (e.g Babes et al. as seen in \citealt{peysakhovich_prosocial_2017}).
+The use of these techniques by \citet{peysakhovich_prosocial_2017} resulted in insightful findings and their use in this case could be used to inform any reinforcement learning based model that is implemented in extension of existing static models.
+
 
 \section{Limitations of Theory}\label{limits_of_theory}
 The theoretical and analytical work discussed in the previous chapters suffers from several limitations that affect the generality of the conclusions drawn. 
@@ -117,10 +529,14 @@ AW predicts that when $\rho$ is equal to $\alpha$, the \textit{index of assortat
 
 \noindent To achieve this, the authors assume that all types have a utility function of the same form as \ref{linearESSEquation} where $\rho \in (-1, 1)$ \citep[p. ~47]{alger_generalization_2012}.
 With this assumption, the model, in essence, only allows one number ($\rho$) to freely evolve.
-This assumption severely limits the search space of the evolutionary process. 
+This assumption of linearity severely limits the search space of the evolutionary process. 
+For example, it is possible that as the stakes get higher, individuals become less likely to be cooperative because they would be giving up too much in terms of personal payoff, or conversely, that when payoffs are high individuals have more of a propensity for cooperation out of some sense of guilt.
+Either way, a linear utility function may not be an accurate representation of how individuals behave.
+Further, even if it is the case that a linear utility function is realistic it is not clear that this shape would be the only one present in a population - we would expect to see some diversity of utility function \citep{van_veelen_why_2006}.
 The experimental framework that we have created relaxes this assumption.
 
-\np A further assumption made in AW is that while players do not have information about their opponent's preferences,
+\np A further assumption made in AW is that while players do not have information about their 
+opponent's preferences,
 the players converge to "mutually compatible" strategies and, in effect, play a Nash equilibrium with perfect information \citep[p. ~46]{alger_generalization_2012}.
 It is unclear how realistic this assumption is. 
 As discussed in previous chapters, it does not make sense to assume that players have knowledge about their opponent's preferences 
@@ -140,16 +556,14 @@ This measure is less stringent than measures used elsewhere (notably in \citet{a
 An oft used fitness measure requires that for an invasion to occur, a mutant must achieve a higher payoff in all equilibria of all games the two types play when they're matched.
 
 \np Of course, these assumptions are all made within the context of a model that is static.
-The conclusions drawn in the work referenced above tend to be of the form \textit{should} a utility function of the form \textit{x} evolve it will result in evolutionary stable play given the assumptions.
-The experimental framework we create intends to investigate these conclusions and assumptions in a dynamically evolving environment.
-The experimental framework that we have created as part of \textit{this} research seeks to recreate these models as dynamically-evolving before attempting to recover the results achieved in existing, static work.
-
-\todo{Why static v dynamic important? => eq selection, dynamics, diversity}
-\todo{emphasise how big an assumption static is}
-
-
-
-
+The conclusions drawn in the work referenced above tend to be of the form \textit{should} a utility function of the form \textit{x} exist as the resident in a population any mutant that enters this population will be unable to remove it given the assumptions.
+The static nature of these models is really the biggest limiting assumption of this literature.
+And the dynamic environment that this research creates is the biggest differentiating factor of the research presented herein.
+Notably the findings discussed in this section are regarding homogenous populations, where we would expect to see some diversity.
+A dynamically evolving model has the potential to reveal stable population states that are heterogeneous.
+Further, investigating the dynamics of a system can illuminate the importance of how individuals are represented and what form mutations take.
+The existing literature discussed here is able to gloss over this implementation level detail, potentially obscuring its importance.
+The experimental framework we create will investigate the conclusions and assumptions of the literature discussed in the preceding in a dynamically evolving environment.
 
 \chapter{The Experimental Framework}\label{experimentalFramework}
 A large part of the work in this research has involved the creation of an experimental framework that could be used to test the results of \citet{alger_generalization_2012} in a fully dynamic environment.
@@ -182,7 +596,7 @@ Where $f(x, y)$ is the expected payoff earned by $x$ when facing $y$ in a given 
 	G_{\epsilon, \alpha}(\theta', \theta) = (\alpha +\epsilon(1-\alpha))f(\theta', \theta') + (1-\epsilon)(1-\alpha)f(\theta', \theta)
 \end{gather}
 
-\np The notion of evolutionary stability is defined as follows: for a state to be considered stable, the residents must achieve, \textit{on average}, a fitness at least as high as that achieved by the mutants in a population that contains both resident and mutant types.
+\np The notion of evolutionary stability \citep{smith_logic_1973} in the experimental framework is defined as follows: for a state to be considered stable, the residents must achieve, \textit{on average}, a fitness at least as high as that achieved by the mutants in a population that contains both resident and mutant types.
 Using functions \ref{FexpectedPayoff} and \ref{GexpectedPayoff}, this relation is given by \ref{ESSweakInequality}.
 \begin{equation}
 	\label{ESSweakInequality}
@@ -643,11 +1057,11 @@ Starting with a randomly generated surface, we run simulations with the followin
 
 When $\alpha = 0$, we would expect the evolved surfaces to converge towards pure-selfishness.
 Just looking at figure \ref{average_r_0_asymmetric_evolved} we can see that it seems to be somewhat similar pure-selfishness.
-This observation is confirmed by the volume-difference, which for the average evolved surface (against selfishness) is 15.0557, so an improvement on the symmetric case's 19.112.
+This observation is confirmed by the volume-difference, which for the average evolved surface (against selfishness) is 11.9657, so an improvement on the symmetric case's 19.112.
 Despite have some level of assortativity in the matching, $\alpha = 0.4$, figure \ref{average_r_04_asymmetric_evolved} too shows a surface that resembles pure-selfishness.
-This average evolved surface does not fair well when compared against the AW prediction, with a volume-difference of 24.8361.
-Surprisingly though, this surface - evolved with $\alpha = 0$ - is our closest approximation to pure-selfishness that we been able to generate using the Phenotype Representation.
-The average evolved surface when $\alpha = 0.4$ has a volume-difference of 13.3602 with pure-selfishness.
+This average evolved surface does not fair well when compared against the AW prediction, with a volume-difference of 29.3766.
+Surprisingly though, this surface - evolved with $\alpha = 0.4$ - is a close approximation of pure-selfishness.
+The average evolved surface when $\alpha = 0.4$ has a volume-difference of 13.9255 with pure-selfishness.
 
 \begin{figure}
 	\centering
@@ -664,10 +1078,9 @@ The average evolved surface when $\alpha = 0.4$ has a volume-difference of 13.36
 \end{figure}
 
 \np The volume-differences calculated for each evolved surface individually are shown in figure \ref{asymmetric_distance_boxplot_r_00_04}.
-Something of note that this figure highlights is that the spread of the distances in this case is greater than that in the symmetric case.
-This could be a product of asymmetric sampling introducing more randomness into the process.
-It is also possible that a product of this increased randomness is that convergence is slower.
-This would mean that the evolved surfaces that we're analysing here are potentially not a good representation of the surface that they're converging towards.
+The distribution of volume-differences for the surfaces generated when $\alpha = 0$ indicate that this kind of simulation has produced surfaces that are consistently shifting towards pure-selfishness.
+What is interesting though is that the AW prediction does not seem to hold when games are asymmetric assortativity is introduced into the matching process.
+
 
 \begin{figure}
 	\centering
@@ -704,14 +1117,12 @@ Figure \ref{asymmetric_barchart_fitness_earned_against_target_r00} shows the fit
 	\caption{Fitness earned by each evolved function when playing against AW prediction alongside the corresponding function; where $x$ is the payoff earned by the owner of utility function, y is the payoff earned by their opponent and $\alpha = 0.0$.}
 	\label{asymmetric_barchart_fitness_earned_against_target_r00}
 \end{figure}
-
-Given that $\alpha = 0$ we would expect the functions to converge towards pure selfishness.
+\np Given that $\alpha = 0$ we would expect the functions to converge towards pure selfishness.
 This has occurred in all but one of the simulations (function $e$).
 The convergence towards selfishness has slightly increased in this asymmetric case compared to the symmetric.
 These results are confirmed by the fitnesses displayed in figure \ref{asymmetric_barchart_fitness_earned_against_target_r00}.
 
-
-Looking at the functions generated when $\alpha = 0.6$, we see a similar trend to the one we saw when assortativity was introduced in the symmetric case.
+\np Looking at the functions generated when $\alpha = 0.6$, we see a similar trend to the one we saw when assortativity was introduced in the symmetric case.
 Like in the symmetric case we see an increased complexity in the evolved functions when assortativity is introduced.
 However, now that we're sampling asymmetric games it this effect has increased.
 Not only that but not one of our ten simulations has converged to the prediction.
@@ -744,6 +1155,12 @@ Having presented the results of the simulations we now discuss the interesting c
 \todo{finish intro one section done.}
 
 
+\section{Symbolic Representation: A Path to Selfishness}
+The results presented regarding the simulations run with the Symbolic Representation in both Chapters \ref{symmetricGames} and \ref{asymmetricGames} 
+When $\alpha = 0$, sixteen out the twenty simulations (combining symmetric and asymmetric runs) produced functions that were equivalent to pure selfishness.
+This aligns with the AW prediction. 
+
+
 \section{Phenotype Representation: In It To Win It}\label{win_it}
 \np Perhaps the most puzzling result presented in the preceding two chapters is the output of simulations using Phenotype Representation and sampling symmetric games.
 These results, detailed in section \ref{symmetricGames_pheno}, show that this kind of simulation produces individuals
@@ -774,22 +1191,45 @@ The converse is true if the mutation is makes this outcome less preferable to th
 
 \np This analysis of payoff structures is relatively straight-forward.
 We are accustomed to thinking about evolution as favouring individuals who are \textit{better} somehow than their opponents. 
-But this kind of mutation coupled with symmetric games codifies a kind minimal-betterness that requires individuals achieve only just more than their counter-parts.
-As their opponents achieve more, the individual must also earn a little more and as the opponent achieves less, the individual is able to achieve less also.
+But this kind of mutation coupled with symmetric games has produced a kind of \textit{minimal-betterness} that requires individuals achieve only-just more than their counter-parts.
+As their opponents achieve more, the individual must also achieve a little more and as the opponent achieves less, the individual is able to achieve less also.
 It seems that we may have developed a utility function has over-adapted to the simulation rather than a function that will be generally evolutionarily successful.
 Having said that, this would be a utility function that has over-adapted to the assumptions made in \citet{alger_generalization_2012}.
 
 
-\section{Evolutionary Stability: An Alternate Route}
+\section{Evolutionary Stability: An Alternate Destination}
 Staying with the symmetric-game Phenotype Representation, an additional interesting point regarding the results of these simulations is that they seem to be qualitatively different to the AW prediction.
-Where the results of the Symbolic Representation and the asymmetric games sampling seem to approach the AW prediction with varying degrees of success, the surfaces ev
+Where the results of the Symbolic Representation and the asymmetric games sampling seem to approach the AW prediction with varying degrees of success, surfaces generated by symmetric-game Phenotype Representation are converging towards something different.
+It is possible that the state that the surfaces are converging towards is an alternative candidate for evolutionary stability.
+
+\np The AW prediction that has been referenced throughout this work is shown in equation \ref{linearESSEquation}.
+The conclusions that Alger and Weibull draw regarding this result are only concerned with its evolutionary stability.
+Not whether its status as an evolutionary stable utility function is exclusive.
+It is possible that other function types exist that are also evolutionarily stable.
+It is possible that the surface that our symmetric-game Phenotype Representation is converging towards is one of them.
+
+\np Figure \ref{linegraph_fitness_difference_increasing_epsilon} 
+shows how the fitness difference when our evolved surface plays against pure-selfishness is in favour of the evolved surface when the evolved surface only makes up a small proportion of the population.
+This difference then steadily moves back in favour of the resident, selfish function as this proportion increases.
+This figure is presented to highlight that the evolved surface would not be able to invade the resident AW prediction.
+However, the downward slope of the fitness difference is almost perfectly linear as the evolved share of population increases.
+When this share is close to 0.5, the fitness difference crosses to be in favour of the AW prediction.
+
+\np As much as this figure can highlight that the AW prediction holds, and cannot be invaded, it could also be indicative of two alternative outcomes.
+The first is that given that the predicted surface performs well when its share of the population is low in the saw way that the evolved surface does when it is in the minority,
+we may be able to take this as evidence that our evolved surface will be difficult to invade also.
+The second is that the change in which function is successful in the fitness comparison happens when the share of population is close to 0.5,
+and so there is potentially a mixed type ESS state that is a population consisting of some share of both of these two utility functions.
+
+\todo{check this}
 
 
-
- > whether evolved surfaces are candidte for ESS.
-
-
+\section{Travels with Randomness}
  > randomness of asymmetric games allows us to explore more?a
+
+
+\section{Axioms of Preferences}
+
  > axioms of preferences.
 
 
