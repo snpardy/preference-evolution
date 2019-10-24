@@ -146,6 +146,40 @@ def _readlines_reverse(filename):
             position -= 1
         yield line[::-1]
 
+
+def array_final_matrices_in_dir(path:str):
+    """
+    Takes a parameter of a path to a directory containing csv files of time series
+    arrays.
+    Averages across the final matrix of each array and returns this average matrix.
+    BEWARE matrices in csv time series array must be the same shape (i.e. arrays can be
+    different lengths, but the matrices within the arrays need to be the same.
+    :param path:
+    :return: average_matrix
+    """
+    file_name_array = glob.glob(path + '/*.csv')
+
+    matrix_array = []
+    for file_name in file_name_array:
+        curr_matrix = deque()
+        breaks_seen = 0
+        for line in _readlines_reverse(file_name):
+            if line == '':
+                # blank line is the last in file (first read)
+                pass
+            elif (line == '<break/>' or line == '<break/>\n'):
+                if breaks_seen <1:
+                    breaks_seen += 1
+                else:
+                    break
+            else:
+                curr_matrix.appendleft(np.array(line.strip().split(sep=','), dtype=float))
+        matrix_array.append(np.array(curr_matrix))
+    matrix_array = np.array(matrix_array)
+
+    return matrix_array
+
+
 def average_surface(path:str):
     """
     Takes a parameter of a path to a directory containing csv files of time series
