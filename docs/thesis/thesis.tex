@@ -522,15 +522,13 @@ This differs from other work by these authors in which to be considered evolutio
 2274]{alger_homo_2013}. 
 Similarly, \citet{alger_generalization_2012} assumes that a resident strategy is evolutionary unstable if there exists some mutant against which the resident strategy achieves on-average less payoff.
 
-\np The utility functions that \citet{alger_generalization_2012} are interested in are a weighted linear combination of the expected payoffs of both players, they look like the following, in which $x$ and $y$ are types and $u_k(x, y)$ is \textit{x's} utility when playing against \textit{y}:
+\np The utility functions that \citet{alger_generalization_2012} are interested in are a weighted linear combination of the expected payoffs of both players, they look like the following, in which $x$ and $y$ are types, $u_k(x, y)$ is \textit{x's} utility when playing against \textit{y} and $\rho \in [-1, 1]$.:
 \begin{equation}
 	\label{linearESSEquation}
 	u(x, y) = \Pi(x,y) + \rho\Pi(y,x)
 \end{equation}
-\begin{center}
-	for some $\rho \in [-1, 1]$.
-\end{center}
-The constant $\rho$ in the above equations is described by \citet{alger_homo_2013} as the the agents' "degree of morality". 
+
+\noindent The constant $\rho$ in the above equations is described by \citet{alger_homo_2013} as the the agents' "degree of morality". 
 The degree of morality can be thought of as how much the individual `wants to do the right thing' - a degree of morality of $0$ corresponds to pure selfishness, while a degree of $1$ corresponds to pure morality. 
 \citet{alger_generalization_2012} concludes that in a model where all utility functions are of the form of equation \ref{linearESSEquation}, the function with $\rho = \alpha$, the index of assortativity, is evolutionarily stable.
 
@@ -540,7 +538,7 @@ The degree of morality can be thought of as how much the individual `wants to do
 	$u_k(x, y) = (1 - \rho) \times \Pi(x, y) + \rho \times \Pi(x, x)$
 \end{center}
 
-An interesting observation that can be made of function \ref{2013linearESS} is that the term that represents the opponent player's payoff -- that is, the term $\pi(x,x)$ -- treats the
+\np An interesting observation that can be made of function \ref{2013linearESS} is that the term that represents the opponent player's payoff -- that is, the term $\pi(x,x)$ -- treats the
 opponent as if they were the same type as the player who's utility function it is regardless of the player's belief or opponent's actual type. This implies that an individual with a 'purely moral' utility function will act in such a way as to maximise their opponent's payoff, assuming that their opponent is of the same type as them and acts in the same way. The authors explain this structure as a representation of Kant's categorical imperative to act only in a way such that ones will might become universal law \citep{kant_groundwork_1775}.
 
 \np Of the utility function shape overall, the paper holds that it is as though an individual with this utility function is
@@ -1309,9 +1307,9 @@ Functions $a$ and $b$ have though landed on an approximation of the AW predictio
 Having presented the results of out experiments we now examine the conclusions that can be drawn and conduct a discussion regarding the implications of these conclusions and possible future work.
 Oxymoronically, we begin with the conclusions and conclude with the discussion.
 
-\section{Conclusions}\label{conclusions}
+\section{Conclusions and Discussion}\label{conclusions}
 
-In summary, the results presented in the preceding two chapters can be taken as evidence for two (broad) key conclusions: Games matter, and mutations matter.
+To sum, the results presented in the preceding two chapters can be taken as evidence for two (broad) key conclusions: Games matter, and mutations matter.
 The details of both of these aspects (games and mutations) are almost entirely absent from the theoretical framework used as a reference point for this research.
 But, it turns out that both have a large influence on the dynamics of the system and the kinds of individuals that are produced by evolution.
 
@@ -1348,7 +1346,8 @@ The converse is true if the mutation makes this outcome less preferable to the i
 We are accustomed to thinking about evolution as favouring individuals who are \textit{better} somehow than their opponents. 
 But this kind of mutation coupled with symmetric games has produced a kind of \textit{minimal-betterness} that requires individuals achieve only-just more than their counter-parts.
 As their opponents achieve more, the individual must also achieve a little more and as the opponent achieves less, the individual is able to achieve less also.
-It seems that we may have developed a utility function has over-adapted to the structure of the games that are being played in determining its fitness.
+The small, local nature of the mutations that are performed on the Phenotype Representation allow the utility functions to totally adapt to the structure of the games that are being played.
+This result highlights a factor that is often left undiscussed in the existing literature: that the kind of games that are played are important. 
 Having said that, this would be a utility function that has over-adapted to the assumptions made in \citet{alger_generalization_2012}.
 
 \subsection[Mutations Matter]{Mutations Matter: An Alternate Evolutionary Stable Destination}
@@ -1363,34 +1362,74 @@ It is possible that other function types exist that are also evolutionarily stab
 It is possible that the surface that our symmetric-game Phenotype Representation is converging towards is one of them.
 
 \np Figure \ref{linegraph_fitness_difference_increasing_epsilon} 
-shows how the fitness difference when our evolved surface plays against pure-selfishness is in favour of the evolved surface when the evolved surface only makes up a small proportion of the population.
+shows the fitness difference when our evolved surface plays against pure-selfishness as the evolved surface's population share increases.
+The figure shows that this fitness difference is in favour of the evolved surface when the evolved surface only makes up a small proportion of the population.
 This difference then steadily moves back in favour of the resident, selfish function as this proportion increases.
 This figure is presented to highlight that the evolved surface would not be able to invade the resident AW prediction.
 However, the downward slope of the fitness difference is almost perfectly linear as the evolved share of population increases.
 When this share is close to 0.5, the fitness difference crosses to be in favour of the AW prediction.
 
-\np As much as this figure can highlight that the AW prediction holds, and cannot be invaded, it could also be indicative of two alternative outcomes.
+\np As much as this figure can highlight that the AW prediction holds it could also be indicative of two alternative outcomes.
 The first is that given that the predicted surface performs well when its share of the population is low in the saw way that the evolved surface does when it is in the minority,
 we may be able to take this as evidence that our evolved surface will be difficult to invade also.
 The second is that the change in which function is successful in the fitness comparison happens when the share of population is close to 0.5,
 and so there is potentially a mixed type ESS state that is a population consisting of some share of both of these two utility functions.
+The evolved surface is not able to fully invade the AW prediction, but neither is AW prediction able to fully repel the evolved surface and so they must co-exist.
 
-\section{Discussion and Further Work}
+\np This mixed type ESS has been approached within a model in which the games that are being sampled are the same as those sampled in \citet{alger_generalization_2012}.
+The way that the mutations are performed has allowed this kind of utility surface to be formed.
+This result, showing that the kinds of mutations that are performed in forming preferences is not entirely novel \citep{garcia_structure_2012}.
 
-\subsection{Symbolic Representation: A Path to Selfishness}
-The results presented regarding the simulations run with the Symbolic Representation in both Chapters \ref{symmetricGames} and \ref{asymmetricGames} 
-When $\alpha = 0$, sixteen out the twenty simulations (combining symmetric and asymmetric runs) produced functions that were equivalent to pure selfishness.
-This aligns with the AW prediction. 
 
-\subsection{Travels with Randomness}
-> randomness of asymmetric games allows us to explore more?a
+\section{Future Work}
+
+The extension of static work regarding preference formation into dynamic environments is a developing field.
+As such, there is much territory as yet uncovered.
+This includes more work investigating how preference theory affects the dynamics.
+As well as experiments using a wider range of methods to represent utility functions.
 
 
 \subsection{Axioms of Preferences}
+The utility functions generated in this research do not exist in a vacuum.
+Much work exists in the area of preference theory that can be used to evaluate the functions generated.
+Evaluation of this kind would have particular applicability to the results of the Symbolic Representation.
+This is because, although constrained by a grammar during evolution, these functions can a little more easily become complex and unwieldy (interesting).
 
-> axioms of preferences.
+\np Throughout this work we have asserted that individuals who act in accordance with their preferences can be said to be acting rationally.
+Formally, a preference set must meet several criteria before it can be said to be logically consistent.
+These axioms include:
+\begin{enumerate}[label={\alph*)}]
+	\item Transitivity: if $a$ is preferred to $b$ and $b$ is preferred to $c$, then $a$ is preferred to $c$.
+	\item Completeness: given two outcomes $a$ and $b$ one of $a \geq b$ or $b \geq a$ must be true, where $\geq$ signify's a weak preference.
+\end{enumerate}
+\citet{angner_course_2012}
+
+\np Further, it is widely accepted within the field that utility is marginally diminishing (\citet{angner_course_2012}, \citet{lane_diminishing_2000}), hence the \textit{law of diminishing marginal utility}.
+In essence this law entails that individuals derive less utility from the $n+1^{th}$ dollar earned (can of soft-drink consumed) than they do the first.
+The functions generated in this research by the Symbolic Representation do not adhere to the law of diminishing returns.
+
+\np In the same way that this research has focused on the assumptions made by static work in the area of Evolutionary Game Theory, future could be undertaken with a focus on preference theory.
+Future work that is completed with more of a focus on these and other tenets of preference theory could shed light on how these axioms effect the dynamics of preference formation, 
+and how utility functions that do not adhere to these axioms perform in comparison to those that do.
 
 
+\subsection{A Third Representation}
+In this research we presented results regarding two methods of representing utility functions.
+Both representations changed the functions over time through mutation.
+An extension to this research would be to compare the results generated here to a third kind of representation, particularly if this representation modified preferences via learning.
+The most obvious candidate for a representation that meets these criteria is deep reinforcement learning.
+Similar to \citet{peysakhovich_prosocial_2017}, the utility function could be represented as neural network that improves via learning.
+
+\np Further work of this kind may be particularly interesting because it would enable us to think about these results as a way of investigating cognition.
+In this research, we have presented results only relating to evolution.
+If these results could be juxtaposed against the results of a process of learning we may be able to draw conclusions about how preferences are represented in real people.
+Whether people's preferences are learned within their lifetime, or whether they're the product of evolution over many thousands of years.
+
+\section{Concluding Remarks}
+The results of this research and particularly the conclusions drawn in the preceding sections serve to highlight the importance of evaluating static results and assumptions in dynamic environments.
+Not only can research into dynamics confirm existing conclusions, it can illuminate results that were previously obscured.l.
+Research into dynamics can reveal the severity of assumptions that were previously taken almost to be trivial, can predict diversity of population, and converge towards novel candidates for evolutionary stability. 
+ 
 \bibliography{thesis}
 \bibliographystyle{apalike}
 
