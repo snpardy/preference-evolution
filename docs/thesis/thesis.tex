@@ -15,10 +15,20 @@
 \usepackage{amsmath}
 \usepackage{algpseudocode}
 \usepackage{algorithm2e}
+\usepackage{setspace}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{wrapfig}
 
 \newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}\PackageWarning{TODO:}{#1!}}
 \newcommand{\note}[1]{\textcolor{red}{[NOTE: #1]}\PackageWarning{NOTE:}{#1!}}
 \newcommand*{\np}{\par\noindent\newline}
+\newcommand*{\authorimg}[1]{%
+  \raisebox{-.3\baselineskip}{%
+    \includegraphics[
+	scale=0.2
+    ]{#1}%
+  }%
+}
 
 \title{Agent Based Models of the Formation of Social Preferences}
 \author{S Pardy}
@@ -46,7 +56,7 @@
 	
 	% \textsc{\Large This thesis is presented in partial fulfillment of the requirements for the degree of Bachelor of Science (Honours) at Monash University}\\[0.5cm] % Major heading such as course name
 	
-	\textsc{\large This thesis is presented in partial fulfillment of the requirements for the degree of Bachelor of Science (Honours) at Monash University}\\[0.5cm] % Minor heading such as course title
+	\textsc{\large This thesis is presented in partial fulfillment of the requirements for\\ the degree of Bachelor of Science (Honours) at Monash University}\\[0.5cm] % Minor heading such as course title
 	
 	%------------------------------------------------
 	%	Author(s)
@@ -87,21 +97,31 @@
 % \hypersetup{colorlinks, citecolor=black, filecolor=black, linkcolor=black urlcolor=black}
 
 % \newpage
+\chapter*{Abstract}
+{\setstretch{1.5} The mechanisms that lead to the formation of cooperative preferences amongst rational individuals are not well understood. 
+The current theory on the formation of cooperative-social preferences is static. 
+This literature draws conclusions about the evolutionary stability of certain outcomes without addressing how a dynamically evolving system would arrive at these outcomes. 
+Drawing on techniques from genetic programming and agent based modelling, we create a dynamic environment in which the conclusions and assumptions of existing theory are explored.
+We pay attention to whether the static results are recoverable in a dynamic environment and how the assumptions made by the existing literature affect the dynamics of the system. 
+We find that when we translate the models from the current literature into dynamic environments our results differ from those presented in the static work dependent on the structure of the mutations performed as well as the structure of the games that are played.
+These two important features are currently ignored in theoretical models.
+\par}
+
 \chapter*{Declaration}
 \np I declare that this thesis is my own work and has not been submitted in any form for another degree or diploma at any university or other institute of tertiary education. Information derived from the work of others has been acknowledged.\\\\\\\\
 
 
 
-\noindent Signed by ………………\\\\\\
+
+\noindent Signed\\\\\\
+\newline   \-\  \qquad\qquad\authorimg{resources/signature.PNG}\\\\\\
+
 
 
 
 
 \noindent Name \quad	Samuel Pardy\\\\
 \noindent Date \quad \today
-
-% \chapter*{Abstract}
-% \chapter*{Acknowledgment}
 
 \tableofcontents
 \newpage
@@ -149,10 +169,10 @@ The literature surrounding game theory, preferences and utility is discussed in 
 \np The tools used to think about the \textit{formation} of social preferences are drawn from a combination of classic game theory, preference theory and evolutionary biology.
 \textit{Evolutionary Game Theory} is explored in section \ref{evo_games}.
 This synthesis of fields allows us to investigate the kinds of preferences produced when the forces of evolution act of the preferences of individuals.
-In this kind of model, an individual acts to maximise their own utility while their evolutionary fitness is determined by the object payoff that they receive.
+In this kind of model, utility functions are \textit{mutated} and agents (possessing these utility functions) who act to maximise their own utility have their evolutionary fitness determined by the objective payoff that they receive.
 
 \np A relatively novel way that this field is being extended is by creating dynamic environments in which to investigate results that have previously only been reasoned about is a static way.
-Discussed in section \ref{}, this extension draws upon existing computational modelling technique such as agent based modelling and genetic algorithms.
+Discussed in section \ref{agent}, this extension draws upon existing computational modelling technique such as agent based modelling and genetic algorithms.
 Studying these results in dynamic settings allows us to explore how assumptions made in support of the results effect the dynamics of the system as well as potentially revealing new results the can then be analysed in comparison to existing results.
 The research presented in this piece develops the study of the formation of social preferences by investigating results of a specific area of the \textit{static} literature in dynamic environments.
 
@@ -189,9 +209,12 @@ The remainder of the thesis is organised as follows:
 		As well as presenting and critically evaluating the current state-of-the-art of the literature on the formation of social preferences.
 	\item[$-$] Chapter \ref{experimentalFramework} outlines the experimental framework that has been created in order to carry out this research.
 	\item [$-$] Chapter \ref{symmetricGames} presents results of experiments that closely align with assumptions made in the literature.
-	\item [$-$] Chapter \ref{asymmetricGames} present the results of experiments that extend beyond the scope of existing theoretical work.
+	\item [$-$] Chapter \ref{asymmetricGames} presents the results of experiments that extend beyond the scope of existing theoretical work.
 	\item [$-$] Finally, chapter \ref{conclusions_and_discussion} contains a discussion of the results along with concluding comments regarding possible extension and further work.
 \end{itemize}
+
+\np In undertaking the work just described, we conclude that the preferences generated in dynamic environments differ from existing theoretical work.
+These differences are dependent on important features regarding the structure of mutations and the kinds of games that are played.
 
 
 \chapter{Literature Review}\label{lit_review}
@@ -327,7 +350,7 @@ In fact, it is difficult to think of any material, objective payoff at all assoc
 So, even though buying and consuming it is a net loss in terms of payoff, people buy and consume soft drink all the time. 
 This must be because people derive some positive \textit{utility} from it, rather than objective payoff.
 
-\np A preference is considered `social' when a player's utility function is dependent on the outcome experienced by their opponent(s0). 
+\np A preference is considered `social' when a player's utility function is dependent on the outcome experienced by their opponent(s). 
 A social preference may assign a positive weight to the opponent's outcome, or a negative weight (an altruistic vs envious preference) \cite{angner_course_2012}.
 
 \np Given a two-player game (made up of pay-offs) and the utility functions of the players, we can write down a \textit{distinct} game based on the utility each player derives from the pay-offs achieved in each potential result state in the original game. 
@@ -560,8 +583,8 @@ claims, the result of \citet{alger_homo_2013} no longer holds. While Newton conc
 assortativity was much slower than that of preference the result may hold, he claims that situations in which this is
 the case are "difficult to conceive" \citep{newton_preferences_2017}.
 
-\np Returning to the discussion of the synthesis of game theory and computer modelling, \citet{peysakhovich_prosocial_2017} employs agent based models and deep reinforcement learning to draw conclusions about the performance of artificial agents with social preference in Stag Hunt games.
-\citet{peysakhovich_prosocial_2017} focuses on practical considerations surrounding the formation "pro-social" preferences in agents.
+\np Returning to the discussion of the synthesis of game theory and computer modelling, \citet{peysakhovich_prosocial_2017} employ agent based models and deep reinforcement learning to draw conclusions about the performance of artificial agents with social preference in Stag Hunt games.
+\citet{peysakhovich_prosocial_2017} focus on practical considerations surrounding the formation "pro-social" preferences in agents.
 This is done by introducing agents with preferences that are already prosocial and observing the effect this has on the wider population.
 The paper concludes that introducing prosocial agents into a population of other reactive learning agents increases 
 (a) the individual agent's long-term payoff and 
@@ -784,8 +807,10 @@ Figure \ref{selfishUtilityGrid} is an example of the grid values of a utility su
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.75]{resources/selfish.png}
-	\caption{An example of a purely selfish type represented as a `utility surface'.}
+	\includegraphics[scale=0.55]{resources/selfish_and_one_mutation.png}
+	\caption{On the left, an example of a purely selfish type represented as a `utility surface'.
+On the right, the selfish utility surface after one mutation has been applied at the point (3, 1).
+	}
 	\label{selfishUtilitySurface}
 \end{figure}
 
@@ -810,13 +835,8 @@ We assume this perturbation takes the shape of a bivariate normal distribution w
 This method ensures that mutations are small.
 It also has the effect of creating \textit{localised} mutations: mutations that only affect a certain area of the surface rather than the shape of the surface overall.
 It turns out that the localised nature of these mutations is important and will be discussed in proceeding sections.
-Figure \ref{selfishUtilitySurfaceOneMutation} shows our selfish utility surface from \ref{selfishUtilitySurface} after one mutation has been applied.
-\begin{figure}
-	\centering
-	\includegraphics[scale=0.7]{resources/one_mutation.png}
-	\caption{The selfish utility surface after one mutation has been applied at the point (3, 3).}
-	\label{selfishUtilitySurfaceOneMutation}
-\end{figure}
+Figure ~\ref{selfishUtilitySurface} also shows our selfish utility surface after one mutation has been applied.
+
 \paragraph{Symbolic Representation}
 \np The second method by which we represent individuals is by maintaining the symbolic expression of a two parameter function.
 This expression (which is the phenotype) is not the only information stored about each individual though.
@@ -860,8 +880,6 @@ However, Symbolic Representation comes with the significant drawback of the gram
 It is difficult to overstate the importance the grammar has on the dynamics of the system.
 Another point of difference is that mutations in this case affect the function overall, rather than a specific area of the space.
 So, with Symbolic Representation, there is no concept of the `locality' of the mutation - mutations affect the whole space.
-
-\todo{is here the place to talk about results of choosing a bad grammar?}
 
 
 \section{Measuring Success}\label{success}
@@ -941,14 +959,13 @@ The payoff points are the four potential outcomes (in terms of payoffs for each 
 Plotted in figure \ref{prisoners_payoff_plot}.
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.5]{resources/prisoners_dilemma_payoffs.png}
+	\includegraphics[scale=0.7]{resources/prisoners_dilemma_payoffs.png}
 	\caption{The payoff points in a prisoner's dilemma game.}
 	\label{prisoners_payoff_plot}
 \end{figure}
 
 \np No figure showing plots of the surfaces evolved using this sampling method is presented here because the simulations 
 produced surfaces that had either not been modified by a single successful invasion or had been subject to only a few successful invasions close to the payoff points.
-\todo{is it ok to just say that and not show a figure?}
 The fact that limited invasions occur in this scenario makes sense when several facts about the model are considered:
 \begin{enumerate}[label=(\alph*)]
 	\item mutations can occur anywhere within the space and are small.
@@ -1017,7 +1034,7 @@ We examine the average surface produced as well as the individual surfaces.
 
 \np When $\alpha = 0$, the function predicted by \citet{alger_generalization_2012} equates to pure selfishness.
 So we are interested in how closely the surface produced by our dynamically evolving system aligns to a surface of pure selfishness.
-Figure \ref{average_r_0_symmetric_evolved} shows an average of the surfaces that resulted from ten simulations with these parameters.
+The surface shown to the left of Figure \ref{combined_average_symmetric_evolved} shows an average of the surfaces that resulted from ten simulations with these parameters.
 Looking at this figure and comparing it to figure \ref{selfishUtilitySurface}, it is not obvious that there is a huge amount of similarity between the two.
 This is confirmed measuring the difference in volume between the evolved surfaces and pure selfishness. 
 
@@ -1028,29 +1045,23 @@ There tends to be a volume-difference of about a third of the total volume of th
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.7]{resources/average_r_0_symmetric_evolved.png}
-	\caption{An average of the surfaces evolved by symmetric-game, Phenotype Representation when $\alpha = 0$.}
-	\label{average_r_0_symmetric_evolved}
+	\includegraphics[scale=0.55]{resources/symmetric_average_evolved_surface_combined.png}
+	\caption{An average of the surfaces evolved by symmetric-game, Phenotype Representation. When $\alpha = 0$ and $\alpha = 0.3$, on the left and right respectively.
+	}
+	\label{combined_average_symmetric_evolved}
 \end{figure}
 
 \np Performing similar analysis on the surfaces evolved when $\alpha \neq 0$ yields similar results.
-The figure \ref{average_r_03_symmetric_evolved} shows the average evolved surface when $\alpha = 0.3$.
-The volume-difference between this surface and the evolved surface when $\alpha = 0$ - shown in figure \ref{average_r_0_symmetric_evolved} - is so small as to be negligible.
-This is notable the AW prediction differs significantly depending on $\alpha$.
+The surface to the right of figure \ref{combined_average_symmetric_evolved} shows the average evolved surface when $\alpha = 0.3$.
+The volume-difference between this surface and the evolved surface when $\alpha = 0$ is so small as to be negligible.
+This is notable because the AW prediction differs significantly depending on $\alpha$.
 As before, we can also look at the volume-differences between the surfaces produced by the simulation and the AW prediction.
 Figure \ref{boxplot_volume_difference_symmetric} shows the distribution of these volumes, the volume-difference between the average surface and the AW prediction is 23.282.
 Now that $\alpha$ is greater than zero and AW predicts some level of cooperation between individuals, our evolved surfaces are even more dissimilar to the AW prediction.
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.7]{resources/average_r_03_symmetric_evolved.png}
-	\caption{An average of the surfaces evolved by symmetric-game, Phenotype Representation when $\alpha = 0.3$.}
-	\label{average_r_03_symmetric_evolved}
-\end{figure}
-
-\begin{figure}
-	\centering
-	\includegraphics[scale=0.6]{resources/distance_boxplot_r_00_03.png}
+	\includegraphics[scale=0.7]{resources/distance_boxplot_r_00_03.png}
 	\caption{Volume-differences between each of the evolved surfaces and the AW prediction. Calculated for $\alpha = 0$ and $\alpha = 0.3$.}
 	\label{boxplot_volume_difference_symmetric}
 \end{figure}
@@ -1073,7 +1084,7 @@ As this proportion increases though, the fitness difference moves back in favour
 This is in agreement with AW's prediction.
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.6]{resources/phenotype_barchart_fitness_earned_against_target_r_00_03.png}
+	\includegraphics[scale=0.7]{resources/phenotype_barchart_fitness_earned_against_target_r_00_03.png}
 	\caption{Fitness earned by average evolved surface against the predicted surface, compared with the expected fitness; i.e. the fitness earned by the predicted surface playing against itself. Calculated for $\alpha = 0$ and $\alpha = 0.3$.}
 	\label{phenotype_barchart_fitness_earned_against_target_r_00_03}
 \end{figure}
@@ -1089,6 +1100,7 @@ This is in agreement with AW's prediction.
 We did though, converge towards an interesting surface that performed reasonably well in fitness evaluation.
 This well-performing surface allowed us to investigate the evolutionary stability of the AW prediction which we were not able to create a counter-example to. 
 It is possible that this method of mutation has produced surfaces that are on their way to converging on an alternative evolutionary stable function.
+The reasons why this method of representation has not produced utility functions that align with the prediction of theoretical work but are discussed in section \ref{conclusions_and_discussion}.
 
 
 \section{Symbolic Representation}\label{symmetricGames_symb}
@@ -1105,7 +1117,7 @@ We examine the fitnesses of the evolved functions as well as the functions thems
 while one contains reference to the payoff earned by the opponent, the utility is heavily slanted towards selfishness.
 Finally, two of the resultant functions can be considered noise.
 These results and the corresponding functions are displayed in figure \ref{barchart_fitness_earned_against_target_r_00}.
-The dashed, threshold-line in this figure is the fitness earned by Pure Selfishness when playing against itself.
+We can see that the functions we can analytically say are equivalent to the AW prediction produce a very small error, while those the differ slightly produce a larger error (particularly $f$ and $g$).
 
 \np It can quickly be seen that functions $f$ and $g$ are poorest performing functions of the group.
 This is makes sense when the functions themselves are considered: in generating a utility value neither function takes into account the player's payoffs.
@@ -1117,7 +1129,7 @@ Utility only carries weight when it is compared to another utility value of the 
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.7]{resources/ylim_barchart_fitness_earned_against_target_r_00.png}
+	\includegraphics[scale=0.7]{resources/symmetric_percenterror_barchart_fitness_earned_against_target_r_00.png}
 	\begin{alignat*}{2}
 		a: f(x, y) = & 12.37x - y + \alpha &\\
 		b: f(x, y) = & x + 70.54&\\
@@ -1130,7 +1142,7 @@ Utility only carries weight when it is compared to another utility value of the 
 		i: f(x, y) = & x - 97.58&\\
 		j: f(x, y) = & x + 48&\\
 	\end{alignat*}
-	\caption{Fitness earned by each evolved function when playing against AW prediction alongside the corresponding functions; where $x$ is the payoff earned by the owner of utility function, y is the payoff earned by their opponent and $\alpha = 0$.}
+	\caption{Percentage Fitness error measured as the difference in fitness between fitness earned by each evolved function (respectively) when playing against AW prediction and the AW prediction playing against itself. Accompanied by the corresponding functions; where $x$ is the payoff earned by the owner of utility function, y is the payoff earned by their opponent and $\alpha = 0$.}
 	\label{barchart_fitness_earned_against_target_r_00}
 \end{figure}
 
@@ -1139,7 +1151,7 @@ but we'll see now that things are a little more complicated when assortativity i
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.7]{resources/ylim_barchart_fitness_earned_against_target_r_06.png}
+	\includegraphics[scale=0.7]{resources/symmetric_percenterror_barchart_fitness_earned_against_target_r_06.png}
 	\begin{alignat*}{2}
 		a: f(x, y) = & 2.9339x + \alpha y&\\
 		b: f(x, y) = & x + \alpha y -\alpha &\\
@@ -1152,7 +1164,7 @@ but we'll see now that things are a little more complicated when assortativity i
 		i: f(x, y) = & \alpha (x^2) + y + \alpha + 21.64&\\
 		j: f(x, y) = & 3x + 2y&\\
 	\end{alignat*}
-	\caption{Fitness earned by each evolved function when playing against AW prediction alongside the corresponding function; where $x$ is the payoff earned by the owner of utility function, y is the payoff earned by their opponent and $\alpha = 0.6$.}
+	\caption{Percentage Fitness error measured as the difference in fitness between fitness earned by each evolved function (respectively) when playing against AW prediction and the AW prediction playing against itself. Accompanied by the corresponding functions; where $x$ is the payoff earned by the owner of utility function, y is the payoff earned by their opponent and $\alpha = 0.6$.}
 	\label{barchart_fitness_earned_against_target_r06}
 \end{figure}
 
@@ -1203,30 +1215,31 @@ Starting with a randomly generated surface, we run simulations with the followin
 Our results are the product of ten such simulations run at each of two levels of assortativity.
 We examine the average surface produced as well as the individual surfaces.
 
-\np With $\alpha = 0$, we take the results of ten simulations and average the surface that is generated, this surface is shown in figure \ref{average_r_0_asymmetric_evolved}.
-Given $alpha$ is zero, in the symmetric case we would expect the evolved surfaces to converge towards pure-selfishness.
-Just looking at figure \ref{average_r_0_asymmetric_evolved} we can see that it seems to be somewhat similar pure-selfishness.
+\np With $\alpha = 0$, we take the results of ten simulations and average the surface that is generated, this surface is shown in figure \ref{combined_average_asymmetric_evolved}.
+Given $\alpha$ is zero, in the symmetric case we would expect the evolved surfaces to converge towards pure-selfishness.
+Just looking at surface on the left of figure \ref{combined_average_asymmetric_evolved} we can see that it seems to be somewhat similar pure-selfishness.
 This observation is confirmed by the volume-difference, which between the average evolved surface and pure-selfishness is 11.9657, so closer than the symmetric case's 19.112.
 
 \np When we introduce assortativity into the matching process, in the symmetric case we would expect some level of cooperation to arise.
-With $\alpha = 0.4$, we again take the results of ten simulations and average the generated surface; shown in figure \ref{average_r_04_asymmetric_evolved}.
-Despite have some level of assortativity in the matching, $\alpha = 0.4$, figure \ref{average_r_04_asymmetric_evolved} too shows a surface that resembles pure-selfishness.
+With $\alpha = 0.4$, we again take the results of ten simulations and average the generated surface; shown on the right of figure \ref{combined_average_asymmetric_evolved}.
+Despite have some level of assortativity in the matching, $\alpha = 0.4$, the surface on the right of figure \ref{combined_average_asymmetric_evolved} too shows a surface that resembles pure-selfishness.
 This average evolved surface does not appear to be similar to the AW prediction, with a volume-difference of 29.3766.
 However, this surface - evolved with $\alpha = 0.4$ - is a close approximation of pure-selfishness.
 The average evolved surface when $\alpha = 0.4$ has a volume-difference of 13.9255 with pure-selfishness.
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.7]{resources/asymmetric_average_evolved_surface_r_00.png}
-	\caption{An average of the surfaces evolved by asymmetric-game, Phenotype Representation when $\alpha = 0$.}
-	\label{average_r_0_asymmetric_evolved}
+	\includegraphics[scale=0.55]{resources/asymmetric_average_evolved_surface_combined.png}
+	\caption{An average of the surfaces evolved by asymmetric-game, Phenotype Representation. When $\alpha = 0$ and $\alpha = 0.4$, on the left and right respectively.
+	}
+	\label{combined_average_asymmetric_evolved}
 \end{figure}
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.75]{resources/asymmetric_average_evolved_surface_r_04.png}
-	\caption{An average of the surfaces evolved by asymmetric-game, Phenotype Representation when $\alpha = 0.4$.}
-	\label{average_r_04_asymmetric_evolved}
+	\includegraphics[scale=0.7]{resources/asymmetric_distance_boxplot_r_00_04.png}
+	\caption{Volume-differences between each of the evolved surfaces and the AW prediction. Calculated for $\alpha = 0$ and $\alpha = 0.4$.}
+	\label{asymmetric_distance_boxplot_r_00_04}
 \end{figure}
 
 \np The volume-differences calculated for each evolved surface individually are shown in figure \ref{asymmetric_distance_boxplot_r_00_04}.
@@ -1234,13 +1247,6 @@ The distribution of volume-differences for the surfaces generated when $\alpha =
 This occurs regardless of whether or not there is assortativity in the matching process. 
 So it seems that the AW prediction does not hold when games are asymmetric.
 
-
-\begin{figure}
-	\centering
-	\includegraphics[scale=0.6]{resources/asymmetric_distance_boxplot_r_00_04.png}
-	\caption{Volume-differences between each of the evolved surfaces and the AW prediction. Calculated for $\alpha = 0$ and $\alpha = 0.4$.}
-	\label{asymmetric_distance_boxplot_r_00_04}
-\end{figure}
 
 
 
@@ -1250,11 +1256,12 @@ We start with a randomly generated genome, and simulate evolution via the techni
 Fitness is determined by the individuals performance in many asymmetric games.
 As with section \ref{symmetricGames_symb}, we evaluate our evolved functions by assessing their behaviour when playing against the target.
 Further to this, we can assess the functions themselves.
-Figure \ref{asymmetric_barchart_fitness_earned_against_target_r00} shows the fitness achieved by function evolved with $\alpha = 0$ when playing against the AW prediction as well the functions themselves.
+Figure \ref{asymmetric_barchart_fitness_earned_against_target_r00} shows absolute percentage difference in fitness between functions evolved with $\alpha = 0$ when playing against the pure selfishness and pure selishness playing against itself.
+The evolved functions themselves are also displayed.
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.7]{resources/ylim_barchart_fitness_earned_against_target_asymmetric_r_00.png}
+	\includegraphics[scale=0.7]{resources/asymmetric_percenterror_barchart_fitness_earned_against_target_r_00.png}
 	\begin{alignat*}{2}
 		a: f(x, y) = & x - 59.61&\\
 		b: f(x, y) = & x - 77.15&\\
@@ -1267,24 +1274,24 @@ Figure \ref{asymmetric_barchart_fitness_earned_against_target_r00} shows the fit
 		i: f(x, y) = & 1583.5408\alpha xy^2+x+25.17\alpha ^2x&\\
 		j: f(x, y) = & x-\alpha ^2&\\
 	\end{alignat*}
-	\caption{Fitness earned by each evolved function when playing against AW prediction alongside the corresponding function; where $x$ is the payoff earned by the owner of utility function, y is the payoff earned by their opponent and $\alpha = 0.0$.}
+	\caption{Percentage Fitness error measured as the difference in fitness between fitness earned by each evolved function (respectively) when playing against AW prediction and the AW prediction playing against itself. Accompanied by the corresponding functions; where $x$ is the payoff earned by the owner of utility function, y is the payoff earned by their opponent and $\alpha = 0.0$.}
 	\label{asymmetric_barchart_fitness_earned_against_target_r00}
 \end{figure}
 \np Given that $\alpha = 0$ we would expect the functions to converge towards pure selfishness.
 This has occurred in all but one of the simulations (function $e$).
 The convergence towards selfishness has slightly increased in this asymmetric case compared to the symmetric.
-These results are confirmed by the fitnesses displayed in figure \ref{asymmetric_barchart_fitness_earned_against_target_r00}.
+These results are confirmed by the functions and errors displayed in figure \ref{asymmetric_barchart_fitness_earned_against_target_r00}.
 
 \np Looking at the functions generated when $\alpha = 0.6$, we see a similar trend to the one we saw when assortativity was introduced in the symmetric case.
-Like in the symmetric case we see an increased complexity in the evolved functions when assortativity is introduced.
-However, now that we're sampling asymmetric games it this effect has increased.
+We can see in Figure ~\ref{barchart_fitness_earned_against_target_asymmetric_r_06} that like in the symmetric case we see an increased complexity in the evolved functions when assortativity is introduced.
+However, now that we're sampling asymmetric games this effect has increased.
 Not only that but not one of our ten simulations has converged to the prediction.
-Functions $a$ and $b$ have though landed on an approximation of the AW prediction, given that these simulations have landed on a function that assigned a weight of $0.5$ to their opponent player.
+Functions $a$ and $e$ have though landed on an approximation of the AW prediction, given that these simulations have landed on a function that assigned a weight of $0.5$ to their opponent player.
 
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.7]{resources/ylim_barchart_fitness_earned_against_target_asymmetric_r_06.png}
+	\includegraphics[scale=0.7]{resources/asymmetric_percenterror_barchart_fitness_earned_against_target_asymmetric_r_06.png}
 	\begin{alignat*}{2}
 		a: f(x, y) = & 2x + y\\
 		b: f(x, y) = & 23.83yx^2 - 2x + (1 - r - r^3)y - 4.94r^3 + 56.43r ^2 + 2r - 451.1485\\
@@ -1297,7 +1304,7 @@ Functions $a$ and $b$ have though landed on an approximation of the AW predictio
 		i: f(x, y) = & 203.1086*y*x^2 +(\alpha - 42.36)x + 62.30y^2 - 2y  -2\alpha -239.28\\
 		j: f(x, y) = & 39.51\alpha xy^2 + (94.59\alpha^3 - \alpha^2)x + (35.07 + 75.67\alpha)y - 3\alpha - 91.41\\
 	\end{alignat*}
-	\caption{Fitness earned by each evolved function when playing against AW prediction alongside the corresponding function; where $x$ is the payoff earned by the owner of utility function, y is the payoff earned by their opponent and $\alpha = 0.6$.}
+	\caption{Percentage Fitness error measured as the difference in fitness between fitness earned by each evolved function (respectively) when playing against AW prediction and the AW prediction playing against itself. Accompanied by the corresponding functions; where $x$ is the payoff earned by the owner of utility function, y is the payoff earned by their opponent and $\alpha = 0.6$.}
 	\label{barchart_fitness_earned_against_target_asymmetric_r_06}
 \end{figure}
 
@@ -1309,7 +1316,7 @@ Oxymoronically, we begin with the conclusions and conclude with the discussion.
 
 \section{Conclusions and Discussion}\label{conclusions}
 
-To sum, the results presented in the preceding two chapters can be taken as evidence for two (broad) key conclusions: Games matter, and mutations matter.
+To sum-up, the results presented in the preceding two chapters can be taken as evidence for two (broad) key conclusions: Games matter, and mutations matter.
 The details of both of these aspects (games and mutations) are almost entirely absent from the theoretical framework used as a reference point for this research.
 But, it turns out that both have a large influence on the dynamics of the system and the kinds of individuals that are produced by evolution.
 
@@ -1347,8 +1354,8 @@ We are accustomed to thinking about evolution as favouring individuals who are \
 But this kind of mutation coupled with symmetric games has produced a kind of \textit{minimal-betterness} that requires individuals achieve only-just more than their counter-parts.
 As their opponents achieve more, the individual must also achieve a little more and as the opponent achieves less, the individual is able to achieve less also.
 The small, local nature of the mutations that are performed on the Phenotype Representation allow the utility functions to totally adapt to the structure of the games that are being played.
-This result highlights a factor that is often left undiscussed in the existing literature: that the kind of games that are played are important. 
-Having said that, this would be a utility function that has over-adapted to the assumptions made in \citet{alger_generalization_2012}.
+
+\np This result highlights a factor that is often left undiscussed in the existing literature: that the kind of games that are played are important. 
 
 \subsection[Mutations Matter]{Mutations Matter: An Alternate Evolutionary Stable Destination}
 Staying with the symmetric-game Phenotype Representation, an additional interesting point regarding the results of these simulations is that they seem to be qualitatively different to the AW prediction.
@@ -1378,7 +1385,8 @@ The evolved surface is not able to fully invade the AW prediction, but neither i
 
 \np This mixed type ESS has been approached within a model in which the games that are being sampled are the same as those sampled in \citet{alger_generalization_2012}.
 The way that the mutations are performed has allowed this kind of utility surface to be formed.
-This result, showing that the kinds of mutations that are performed in forming preferences is not entirely novel \citep{garcia_structure_2012}.
+This result, showing that the structure of mutations that are performed is important has been explored previously in relation to the evolution of simple strategies \citep{garcia_structure_2012}.
+The research presented here shows that this conclusion can be extended to the domain of preference formation.
 
 
 \section{Future Work}
@@ -1393,7 +1401,7 @@ As well as experiments using a wider range of methods to represent utility funct
 The utility functions generated in this research do not exist in a vacuum.
 Much work exists in the area of preference theory that can be used to evaluate the functions generated.
 Evaluation of this kind would have particular applicability to the results of the Symbolic Representation.
-This is because, although constrained by a grammar during evolution, these functions can a little more easily become complex and unwieldy (interesting).
+This is because, although constrained by a grammar during evolution, these functions tend to more easily become complex and unwieldy (interesting).
 
 \np Throughout this work we have asserted that individuals who act in accordance with their preferences can be said to be acting rationally.
 Formally, a preference set must meet several criteria before it can be said to be logically consistent.
@@ -1427,7 +1435,7 @@ Whether people's preferences are learned within their lifetime, or whether they'
 
 \section{Concluding Remarks}
 The results of this research and particularly the conclusions drawn in the preceding sections serve to highlight the importance of evaluating static results and assumptions in dynamic environments.
-Not only can research into dynamics confirm existing conclusions, it can illuminate results that were previously obscured.l.
+Not only can research into dynamics confirm existing conclusions, it can illuminate results that may have previously been obscured.
 Research into dynamics can reveal the severity of assumptions that were previously taken almost to be trivial, can predict diversity of population, and converge towards novel candidates for evolutionary stability. 
  
 \bibliography{thesis}
